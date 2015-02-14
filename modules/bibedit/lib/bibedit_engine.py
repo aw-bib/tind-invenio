@@ -1250,14 +1250,15 @@ def perform_request_autocomplete(request_type, recid, uid, data):
             u_subtag2 = '_'
         subfieldcode = data['subfieldcode']
         fulltag = maintag+u_subtag1+u_subtag2+subfieldcode
-    if (request_type == 'autokeyword'):
+    if request_type == 'autokeyword':
         # call the keyword-form-ontology function
         if fulltag and searchby:
             items = get_kbt_items_for_bibedit(CFG_BIBEDIT_KEYWORD_TAXONOMY,
                                               CFG_BIBEDIT_KEYWORD_RDFLABEL,
                                               searchby)
             response['autokeyword'] = items
-    if (request_type == 'autosuggest'):
+
+    if request_type == 'autosuggest':
         # call knowledge base function to put the suggestions in an array..
         if fulltag and searchby and len(searchby) > 3:
             # add trailing '*' wildcard for 'search_unit_in_bibxxx()' if not already present
@@ -1267,8 +1268,14 @@ def perform_request_autocomplete(request_type, recid, uid, data):
             for sugg in suggest_values:
                 if sugg.startswith(searchby):
                     new_suggest_vals.append(sugg)
+            from invenio.bibauthority_engine import process_authority_autosuggest
+
+            authority_results = process_authority_autosuggest(searchby, fulltag[:3])
+            for result in authority_results:
+                new_suggest_vals.append(result)
             response['autosuggest'] = new_suggest_vals
-    if (request_type == 'autocomplete'):
+
+    if request_type == 'autocomplete':
         # call the values function with the correct kb_name
         if fulltag in CFG_BIBEDIT_AUTOCOMPLETE_TAGS_KBS:
             kbname = CFG_BIBEDIT_AUTOCOMPLETE_TAGS_KBS[fulltag]
@@ -1292,7 +1299,7 @@ def perform_request_autocomplete(request_type, recid, uid, data):
             xml_rec = wash_for_xml(print_rec(record))
             record, status_code, dummy_errors = create_record(xml_rec)
             existing_values = []
-            if (status_code != 0):
+            if status_code != 0:
                 existing_values = record_get_field_values(record,
                                                           maintag,
                                                           subtag1,

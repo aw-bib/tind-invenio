@@ -29,13 +29,25 @@
 var gSelectionModeOn = false;
 var gReady = true;
 
-function initInputHotkeys(input_element, original) {
+function initInputHotkeys(inputElement, original) {
     /* Binding of shortcuts for input elements */
 
     // Lauch autosuggest
-    $(input_element).bind('keydown', 'ctrl+shift+a', function (event)  { onAutosuggest(event); } );
-    $(input_element).bind('keydown', 'ctrl+/', function (event)  { onJumpField(event, original, -1); } );
-    $(input_element).bind('keydown', 'ctrl+*', function (event)  { onJumpField(event, original, 1); } );
+    var os = navigator.platform, element = $(inputElement);
+    if (os.indexOf("Mac") < 0) {
+        element.bind('keydown', 'ctrl+shift+a', function (event) {
+            onAutosuggest(event);
+        });
+    } else {
+        element.bind('keydown', 'ctrl+shift', function (event) {
+            if (event.metaKey) {
+                onAutosuggest(event);
+            }
+        });
+    }
+    element.bind('keydown', 'ctrl+/', function (event) {onJumpField(event, original, -1); });
+    element.bind('keydown', 'ctrl+*', function (event) {onJumpField(event, original, 1); });
+
     // Save content and jump to next content field.
     // $(input_element).bind('keydown', 'tab', onKeyTab);
     // Save content and jump to previous content field.

@@ -1,3 +1,4 @@
+# coding=utf-8
 # This file is part of Invenio.
 # Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2013 CERN.
 #
@@ -21,12 +22,23 @@ CFG_BIBAUTHORITY_RECORD_CONTROL_NUMBER_FIELD = '035__a'
 
 # the record field for authority control numbers
 CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS = {
-        'AUTHOR' : ['100','700'],
-        'INSTITUTE' : ['110','920'],
-        'JOURNAL' : ['130'],
-        'SUBJECT' : ['150']
+    'AUTHOR': ['100', '700'],
+    'INSTITUTE': ['110', '920'],
+    'JOURNAL': ['130'],
+    'SUBJECT': ['150']
 }
 
+CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS_REVERSED = {
+    '100': 'AUTHOR',
+    '700': 'AUTHOR',
+    '110': 'INSTITUTE',
+    '920': 'INSTITUTE',
+    '130': 'JOURNAL',
+    '150': 'SUBJECT',
+}
+
+# Config variable to define if yes or no should the autocomplete check for authority record.
+CFG_AUTHORITY_AUTOCOMPLETE = True
 
 # Separator to be used in control numbers to separate the authority type
 # PREFIX (e.g. "INSTITUTE") from the control_no (e.g. "(CERN)abc123"
@@ -81,8 +93,8 @@ CFG_BIBAUTHORITY_CONTROLLED_FIELDS_AUTHORITY = {
     '510__a': 'INSTITUTE',
     '530__a': 'JOURNAL',
     '550__a': 'SUBJECT',
-    '909C1u': 'INSTITUTE', # used in bfe_affiliation
-    '920__v': 'INSTITUTE', # used by FZ Juelich demo data
+    '909C1u': 'INSTITUTE',  # used in bfe_affiliation
+    '920__v': 'INSTITUTE',  # used by FZ Juelich demo data
 }
 
 # constants for CFG_BIBEDIT_AUTOSUGGEST_TAGS
@@ -107,20 +119,20 @@ CFG_BIBAUTHORITY_AUTOSUGGEST_CONFIG = {
         'field': 'authorityauthor',
         'insert_here_field': '100__a',
         'sort_by': CFG_BIBAUTHORITY_AUTOSUGGEST_SORT_POPULAR,
-        'disambiguation_fields': ['100__d', '270__m'],
+        'disambiguation_fields': ['100__d', '035__a'],
     },
-    'INSTITUTE':{
+    'INSTITUTE': {
         'field': 'authorityinstitute',
         'insert_here_field': '110__a',
         'sort_by': CFG_BIBAUTHORITY_AUTOSUGGEST_SORT_ALPHA,
-        'disambiguation_fields': ['270__b'],
+        'disambiguation_fields': ['270__b', "035__a"],
     },
-    'JOURNAL':{
+    'JOURNAL': {
         'field': 'authorityjournal',
         'insert_here_field': '130__a',
         'sort_by': CFG_BIBAUTHORITY_AUTOSUGGEST_SORT_POPULAR,
     },
-    'SUBJECT':{
+    'SUBJECT': {
         'field': 'authoritysubject',
         'insert_here_field': '150__a',
         'sort_by': CFG_BIBAUTHORITY_AUTOSUGGEST_SORT_ALPHA,
@@ -132,25 +144,27 @@ CFG_BIBAUTHORITY_AUTOSUGGEST_CONFIG = {
 # NR stands for 'non-repeatable'
 CFG_BIBAUTHORITY_AUTHORITY_SUBFIELDS_TO_INDEX = {
     'AUTHOR': [
-        '100__a', #Personal Name (NR, NR)
-        '100__d', #Year of birth or other dates (NR, NR)
-        '100__q', #Fuller form of name (NR, NR)
-        '400__a', #(See From Tracing) (R, NR)
-        '400__d', #(See From Tracing) (R, NR)
-        '400__q', #(See From Tracing) (R, NR)
+        '100__a',  #Personal Name (NR, NR)
+        '100__d',  #Year of birth or other dates (NR, NR)
+        '100__q',  #Fuller form of name (NR, NR)
+        '400__a',  #(See From Tracing) (R, NR)
+        '400__d',  #(See From Tracing) (R, NR)
+        '400__q',  #(See From Tracing) (R, NR)
     ],
     'INSTITUTE': [
-        '110__a', #(NR, NR)
-        '410__a', #(R, NR)
+        '110__a',  #(NR, NR)
+        '410__a',  #(R, NR)
     ],
     'JOURNAL': [
-        '130__a', #(NR, NR)
-        '130__f', #(NR, NR)
-        '130__l', #(NR, NR)
-        '430__a', #(R, NR)
+        '130__a',  #(NR, NR)
+        '130__f',  #(NR, NR)
+        '130__l',  #(NR, NR)
+        '430__a',  #(R, NR)
     ],
     'SUBJECT': [
-        '150__a', #(NR, NR)
-        '450__a', #(R, NR)
+        '150__a',  #(NR, NR)
+        '450__a',  #(R, NR)
     ],
 }
+
+CFG_AUTHORITY_COPY_NATIVE_FIELD = True

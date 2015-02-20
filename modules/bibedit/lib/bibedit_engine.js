@@ -6186,8 +6186,7 @@ function updateBibCirculationPanel(){
   }
 
   // updating the content
-  var copiesCountElement = $('#bibEditBibCirculationCopies');
-  copiesCountElement.attr("innerHTML", gPhysCopiesNum);
+  document.getElementById("bibEditBibCirculationCopies").innerHTML = gPhysCopiesNum;
 }
 
 

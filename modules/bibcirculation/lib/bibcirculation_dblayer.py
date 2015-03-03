@@ -2595,8 +2595,8 @@ def search_ill_requests_title(title, date_from, date_to):
                  FROM crcILLREQUEST ill, crcBORROWER bor
                 WHERE ill.id_crcBORROWER=bor.id """
     query += tokens_query
-    query += """  AND DATE_FORMAT(ill.request_date,'%%d-%%m-%%Y') >= '%s'
-                  AND DATE_FORMAT(ill.request_date,'%%d-%%m-%%Y') <= '%s'
+    query += """  AND DATE_FORMAT(ill.request_date,'%%Y-%%m-%%d') >= '%s'
+                  AND DATE_FORMAT(ill.request_date,'%%Y-%%m-%%d') <= '%s'
              ORDER BY ill.id desc""" % (date_from, date_to)
 
     return run_sql(query)
@@ -2613,8 +2613,8 @@ def search_ill_requests_id(reqid, date_from, date_to):
                   FROM crcILLREQUEST ill, crcBORROWER bor
                  WHERE ill.id_crcBORROWER=bor.id
                    AND ill.id = %s
-                   AND DATE_FORMAT(ill.request_date,'%%d-%%m-%%Y') >=%s
-                   AND DATE_FORMAT(ill.request_date,'%%d-%%m-%%Y') <=%s
+                   AND DATE_FORMAT(ill.request_date,'%%Y-%%m-%%d') >=%s
+                   AND DATE_FORMAT(ill.request_date,'%%Y-%%m-%%d') <=%s
               ORDER BY ill.id desc""", (reqid, date_from, date_to))
 
     return res
@@ -2633,8 +2633,8 @@ def search_requests_cost(cost, date_from, date_to):
                   FROM crcILLREQUEST ill, crcBORROWER bor
                  WHERE ill.id_crcBORROWER=bor.id
                    AND ill.cost like upper('%%%s%%')
-                   AND DATE_FORMAT(ill.request_date,'%%d-%%m-%%Y') >= %s
-                   AND DATE_FORMAT(ill.request_date,'%%d-%%m-%%Y') <= %s
+                   AND DATE_FORMAT(ill.request_date,'%%Y-%%m-%%d') >= %s
+                   AND DATE_FORMAT(ill.request_date,'%%Y-%%m-%%d') <= %s
               ORDER BY ill.id desc
                   """ % (cost.upper(), date_from, date_to))
 
@@ -2661,8 +2661,8 @@ def search_requests_notes(notes, date_from, date_to):
                   FROM crcILLREQUEST ill, crcBORROWER bor
                  WHERE ill.id_crcBORROWER=bor.id """
     query += tokens_query
-    query += """   AND DATE_FORMAT(ill.request_date,'%%d-%%m-%%Y') >= %s
-                   AND DATE_FORMAT(ill.request_date,'%%d-%%m-%%Y') <= %s
+    query += """   AND DATE_FORMAT(ill.request_date,'%%Y-%%m-%%d') >= %s
+                   AND DATE_FORMAT(ill.request_date,'%%Y-%%m-%%d') <= %s
               ORDER BY ill.id desc
                   """ % (date_from, date_to)
 

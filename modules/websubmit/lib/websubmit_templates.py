@@ -797,16 +797,18 @@ class Template:
                          'page' : returnto['page']
                        }
             else:
-                out += """ if (tester2()) {
-                             $(this).attr("disabled", true);
-                             document.forms[0].action="/submit";
-                             document.forms[0].step.value=1;
-                             user_must_confirm_before_leaving_page = false;
-                             document.forms[0].submit();
-                           } else {
-                             return false;
-                           }
-                         }"""
+                out += """if (tester2()) {
+                            $(this).attr("disabled", true);
+                            document.forms[0].action="/submit";
+                            document.forms[0].step.value=1;
+                            user_must_confirm_before_leaving_page = false;
+                            document.forms[0].submit();
+                            $("form").find("button:submit").parent().hide();
+                 $("form").find("button:submit").parent().parent().append("<div id='waitarea'><h2>Submission in progress, please be patient!</h2> <b>You will be redirected automatically</b><img src='https://ir.tind.io/img/loading.gif'> </div>");
+                          } else {
+                            return false;
+                          }
+                        }"""
         out += """ /*]]>*/</script>"""
         return out
 

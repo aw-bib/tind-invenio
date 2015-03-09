@@ -986,7 +986,7 @@ def perform_createaccount(req, email='', password='', callback='yes', confirm=0)
         if not res:
             res = run_sql("INSERT INTO user (email,password, note) values(%s,AES_ENCRYPT(email,%s), '1')", (email, password))
             if CFG_ACCESS_CONTROL_NOTIFY_USER_ABOUT_NEW_ACCOUNT == 1:
-                emailsent = send_new_user_account_warning(email, email, password) == 0
+                emailsent = send_new_user_account_warning(email, email, password) 
             if password:
                 output += '<b><span class="info">Account created with password and activated.</span></b>'
             else:

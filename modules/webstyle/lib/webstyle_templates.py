@@ -50,6 +50,7 @@ from invenio.dateutils import convert_datecvs_to_datestruct, \
 from invenio.bibformat import format_record
 from invenio import template
 from invenio.htmlutils import get_mathjax_header
+from invenio.access_control_engine import acc_authorize_action
 websearch_templates = template.load('websearch')
 
 class Template:
@@ -363,6 +364,13 @@ template function generated it.
         if not CFG_BASE_URL and '/' in stripped_url:
             metabase = "<base href='%s'>" % (CFG_SITE_URL,)
 
+        submit_selected = ""
+        (auth_code, auth_msg) = acc_authorize_action(req, 'submit')
+        if auth_code == 1:
+            submit_selected = "blank"
+        elif navmenuid == 'submit':
+            submit_selected = "selected"
+
         out = """\
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -485,7 +493,7 @@ template function generated it.
           'body_css_classes' : body_css_classes and ' class="%s"' % ' '.join(body_css_classes) or '',
 
           'search_selected': navmenuid == 'search' and "selected" or "",
-          'submit_selected': navmenuid == 'submit' and "selected" or "",
+          'submit_selected': submit_selected,
           'personalize_selected': navmenuid.startswith('your') and "selected" or "",
           'help_selected': navmenuid == 'help' and "selected" or "",
 

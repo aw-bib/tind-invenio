@@ -130,7 +130,7 @@
 		* Handle click on refextract from PDF button
 		*
 		*/
-		log_action("onRefExtractClick");
+		logAction("onRefExtractClick");
 
 		save_changes().done(function() {
 			var loading_title = "Extracting references from PDF";
@@ -146,7 +146,7 @@
 		* Handle click on refextract from URL button
 		*
 		*/
-		log_action("onRefExtractURLClick");
+		logAction("onRefExtractURLClick");
 		save_changes().done(function() {
 			var dialogContent = '<input type="text" id="input_extract_url" class="bibedit_input" placeholder="URL to extract references">';
 			dialogReferences = createDialog("Extract references from URL", dialogContent, 200, 500);
@@ -176,7 +176,7 @@
 		* Handler for free text refextract button. Allows to paste references
 		* and process them using refextract on the server side.
 		*/
-		log_action("onRefExtractFreeTextClick");
+		logAction("onRefExtractFreeTextClick");
 		save_changes().done(function() {
 			/* Create the modal dialog that will contain the references */
 			var dialogContent = "Paste your references:<br/><textarea id='reffreetext' class='bibedit_input'></textarea>"

@@ -180,9 +180,6 @@ var gRecordHasPDF = false;
 // queue with all requests to be sent to server
 var gReqQueue = [];
 
-// last checkbox checked
-var gLastChecked = null;
-
 // last time a bulk request completed
 var gLastRequestCompleted = new Date();
 
@@ -194,6 +191,9 @@ var gProfile = false;
 
 // Log of all the actions effectuated by the user
 var gActionLog = [];
+
+// Max logs in gActionLog
+var gActionLogMax = 50;
 
 /*
  * **************************** 2. Initialization ******************************
@@ -222,10 +222,21 @@ function resize_content() {
    * Resize content table to always fit in the avaiable screen and not have two
    * different scroll bars
    */
-  var bibedit_table_top = $("#bibEditContentTable").offset().top;
-  var bibedit_table_height = Math.round(.93 * ($(window).height() - bibedit_table_top));
-  bibedit_table_height = parseInt(bibedit_table_height, 10) + 'px';
-  $("#bibEditContentTable").css('height', bibedit_table_height);
+  var bibEditTable = $("#bibEditTable");
+  var bibEditContentTable = $("#bibEditContentTable");
+  var topToolBar = $("#Toptoolbar");
+  var bibEditMenu = $("#bibEditMenu");
+  var bibEditTableTop = bibEditContentTable.offset().top;
+  var bibEditTableLeft = bibEditContentTable.offset().left;
+  var bibEditTableHeight = Math.round(($(window).height() - bibEditTableTop));
+  var bibEditTableWidth = Math.round(($(window).width() - bibEditTableLeft) - bibEditMenu.offset().left);
+  var tableHeight = parseInt(bibEditTableHeight, 10) + 'px';
+  var tableWidth = parseInt(bibEditTableWidth, 10) + 'px';
+  bibEditContentTable.css('height', tableHeight);
+  bibEditContentTable.css('width',  (parseInt(bibEditTableWidth, 10) + 10) + 'px');
+  bibEditTable.css('min-width', tableWidth);
+  bibEditTable.css('max-width', tableWidth);
+  topToolBar.css('width', tableWidth);
 }
 
 function init_bibedit() {
@@ -246,8 +257,8 @@ function init_bibedit() {
   bindFocusHandlers();
   // Modify BibEdit content table height dinamically to avoid going over the
   // viewport
-  resize_content();
   $(window).bind('resize', resize_content);
+  resize_content();
 };
 
 
@@ -435,9 +446,9 @@ function initJeditable(){
  * **************************** 3. Ajax ****************************************
  */
 
-function log_action(msg) {
-    gActionLog.unshift(msg)
-    gActionLog = gActionLog.slice(0, 200);
+function logAction(msg) {
+    gActionLog.unshift(msg);
+    gActionLog = gActionLog.slice(0, gActionLogMax);
 }
 
 function initAjax(){
@@ -958,7 +969,7 @@ function deleteFieldFromTag(tag, fieldPosition){
   /*
    * Delete a specified field.
    */
-  log_action("deleteFieldFromTag " + tag + ' ' + fieldPosition)
+  logAction("deleteFieldFromTag " + tag + ' ' + fieldPosition)
   var field = gRecord[tag][fieldPosition];
   var fields = gRecord[tag];
   for (var change in gHoldingPenChanges) {
@@ -1646,7 +1657,7 @@ function onNewRecordClick(event){
   /*
    * Handle 'New' button (new record).
    */
-  log_action("onNewRecordClick")
+  logAction("onNewRecordClick")
   updateStatus('updating');
   if ( gRecordDirty || gReqQueue.length > 0 ) {
     if (!displayAlert('confirmLeavingChangedRecord')){
@@ -1676,7 +1687,7 @@ function onNewRecordClick(event){
 
 function onTemplateRecordClick(event){
     /* Handle 'Template management' button */
-    log_action("onTemplateRecordClick");
+    logAction("onTemplateRecordClick");
     var template_window = window.open('/record/edit/templates', '', 'resizeable,scrollbars');
     template_window.document.close(); // needed for chrome and safari
 }
@@ -1704,7 +1715,7 @@ function getRecord(recID, recRev, onSuccess, args){
    *             callback loads the retrieved record into the bibEdit user
    *             interface
    */
-  log_action("getRecord recid:" + recID + " " + "recRev:" + recRev);
+  logAction("getRecord recid:" + recID + " " + "recRev:" + recRev);
   /* Make sure the record revision exists, otherwise default to current */
   if ($.inArray(recRev, gRecRevisionHistory) === -1) {
     recRev = 0;
@@ -1769,7 +1780,7 @@ function onGetRecordSuccess(json){
   /*
    * Handle successfull 'getRecord' requests.
    */
-  log_action("onGetRecordSuccess");
+  logAction("onGetRecordSuccess");
   cleanUp(!gNavigatingRecordSet);
   // Store record data.
   gRecID = json['recID'];
@@ -1913,7 +1924,7 @@ function onSubmitPreviewSuccess(dialogPreview, html_preview){
    * dialog: object containing the different parts of the modal dialog
    * html_preview: a formatted preview of the record content
   */
-  log_action("onSubmitPreviewSuccess");
+  logAction("onSubmitPreviewSuccess");
   updateStatus('ready');
   addContentToDialog(dialogPreview, html_preview, "Do you want to submit the record?");
   dialogPreview.dialogDiv.dialog({
@@ -2030,7 +2041,7 @@ function onSubmitClick() {
   /*
    * Handle 'Submit' button (submit record).
    */
-  log_action("onSubmitClick");
+  logAction("onSubmitClick");
   $('#btnSubmit').prop('disabled', true);
   save_changes().done(function() {
     updateStatus('updating');
@@ -2054,7 +2065,7 @@ function onPreviewClick() {
   /*
    * Handle 'Preview' button (preview record).
    */
-  log_action("onPreviewClick");
+  logAction("onPreviewClick");
   clearWarnings();
   var reqData = {
               'new_window': true,
@@ -2101,7 +2112,7 @@ function onPrintClick() {
    * Print page, makes use of special css rules @media print
    */
   // If we are in textarea view, copy the contents to the helper div
-  log_action("onPrintClick");
+  logAction("onPrintClick");
   $('#print_helper').text($('#textmarc_textbox').val());
   $("#bibEditContentTable").css('height', "100%");
   window.print();
@@ -2124,7 +2135,7 @@ function onTextMarcClick() {
   * 2) Remove editor table and display content in textbox
   * 3) Activate flag to know we are in text marc mode (for submission)
   */
-  log_action("onTextMarcClick");
+  logAction("onTextMarcClick");
   var stop = false;
   for (changeInd in gHoldingPenChanges){
     var changeObj = gHoldingPenChanges[changeInd];
@@ -2209,7 +2220,7 @@ function onTableViewClick() {
    *    content
    * 2) Get the record from the cache and display it in the table
   */
-  log_action("onTableViewClick");
+  logAction("onTableViewClick");
   createReq({recID: gRecID, textmarc: $('#textmarc_textbox').val(),
       requestType: 'getTableView', recordDirty: gRecordDirty,
       disabled_hp_changes: gDisabledHpEntries
@@ -2242,7 +2253,7 @@ function onOpenPDFClick() {
   /*
    * Create request to retrieve PDF from record and open it in new window
    */
-   log_action("onOpenPDFClick");
+   logAction("onOpenPDFClick");
    createReq({recID: gRecID, requestType: 'get_pdf_url'
        }, function(json){
         // Preview was successful.
@@ -2266,7 +2277,7 @@ function getPreview(dialog, onSuccess) {
     /*
      * Get preview to be added to the dialog before submission
      */
-    log_action("getPreview");
+    logAction("getPreview");
     clearWarnings();
     var html_preview;
     var reqData = {
@@ -2298,7 +2309,7 @@ function onCancelClick(){
   /*
    * Handle 'Cancel' button (cancel editing).
    */
-  log_action("onCancelClick");
+  logAction("onCancelClick");
   updateStatus('updating');
   if (!gRecordDirty || displayAlert('confirmCancel')) {
     createReq({
@@ -2330,7 +2341,7 @@ function onCloneRecordClick() {
   /*
    * Handle 'Clone' button (clone record).
    */
-  log_action("onCloneRecordClick");
+  logAction("onCloneRecordClick");
   updateStatus('updating');
   if (!displayAlert('confirmClone')){
     updateStatus('ready');
@@ -2358,7 +2369,7 @@ function onDeleteRecordClick(){
   /*
    * Handle 'Delete record' button.
    */
-  log_action("onDeleteRecordClick");
+  logAction("onDeleteRecordClick");
   if (gPhysCopiesNum > 0){
     displayAlert('errorPhysicalCopiesExist');
     return;
@@ -2396,7 +2407,7 @@ function onMergeClick(event){
    * Handle click on 'Merge' link (to merge outdated cache with current DB
    * version of record).
    */
-  log_action("onMergeClick");
+  logAction("onMergeClick");
   notImplemented(event);
 
   updateStatus('updating');
@@ -2721,7 +2732,7 @@ function onMARCTagsClick(event){
   /*
    * Handle 'MARC' link (MARC tags).
    */
-  log_action("onMARCTagsClick");
+  logAction("onMARCTagsClick");
   $(this).unbind('click').attr('disabled', 'disabled');
   createReq({recID: gRecID, requestType: 'changeTagFormat', tagFormat: 'MARC'});
   gTagFormat = 'MARC';
@@ -2735,7 +2746,12 @@ function onHumanTagsClick(event){
   /*
    * Handle 'Human' link (Human tags).
    */
-  log_action("onHumanTagsClick");
+  var i;
+  var cellsTag;
+  var cellsSubTag;
+  var tabSwitch;
+  var maxValue = 0;
+  logAction("onHumanTagsClick");
   $(this).unbind('click').attr('disabled', 'disabled');
   createReq({recID: gRecID, requestType: 'changeTagFormat',
        tagFormat: 'human'});
@@ -2810,7 +2826,7 @@ function onFieldBoxClick(e, box){
   /*
    * Handle field select boxes.
    */
-  log_action("onFieldBoxClick " + box);
+  logAction("onFieldBoxClick " + box);
    if ( !jQuery.contains(document.documentElement, gLastChecked)) {
        gLastChecked = box;
        clickBox(box);
@@ -2858,7 +2874,7 @@ function onSubfieldBoxClick(box){
   /*
    * Handle subfield select boxes.
    */
-  log_action("onSubfieldBoxClick " + box);
+  logAction("onSubfieldBoxClick " + box);
   var tmpArray = box.id.split('_');
   var tag = tmpArray[1], fieldPosition = tmpArray[2],
     subfieldIndex = tmpArray[3];
@@ -3170,7 +3186,7 @@ function onAddFieldClick(){
   /*
    * Handle 'Add field' button.
    */
-  log_action("onAddFieldClick");
+  logAction("onAddFieldClick");
   if (failInReadOnly())
     return;
   activateSubmitButton();
@@ -3485,7 +3501,7 @@ function onAddSubfieldsClick(img){
    * Handle 'Add subfield' buttons.
    */
   var fieldID = img.id.slice(img.id.indexOf('_')+1);
-  log_action("onAddSubfieldsClick " + fieldID);
+  logAction("onAddSubfieldsClick " + fieldID);
   addSubfield(fieldID);
 }
 
@@ -3494,7 +3510,7 @@ function onDOISearchClick(button){
    * Handle 'Search for DOI' button.
    */
   // gets the doi based from appropriate cell
-  log_action("onDOISearchClick");
+  logAction("onDOISearchClick");
   var doi = $(button).parent().prev().text();
   createReq({doi: doi, requestType: 'DOISearch'}, function(json)
   {
@@ -4201,7 +4217,7 @@ function onMoveSubfieldClick(type, tag, fieldPosition, subfieldIndex){
   /*
    * Handle subfield moving arrows.
    */
-  log_action("onMoveSubfieldClick " + type + ' ' + tag);
+  logAction("onMoveSubfieldClick " + type + ' ' + tag);
   if (failInReadOnly()){
     return;
   }
@@ -4233,7 +4249,7 @@ function onDeleteClick(event){
   /*
    * Handle 'Delete selected' button or delete hotkeys.
    */
-  log_action("onDeleteClick");
+  logAction("onDeleteClick");
   if (failInReadOnly()){
     return;
   }
@@ -4282,7 +4298,7 @@ function onMoveFieldUp(tag, fieldPosition) {
   if (failInReadOnly()){
     return;
   }
-  log_action('onMoveFieldUp ' + tag + ' ' + fieldPosition)
+  logAction('onMoveFieldUp ' + tag + ' ' + fieldPosition)
   fieldPosition = parseInt(fieldPosition);
   var thisField = gRecord[tag][fieldPosition];
   if (fieldPosition > 0) {
@@ -4302,7 +4318,7 @@ function onMoveFieldDown(tag, fieldPosition) {
   if (failInReadOnly()){
     return;
   }
-  log_action('onMoveFieldDown ' + tag + ' ' + fieldPosition)
+  logAction('onMoveFieldDown ' + tag + ' ' + fieldPosition)
   fieldPosition = parseInt(fieldPosition);
   var thisField = gRecord[tag][fieldPosition];
   if (fieldPosition < gRecord[tag].length-1) {
@@ -4340,7 +4356,7 @@ function switchToReadOnlyMode(){
     alert("Please submit the record or cancel your changes before going to the read-only mode ");
     return false;
   }
-  log_action("switchToReadOnlyMode");
+  logAction("switchToReadOnlyMode");
   gReadOnlyMode = true;
   createReq({recID: gRecID, requestType: 'deleteRecordCache'}, function() {},
             true, undefined, onDeleteRecordCacheError);
@@ -4404,7 +4420,7 @@ function onRevertClick(revisionId){
   /*
    * Handle 'Revert' button (submit record).
    */
-  log_action("onRevertClick " + revisionId);
+  logAction("onRevertClick " + revisionId);
   updateStatus('updating');
   if (displayAlert('confirmRevert')){
     createReq({recID: gRecID, revId: revisionId, lastRevId: gRecLatestRev, requestType: 'revert',
@@ -4570,7 +4586,7 @@ function getSelectionMarcXml(){
 function onPerformCopy(){
   /** The handler performing the copy operation
    */
-  log_action("onPerformCopy");
+  logAction("onPerformCopy");
   if (document.activeElement.type == "textarea" || document.activeElement.type == "text"){
     /*we do not want to perform this in case we are in an ordinary text area*/
     return;
@@ -4586,7 +4602,7 @@ function onPerformPaste(){
 
      According to the default behaviour, the fields are appended as last of the same kind
    */
-  log_action("onPerformPaste");
+  logAction("onPerformPaste");
   if (!gRecord) {
     return;
   }
@@ -5418,7 +5434,7 @@ function performMoveSubfield(tag, fieldPosition, subfieldIndex, direction, undoR
 
 
 function onRedo(evt){
-  log_action("redo");
+  logAction("redo");
   if (gRedoList.length <= 0){
     alert("No Redo operations to process");
     return;
@@ -5551,7 +5567,7 @@ function urMarkSelectedUntil(entry){
 
 
 function onUndo(evt){
-  log_action("undo");
+  logAction("undo");
   if (gUndoList.length <= 0){
     alert("No Undo operations to process");
     return;
@@ -6324,7 +6340,7 @@ function sanitize_value(value) {
  * @return {String}
  */
 function onFieldTagChange(value, cell) {
-    log_action("onFieldTagChange " + value);
+    logAction("onFieldTagChange " + value);
 
     function updateModel() {
         var currentField = gRecord[oldTag][cell.fieldPosition];
@@ -6398,7 +6414,7 @@ function onFieldTagChange(value, cell) {
  * @return {Object}
  */
 function onSubfieldCodeChange(value, cell) {
-  log_action("onSubfieldCodeChange " + value);
+  logAction("onSubfieldCodeChange " + value);
 
   function updateModel() {
     subfield_instance[0] = value;
@@ -6441,7 +6457,7 @@ function onSubfieldCodeChange(value, cell) {
  * @return {String}
  */
 function onContentChange(value, cell) {
-  log_action("onContentChange " + value);
+  logAction("onContentChange " + value);
 
   function redrawTags() {
     redrawFieldPosition(cell.tag, cell.fieldPosition);
@@ -6644,7 +6660,7 @@ function onEditableCellChange(value, th) {
 /*****************************************************************************/
 
 function onfocusreference(check_box) {
-  log_action("onfocusreference");
+  logAction("onfocusreference");
 
   var $reference_checkbox = $("#focuson_references");
 
@@ -6668,7 +6684,7 @@ function onfocusreference(check_box) {
 
 
 function onfocusauthor(check_box) {
-  log_action("onfocusauthor");
+  logAction("onfocusauthor");
 
   if (gRecordHideAuthors) {
     gRecordHideAuthors = false;
@@ -6698,7 +6714,7 @@ function onfocusauthor(check_box) {
 
 
 function onfocusother(check_box) {
-  log_action("onfocusother");
+  logAction("onfocusother");
 
   var $others_checkbox = $("#focuson_others");
 
@@ -6725,7 +6741,7 @@ function onfocusother(check_box) {
 }
 
 function onfocuscurator(check_box) {
-  log_action("onfocuscurator");
+  logAction("onfocuscurator");
 
   var $curator_checkbox = $("#focuson_curator");
 
@@ -6834,7 +6850,7 @@ function displayAll() {
 /*************** Functions related to affiliation guess ***************/
 
 function onGuessAffiliations() {
-  log_action("onGuessAffiliations");
+  logAction("onGuessAffiliations");
 
   var reqData = {
               recID: gRecID,

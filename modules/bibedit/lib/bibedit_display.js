@@ -90,6 +90,7 @@ function displayRecord() {
         addChangeControl(changeNr, false);
     }
     colorFields();
+    resize_content();
 }
 
 function createControlField(tag, field, fieldPosition) {

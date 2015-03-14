@@ -75,29 +75,23 @@
 }
 
 .bibEditColFieldBox {
-  min-width: 14px;
-  max-width: 14px;
-  width: 14px;
+  width: 15px;
 }
 
 #bibEditColFieldTag {
-  min-width: 48px;
-  max-width: 100px;
   width: 48px;
   border-right: 1px solid #A1A1A1;
 }
 
 #bibEditColSubfieldTag {
-  width: 28px;
-  min-width: 28px;
-  max-width: 80px;
+  width: 25px;
+  padding-left: 2px;
   border-right: 1px solid #A1A1A1;
+  word-break: keep-all;
 }
 
 #bibEditColSubfieldAdd {
   width: 40px;
-  min-width: 40px;
-  max-width: 40px;
 }
 
 #bibEditTable .bibEditCellContent:hover,
@@ -186,7 +180,7 @@
   width: 14px;
 }
 
-#bibEditTable .bibEditTxtValue {
+.bibEditTxtValue {
   width: 100%;
 }
 
@@ -613,7 +607,6 @@ div.refextracted {
     background-color: rgb(255, 255, 255);
     border: 1px solid #A1A1A1;
     border-collapse: collapse;
-    width: 100%;
     table-layout:fixed;
 }
 
@@ -626,11 +619,9 @@ div.refextracted {
     padding: 1px 1px;
     font-size: 0.8em;
     overflow:hidden;
-    word-wrap: break-word;
  }
 
  #bibEditTable td textarea {
-    max-width: 615px;
     min-height: 65px;
     max-height: 600px;
 }

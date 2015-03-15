@@ -30,32 +30,63 @@ var gSelectionModeOn = false;
 var gReady = true;
 
 function initInputHotkeys(inputElement, original) {
-    /* Binding of shortcuts for input elements */
+  /* Binding of shortcuts for input elements */
 
-    // Lauch autosuggest
-    var os = navigator.platform, element = $(inputElement);
-    if (os.indexOf("Mac") < 0) {
-        element.bind('keydown', 'ctrl+shift+a', function (event) {
-            onAutosuggest(event);
+  // Lauch autosuggest
+  var os = navigator.platform, element = $(inputElement);
+  if (original !== undefined) {
+    var originalId = original.id;
+    if ((originalId.indexOf("subfieldTag") === -1) && (originalId.indexOf("fieldTag") === -1)) {
+      var tag = originalId.replace("content_", "");
+      var subfieldValue = $("#subfieldTag_" + tag)[0].innerHTML;
+      if ((tag.lastIndexOf("020", 0) === 0) && (subfieldValue === "a")) {
+        element.keyup(function (event) {
+          checkISBN(event.target.value, event.target);
         });
-    } else {
-        element.bind('keydown', 'ctrl+shift', function (event) {
-            if (event.metaKey) {
-                onAutosuggest(event);
-            }
-        });
+      }
     }
-    element.bind('keydown', 'ctrl+/', function (event) {onJumpField(event, original, -1); });
-    element.bind('keydown', 'ctrl+*', function (event) {onJumpField(event, original, 1); });
+  } else if (inputElement.lastIndexOf("#content", 0) === 0) {
+    element.keyup(function (event) {
+      var tmpArray = event.target.id.split('_');
+      var idAdd = tmpArray[1];
+      var idAddPos = tmpArray[2];
+      var maintag = $("#txtAddFieldTag_" + idAdd)[0].value;
+      var subfieldcode = $("#txtAddFieldSubfieldCode_" + idAdd + "_" + idAddPos)[0].value;
+      console.log(maintag);
+      console.log(subfieldcode);
+      if ((maintag === "020") && (subfieldcode === "a")) {
+        checkISBN(event.target.value, event.target);
+      }
+    });
+  }
 
-    // Save content and jump to next content field.
-    // $(input_element).bind('keydown', 'tab', onKeyTab);
-    // Save content and jump to previous content field.
-    // $(input_element).bind('keydown', 'shift+tab', onKeyTab);
-    // // Add subfield in form.
-    // $(input_element).bind('keydown', 'ctrl+shift+e', onKeyCtrlShiftE);
-    // // Remove subfield from form.
-    // $(input_element).bind('keydown', 'ctrl+shift+d', onKeyCtrlShiftD);
+  if (os.indexOf("Mac") < 0) {
+    element.bind('keydown', 'ctrl+shift+a', function (event) {
+      console.log("autosuggesting");
+      onAutosuggest(event);
+    });
+  } else {
+    console.log("mac");
+    element.bind('keydown', 'ctrl+alt', function (event) {
+      console.log(event);
+      if (event.metaKey) {
+        onAutosuggest(event);
+      }
+    });
+  }
+  element.bind('keydown', 'ctrl+/', function (event) {onJumpField(event, original, -1); });
+  element.bind('keydown', 'ctrl+*', function (event) {onJumpField(event, original, 1); });
+
+  // Save content and jump to next content field.
+  element.bind('keydown', 'tab', onKeyTab);
+  // Save content and jump to previous content field.
+  element.bind('keydown', 'shift+tab', onKeyTab);
+
+  element.bind('keydown', 'return', onKeyReturn);
+  // // Add subfield in form.
+  // $(input_element).bind('keydown', 'ctrl+shift+e', onKeyCtrlShiftE);
+  // // Remove subfield from form.
+  // $(input_element).bind('keydown', 'ctrl+shift+d', onKeyCtrlShiftD);
 }
 
 function initHotkeys() {
@@ -292,9 +323,11 @@ function onKeyReturn(event) {
    */
   if (event.target.nodeName == 'TEXTAREA') {
     $(event.target).parent().submit();
+    console.log("return");
     event.preventDefault();
   }
   else if (event.target.nodeName == 'TD') {
+    console.log("returnB");
     var targetID = event.target.id;
     var type = targetID.slice(0, targetID.indexOf('_'));
     if (type == 'content'){
@@ -302,26 +335,27 @@ function onKeyReturn(event) {
       event.preventDefault();
     }
   }
+  console.log("returnC");
 }
 
-// function onKeyTab(event){
-//   /*
-//    * Handle key tab (save content and jump to next content field).
-//    */
-//   if (event.target.nodeName == 'TEXTAREA'){
-//     var contentCells = $('.bibEditCellContent');
-//     var cell = $(event.target).parent().parent();
-//     var foo = $(event.target).parent();
-//     foo.submit();
-//     if (!event.shiftKey) {
-//       $(contentCells).eq($(contentCells).index(cell)+1).trigger('click');
-//     }
-//     else {
-//       $(contentCells).eq($(contentCells).index(cell)-1).trigger('click');
-//     }
-//     event.preventDefault();
-//   }
-// }
+function onKeyTab(event){
+   /*
+    * Handle key tab (save content and jump to next content field).
+    */
+   if (event.target.nodeName == 'TEXTAREA'){
+     var contentCells = $('.tabSwitch');
+     var cell = $(event.target).parent().parent();
+     var foo = $(event.target).parent();
+     foo.submit();
+     if (event.shiftKey) {
+       $(contentCells).eq($(contentCells).index(cell)-1).trigger('click');
+     }
+     else {
+       $(contentCells).eq($(contentCells).index(cell)+1).trigger('click');
+     }
+     event.preventDefault();
+   }
+}
 
 function onKeyCtrlUp(event) {
   /*

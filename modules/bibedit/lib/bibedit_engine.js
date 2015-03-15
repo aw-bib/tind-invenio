@@ -304,7 +304,6 @@ function initDialogs(){
  * Error handler when deleting cache of the record
  */
 function onDeleteRecordCacheError(XHR, textStatus, errorThrown) {
-  console.log("Cannot delete record cache file");
   updateStatus('ready');
 }
 
@@ -409,7 +408,7 @@ function initJeditable(){
         });
 
         $('textarea', this).bind('keydown', function(e) {
-            var TABKEY = 9;
+          var TABKEY = 9;
             var RETURNKEY = 13;
 
             switch (e.keyCode) {
@@ -506,24 +505,13 @@ function createReq(data, onSuccess, asynchronous, deferred, onError) {
   }
 
   // Send the request.
-  $.ajax(ajax_options).done(function() {
-    createReqAjaxDone(data);
-  });
+  return $.ajax(ajax_options);
 }
 // Transactions data.
 createReq.transactionID = 0;
 createReq.transactions = [];
 
-function createReqAjaxDone(data){
-/*
- * This function is executed after the ajax request in createReq function was finished
- * data: the data parameter that was send with ajax request
- */
-  // If the request was from holding pen, trigger the event to apply holding pen changes
-  if (data['requestType'] == 'getHoldingPenUpdates') {
-    $.event.trigger('HoldingPenPageLoaded');
-  }
-}
+
 
 
 /**
@@ -2928,7 +2916,7 @@ function addFieldGatherInformations(fieldTmpNo){
     var subfields = [];
     for (i=0; i < subfieldTmpNo; i++){
       var subfieldCode = $('#txtAddFieldSubfieldCode_' + fieldTmpNo + '_' + i).attr("value");
-      var subfieldValueSelector = $('#txtAddFieldValue_' + fieldTmpNo + '_' + i);
+      var subfieldValueSelector = $('#content_' + fieldTmpNo + '_' + i);
       var subfieldValue = subfieldValueSelector.attr("value");
       if (subfieldValueSelector.hasClass("bibEditVolatileSubfield")) {
         subfieldValue = "VOLATILE:" + subfieldValue;
@@ -2946,7 +2934,7 @@ function addFieldGatherInformations(fieldTmpNo){
       "isControlfield" : false
     };
   } else {
-    cfValue = $("#txtAddFieldValue_" + fieldTmpNo + "_0").attr("value");
+    cfValue = $("#content_" + fieldTmpNo + "_0").attr("value");
     data = {
       "name": "nonexisting template - values taken from the field",
       "description": "The description of a template",
@@ -2980,7 +2968,7 @@ function addFieldAddSubfieldEditor(jQRowGroupID, fieldTmpNo, defaultCode, defaul
   $('#btnAddFieldRemove_' + fieldTmpNo + '_' + subfieldTmpNo).bind('click', function(){
     $('#rowAddField_' + this.id.slice(this.id.indexOf('_')+1)).remove();
   });
-  $('#txtAddFieldValue_' + fieldTmpNo + '_' + subfieldTmpNo).on(
+  $('#content_' + fieldTmpNo + '_' + subfieldTmpNo).on(
     'focus', function(e){
       if ($(this).hasClass('bibEditVolatileSubfield')){
         $(this).select();
@@ -2988,10 +2976,11 @@ function addFieldAddSubfieldEditor(jQRowGroupID, fieldTmpNo, defaultCode, defaul
       }
     }
   ).on("mouseup", function(e) { e.preventDefault(); });
-  var contentEditorId = '#txtAddFieldValue_' + fieldTmpNo + '_' + subfieldTmpNo;
+  var contentEditorId = '#content_' + fieldTmpNo + '_' + subfieldTmpNo;
   $(contentEditorId).bind('keyup', function(e){
     onAddFieldValueKeyPressed(e, jQRowGroupID, fieldTmpNo, subfieldTmpNo);
   });
+
 
 }
 
@@ -3000,9 +2989,9 @@ function onAddFieldJumpToNextSubfield(jQRowGroupID, fieldTmpNo, subfieldTmpNo){
   /* Gets all the open text boxes for the current field and submits the changes
    * if it is the last one.
    */
-  var fieldOpenInputs = $('input[id^="txtAddFieldValue_' + fieldTmpNo + '"]');
+  var fieldOpenInputs = $('input[id^="content_' + fieldTmpNo + '"]');
 
-  var currentInputSelector = "#txtAddFieldValue_" + fieldTmpNo + "_" + subfieldTmpNo;
+  var currentInputSelector = "#content_" + fieldTmpNo + "_" + subfieldTmpNo;
   var currentInput = $(currentInputSelector);
   var currentInputIndex = fieldOpenInputs.index(currentInput);
 
@@ -3029,7 +3018,7 @@ function applyFieldTemplate(jQRowGroupID, formData, fieldTmpNo){
     $("#txtAddFieldTag_" + fieldTmpNo).attr("value", formData.tag);
     $("#txtAddFieldInd1_" + fieldTmpNo).attr("value", '');
     $("#txtAddFieldInd2_" + fieldTmpNo).attr("value", '');
-    $("#txtAddFieldValue_" + fieldTmpNo + "_0").attr("value", formData.value);
+    $("#content_" + fieldTmpNo + "_0").attr("value", formData.value);
   }
   else
   {
@@ -3113,10 +3102,10 @@ function createAddFieldInterface(initialContent, initialTemplateNo){
   initInputHotkeys('#txtAddFieldInd2_' + fieldTmpNo);
   $('#txtAddFieldSubfieldCode_' + fieldTmpNo + '_0').bind('keyup', onAddFieldChange);
   initInputHotkeys('#txtAddFieldSubfieldCode_' + fieldTmpNo + '_0');
-  $('#txtAddFieldValue_' + fieldTmpNo + '_0').bind('keyup', function (e){
+  $('#content_' + fieldTmpNo + '_0').bind('keyup', function (e){
     onAddFieldValueKeyPressed(e, jQRowGroupID, fieldTmpNo, 0);
   });
-  initInputHotkeys('#txtAddFieldValue_' + fieldTmpNo + '_0');
+  initInputHotkeys('#content_' + fieldTmpNo + '_0');
 
   $('#selectAddFieldTemplate_' + fieldTmpNo).bind('change', function(e){
       value = $('#selectAddFieldTemplate_' + fieldTmpNo).attr("value");
@@ -3324,7 +3313,7 @@ function addFieldSave(fieldTmpNo)
   var jQRowGroupID = "#rowGroupAddField_" + fieldTmpNo;
   var controlfield = $(jQRowGroupID).data('isControlfield');
   var tag = $('#txtAddFieldTag_' + fieldTmpNo).val();
-  var value = $('#txtAddFieldValue_' + fieldTmpNo + '_0').val();
+  var value = $('#content_' + fieldTmpNo + '_0').val();
   var subfields = [], ind1 = ' ', ind2 = ' ';
 
   // variables used when we are adding a field in a specific position
@@ -3370,7 +3359,7 @@ function addFieldSave(fieldTmpNo)
      $('#rowGroupAddField_' + fieldTmpNo + ' .bibEditTxtSubfieldCode'
       ).each(function() {
         var subfieldTmpNo = this.id.slice(this.id.lastIndexOf('_')+1);
-        var txtValue = $('#txtAddFieldValue_' + fieldTmpNo + '_' +
+        var txtValue = $('#content_' + fieldTmpNo + '_' +
     subfieldTmpNo);
         var value = $(txtValue).val();
         value = value.replace(/^\s+|\s+$/g,""); // Remove whitespace from the ends of strings
@@ -3706,41 +3695,69 @@ function onAddSubfieldsSave(event, tag, fieldPosition) {
   }
 }
 
+function onContentClick(event, cell) {
+  /*
+   * Handle click on editable content fields.
+   */
+  var cellDom = $(cell);
+  var targetEvent = $(event.target);
+  var targetEventParent = targetEvent.parent();
+
+  if ( (targetEventParent.hasClass('bibeditHPCorrection') && !targetEventParent.hasClass('bibeditHPSame'))
+        || (targetEvent.hasClass('bibeditHPCorrection') && !targetEvent.hasClass('bibeditHPSame')) ) {
+    return false;
+  }
+  var shouldSelect = false;
+  // Check if subfield is volatile subfield from a template
+  if ( cellDom.hasClass('bibEditVolatileSubfield') ) {
+    shouldSelect = true;
+  }
+
+  if (!cellDom.hasClass('edit_area')) {
+    cellDom.addClass('edit_area');
+    cellDom.removeAttr('onclick');
+    convertFieldIntoEditable(cell, shouldSelect);
+    cellDom.trigger('click');
+  }
+}
 
 function convertFieldIntoEditable(cell, shouldSelect){
-  // chacking if the clicked field is still present int the DOM structure ... if not, we have just removed the element
-  if ($(cell).parent().parent().parent()[0] == undefined){
+
+  var editEvent = 'customclick';
+  var cellDom = $(cell);
+  // checking if the clicked field is still present int the DOM structure ... if not, we have just removed the element
+  if (cellDom.parent().parent().parent()[0] == undefined){
     return;
   }
   // first we have to detach all exisiting editables ... which means detaching the event
-  editEvent = 'customclick';
-  $(cell).unbind(editEvent);
+  cellDom.unbind(editEvent);
 
   /*
     This binding allows to wait if other textarea is opened before
     opening the new one. In this way we can jump from one field to the
     other without the new one being closed.
   */
-  $(cell).unbind('click').bind('click', function(event) {
+  cellDom.unbind('click');
+  cellDom.bind('click', function(event) {
     var self = this;
 
-    function trigger_click() {
+    function triggerClick() {
       $(self).trigger('customclick');
     }
 
     if ($(".edit_area textarea").length > 0) {
       $(".edit_area textarea").parent().submit(function() {
-        setTimeout(trigger_click, 30);
+        setTimeout(triggerClick, 30);
       });
     } else {
-      trigger_click();
+      triggerClick();
     }
   });
 
-  $(cell).editable(
+  cellDom.editable(
     /* function to send edited content to */
     function(value) {
-      newVal = onEditableCellChange(value, this);
+      var newVal = onEditableCellChange(value, this);
       if (typeof newVal === "undefined") {
         /* content could not be changed, keep old value */
         var tmpArray = this.id.split('_');
@@ -3751,7 +3768,7 @@ function convertFieldIntoEditable(cell, shouldSelect){
         return field[0][subfieldIndex][1];
       }
       if (newVal.substring(0,9) == "VOLATILE:"){
-        $(cell).addClass("bibEditVolatileSubfield");
+        cellDom.addClass("bibEditVolatileSubfield");
         newVal = newVal.substring(9);
         if (!shouldSelect) {
           // the field should start selecting all the content upon the click
@@ -3760,7 +3777,7 @@ function convertFieldIntoEditable(cell, shouldSelect){
         }
       }
       else{
-        $(cell).removeClass("bibEditVolatileSubfield");
+        cellDom.removeClass("bibEditVolatileSubfield");
         if (shouldSelect){
           // this is not a volatile field any more - clicking should not
           // select all the content inside.
@@ -3771,7 +3788,7 @@ function convertFieldIntoEditable(cell, shouldSelect){
     },
     /* start of jEditable options */
     {
-      type: 'textarea_custom',
+      type: 'textarea',
       callback: function(data, settings){
         /* Function to run after submitting edited content */
         var tmpArray = this.id.split('_');
@@ -3787,6 +3804,9 @@ function convertFieldIntoEditable(cell, shouldSelect){
               addChangeControl(changeNum, true);
           }
         }
+        var autosuggest_id = 'autosuggest_' + tmpArray[1] + '_' + tmpArray[2] + '_' + tmpArray[3];
+        var autosugg_in = document.getElementById(autosuggest_id);
+        if (autosugg_in != null) {autosugg_in.innerHTML = "";}
       },
       event: editEvent,
       data: function() {
@@ -3823,42 +3843,6 @@ function convertFieldIntoEditable(cell, shouldSelect){
       select: shouldSelect
     });
 }
-
-
-function onContentClick(event, cell) {
-  /*
-   * Handle click on editable content fields.
-   */
-  function open_field() {
-    /*
-      Converts <td> element into editable object the first time click
-      is triggered
-    */
-    var shouldSelect = false;
-    // Check if subfield is volatile subfield from a template
-    if ( $(cell).hasClass('bibEditVolatileSubfield') ) {
-      shouldSelect = true;
-    }
-    if (!$(cell).hasClass('edit_area')) {
-      $(cell).addClass('edit_area').removeAttr('onclick');
-      convertFieldIntoEditable(cell, shouldSelect);
-      $(cell).trigger('click');
-    }
-  }
-  if ( ($(event.target).parent().hasClass('bibeditHPCorrection') && !$(event.target).parent().hasClass('bibeditHPSame'))
-        || ($(event.target).hasClass('bibeditHPCorrection') && !$(event.target).hasClass('bibeditHPSame')) ) {
-    return false;
-  }
-  if ($(".edit_area textarea").length > 0) {
-    /* There is another textarea open, wait for it to close */
-    $(".edit_area textarea").parent().submit(function() {
-       setTimeout(open_field, 30);
-    });
-  } else {
-    open_field();
-  }
-}
-
 
 function getUpdateSubfieldValueRequestData(tag, fieldPosition, subfieldIndex,
         subfieldCode, value, changeNo, undoDescriptor, modifySubfieldCode){
@@ -4034,6 +4018,13 @@ var suggestions = new Array();
 /*call autosuggest, get the values, suggest them to the user*/
 /*this is typically called when autosuggest key is pressed*/
 function onAutosuggest(event) {
+  var param_tag;
+  var autosuggest_id;
+  var maintag, fieldPosition, subfieldIndex;
+  var subfieldcode;
+  var fullcode;
+  var subtag2;
+  var subtag1;
   var mytarget = event.target;
   if (event.srcElement) mytarget = event.srcElement;/*fix for IE*/
   var myparent = mytarget.parentNode;
@@ -4043,19 +4034,41 @@ function onAutosuggest(event) {
   var mylen = value.length;
   var replacement = ""; //used by autocomplete
   var tmpArray = mygrandparent.id.split('_');
-  /*ids for autosuggest/autocomplete html elements*/
-  var content_id = 'content_'+tmpArray[1]+'_'+tmpArray[2]+'_'+tmpArray[3];
-  var autosuggest_id = 'autosuggest_'+tmpArray[1]+'_'+tmpArray[2]+'_'+tmpArray[3];
-  var select_id = 'select_'+tmpArray[1]+'_'+tmpArray[2]+'_'+tmpArray[3];
-  var param_tag = tmpArray[1]+'_'+tmpArray[2]+'_'+tmpArray[3];
-  var maintag = tmpArray[1], fieldPosition = tmpArray[2],
-	  subfieldIndex = tmpArray[3];
-  var field = gRecord[maintag][fieldPosition];
-  var subfieldcode = field[0][subfieldIndex][0];
-  var subtag1 = field[1];
-  var subtag2 = field[2];
-  //check if this an autosuggest or autocomplete field.
-  var fullcode = getMARC(maintag, fieldPosition, subfieldIndex);
+  if(tmpArray.length === 4) {
+    /*ids for autosuggest/autocomplete html elements*/
+    autosuggest_id = 'autosuggest_' + tmpArray[1] + '_' + tmpArray[2] + '_' + tmpArray[3];
+    param_tag = tmpArray[1] + '_' + tmpArray[2] + '_' + tmpArray[3];
+    maintag = tmpArray[1], fieldPosition = tmpArray[2],
+      subfieldIndex = tmpArray[3];
+    var field = gRecord[maintag][fieldPosition];
+    subfieldcode = field[0][subfieldIndex][0];
+    subtag1 = field[1];
+    subtag2 = field[2];
+    //check if this an autosuggest or autocomplete field.
+    fullcode = getMARC(maintag, fieldPosition, subfieldIndex);
+  } else {
+    var idAdd = tmpArray[1];
+    var idAddPos = tmpArray[2];
+    maintag = $("#txtAddFieldTag_" + idAdd)[0].value;
+    subtag1 = $("#txtAddFieldInd1_" + idAdd)[0].value;
+    if(subtag1==="") { 
+      subtag1 = "_";
+    }
+    subtag2 = $("#txtAddFieldInd2_" + idAdd)[0].value;
+    if(subtag2==="") { 
+      subtag2 = "_";
+    }
+    subfieldcode = $("#txtAddFieldSubfieldCode_" + idAdd + "_" + idAddPos)[0].value;
+    if((maintag==="")||(subfieldcode==="")) { 
+      return;
+    }
+    var index = $("#content_" + idAdd + "_" + idAddPos).parent().index();
+    autosuggest_id = 'autosuggest_' + idAdd + "_" + idAddPos;
+    $("#content_" + idAdd + "_" + idAddPos).closest('tr').next().children().eq(index).attr("id",autosuggest_id);
+
+    param_tag = idAdd + "_" + idAddPos;
+    fullcode = maintag+subtag1+subtag2+subfieldcode;
+  }
   var reqtype = ""; //autosuggest or autocomplete, according to tag..
   var i = 0;
   var n = 0;
@@ -4099,7 +4112,20 @@ function onAutosuggest(event) {
                 addSubfield(addhereID, subfieldcode, valuein);
             }
         } else { //autocomplete, nothing found
-            alert("No suggestions for your search term "+value);
+          if (!$("#nosuggestion").length) {
+            autosugg_in = document.getElementById(autosuggest_id);
+            if (autosugg_in != null) {autosugg_in.innerHTML = "";}
+              if(value.length > 3) {
+                $("#" + autosuggest_id).append("<p id='nosuggestion' class='error'> <b>No suggestion</b> for your search term " + value + "</p>");
+              } else { 
+                $("#" + autosuggest_id).append("<p id='nosuggestion' class='error'> <b>No suggestion</b> your search term must be longer than 3 characters.</p>");
+              }
+            setTimeout(function () {
+              $("#nosuggestion").fadeOut(500, function () {
+                $("#nosuggestion").remove()
+              })
+            }, 4000);
+          }
         }
     } //autocomplete
     if ((reqtype == 'autosuggest') || (reqtype == 'autokeyword')) {
@@ -4125,8 +4151,21 @@ function onAutosuggest(event) {
             autosugg_in = document.getElementById(autosuggest_id);
             if (autosugg_in != null) {autosugg_in.innerHTML = mysel;}
          } else { //there were no suggestions
-             alert("No suggestions for your search term "+value);
-         }
+          if (!$("#nosuggestion").length) {
+            autosugg_in = document.getElementById(autosuggest_id);
+            if (autosugg_in != null) {autosugg_in.innerHTML = "";}
+              if(value.length > 3) {
+                $("#" + autosuggest_id).append("<p id='nosuggestion' class='error'> <b>No suggestion</b> for your search term " + value + "</p>");
+              } else { 
+                $("#" + autosuggest_id).append("<p id='nosuggestion' class='error'> <b>No suggestion</b> your search term must be longer than 3 characters.</p>");
+              }
+            setTimeout(function () {
+              $("#nosuggestion").fadeOut(500, function () {
+                $("#nosuggestion").remove()
+              })
+            }, 4000);
+          }
+        }
     } //autosuggest
   }, false); /*NB! This function is called synchronously.*/
 } //onAutoSuggest
@@ -4134,12 +4173,11 @@ function onAutosuggest(event) {
 
 /*put the content of the autosuggest select into the field where autoselect was lauched*/
 function onAutosuggestSelect(i, val_to_modify) {
-  var content_id = 'content_' + val_to_modify;
+  var content_id = "content_" + val_to_modify;
   var autosuggest_id = 'autosuggest_'+ val_to_modify;
-  console.log(val_to_modify);
   if(i != "-1") {
       /*generate the content element id and autosuggest element id from the selectid*/
-      discomposure = val_to_modify.split("_");
+      var discomposure = val_to_modify.split("_");
       var content_t = document.getElementById(content_id); //table
       var content = null; //the actual text
       //this is interesting, since if the user is browsing the list of selections by mouse,
@@ -4163,27 +4201,60 @@ function onAutosuggestSelect(i, val_to_modify) {
         content.innerHTML = suggestions[i];
         content.value = suggestions[i];
       } else {
-        updateSubfieldValue(discomposure[0], discomposure[1], discomposure[2], "a", suggestions[i]["fields"][discomposure[0]]["a"][0]);
-        content.innerHTML = suggestions[i]["fields"][discomposure[0]]["a"][0];
-        content.value = suggestions[i]["fields"][discomposure[0]]["a"][0];
-        setTimeout( function() {for(key in suggestions[i]["fields"]) {
-            for(subkey in suggestions[i]["fields"][key]) {
-                if((key==discomposure[0])&&(subkey != "a")) {
-                        for(val in suggestions[i]["fields"][key][subkey]) {
-                        addSubfield(discomposure[0] + "_" +discomposure[1] , subkey, suggestions[i]["fields"][key][subkey][val]);
-                        onAddSubfieldsSave(null,discomposure[0],discomposure[1]);
-                        }
+        console.log(discomposure);
+        if (discomposure.length < 3) {
+          var idAdd = discomposure[0];
+          var idAddPos = discomposure[1];
+          var rowGroup = "#rowGroupAddField_" + idAdd;
+          discomposure[0] = $("#txtAddFieldTag_" + idAdd)[0].value;
+          content.value = suggestions[i]["fields"][discomposure[0]]["a"][0];
+          setTimeout(function () {
+          for (key in suggestions[i]["fields"]) {
+              for (subkey in suggestions[i]["fields"][key]) {
+                if ((key == discomposure[0]) && (subkey != "a")) {
+                  for (val in suggestions[i]["fields"][key][subkey]) {
+                     addFieldAddSubfieldEditor(rowGroup, parseInt(idAdd), subkey, suggestions[i]["fields"][key][subkey][val]);
+                  }
                 } else {
-                    if(key=="035") {
-                    for(val in suggestions[i]["fields"][key][subkey]) {
-                        addSubfield(discomposure[0] + "_" +discomposure[1] , "0", suggestions[i]["fields"][key][subkey][val]);
-                        onAddSubfieldsSave(null,discomposure[0],discomposure[1]);
-                        }
+                  if (key == "035") {
+                    for (val in suggestions[i]["fields"][key][subkey]) {
+                       addFieldAddSubfieldEditor(rowGroup, parseInt(idAdd), "0", suggestions[i]["fields"][key][subkey][val]);
                     }
+                  }
                 }
+              }
             }
+              content.focus();
+          }
+            ,1000);
 
-        }},1000);
+        } else {
+          updateSubfieldValue(discomposure[0], discomposure[1], discomposure[2], "a", suggestions[i]["fields"][discomposure[0]]["a"][0]);
+          content.innerHTML = suggestions[i]["fields"][discomposure[0]]["a"][0];
+          content.value = suggestions[i]["fields"][discomposure[0]]["a"][0];
+          setTimeout(function () {
+            for (key in suggestions[i]["fields"]) {
+              for (subkey in suggestions[i]["fields"][key]) {
+                if ((key == discomposure[0]) && (subkey != "a")) {
+                  for (val in suggestions[i]["fields"][key][subkey]) {
+                    addSubfield(discomposure[0] + "_" + discomposure[1], subkey, suggestions[i]["fields"][key][subkey][val]);
+                    onAddSubfieldsSave(null, discomposure[0], discomposure[1]);
+                  }
+                } else {
+                  if (key == "035") {
+                    for (val in suggestions[i]["fields"][key][subkey]) {
+                      addSubfield(discomposure[0] + "_" + discomposure[1], "0", suggestions[i]["fields"][key][subkey][val]);
+                      onAddSubfieldsSave(null, discomposure[0], discomposure[1]);
+                    }
+                  }
+                }
+              }
+
+            }
+          $("#"+content_id).trigger("click");
+            }
+            , 1000);
+        }
       }
   }
   /*remove autosuggest box*/
@@ -6624,7 +6695,6 @@ function onEditableCellChange(value, th) {
     if (failInReadOnly()) {
         return;
     }
-
     value = sanitize_value(value);
 
     /* return an object with all the info we need */
@@ -6894,5 +6964,37 @@ function onGuessAffiliations() {
         reColorFields();
       }
     });
+  });
+}
+
+
+
+function checkISBN(isbn, elem) { 
+  var data = {"isbn": isbn, "requestType": "checkISBN"};
+  createReq(data, null, true, undefined, onAjaxError).done(function (result) {
+    var whereToAddFlashMessage = $(elem).parent().parent();
+    console.log("testing");
+    console.log(whereToAddFlashMessage);
+    console.log(whereToAddFlashMessage.nodeName);
+    if(whereToAddFlashMessage[0].nodeName == "TR") { 
+      console.log(whereToAddFlashMessage);
+      whereToAddFlashMessage = $(elem).parent();
+    }
+    console.log(whereToAddFlashMessage);
+    var res = result['resultSet'];
+    var recid = $("#content_001_0")[0].innerHTML;
+    for (var i = 0; i < res.length; i++) {
+      if ((res[i]) && (res[i][0] != recid)) {
+        if (!$("#isbnduplicate").length) {
+          whereToAddFlashMessage.append("<p id='isbnduplicate' class='error'> <b>Duplicate ISBN</b> with record <a target='_blank' href='/record/" + res[i][0] + "'>" + res[i][0] + "</a> (edit:  <a target='_blank' href='/record/" + res[i][0] + "/edit'>" + res[i][0] + "</a> ) </p>");
+          setTimeout(function () {
+            $("#isbnduplicate").fadeOut(500, function () {
+              $("#isbnduplicate").remove()
+            })
+          }, 4000);
+        }
+      }
+      break;
+    }
   });
 }

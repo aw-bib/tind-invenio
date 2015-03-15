@@ -54,6 +54,8 @@ from invenio.bibedit_config import CFG_BIBEDIT_AJAX_RESULT_CODES, \
     CFG_BIBEDIT_DISPLAY_REFERENCE_TAGS, CFG_BIBEDIT_DISPLAY_AUTHOR_TAGS, \
     CFG_BIBEDIT_EXCLUDE_CURATOR_TAGS, CFG_BIBEDIT_AUTHOR_DISPLAY_THRESHOLD
 
+from invenio.dbquery import run_sql
+
 from invenio.config import (CFG_SITE_LANG,
                             CFG_BIBCATALOG_SYSTEM_RT_URL,
                             CFG_BIBEDIT_SHOW_HOLDING_PEN_REMOVED_FIELDS,
@@ -448,7 +450,8 @@ def _perform_request_ajax(req, recid, uid, data, isBulk=False):
     elif request_type in ('autosuggest', 'autocomplete', 'autokeyword'):
         response.update(perform_request_autocomplete(request_type, recid, uid,
                                                      data))
-
+    elif request_type in ('checkISBN',):
+        response.update(perform_request_isbn(request_type, data))
     elif request_type in ('getTickets', 'closeTicket', 'openTicket', 'createTicket','getNewTicketRTInfo'):
         # BibCatalog requests.
         response.update(perform_request_bibcatalog(request_type, uid, data))
@@ -527,6 +530,20 @@ def perform_request_bibedit_search(data, req):
     result_set = list(perform_request_search(req=req, p=pattern))
     response['resultCode'] = 1
     response['resultSet'] = result_set[0:CFG_BIBEDIT_MAX_SEARCH_RESULTS]
+    return response
+
+
+def perform_request_isbn(request_type, data):
+    """Handle check of already existing isbn"""
+
+    response = {}
+    response['resultCode'] = 1
+
+    result = run_sql("select id_bibrec from  bib02x, bibrec_bib02x where tag='020__a' and value='{0}' and id_bibxxx = id;".format(data["isbn"]))
+    if result:
+        response['resultSet'] = result
+    else:
+        response['resultSet'] = False
     return response
 
 

@@ -73,7 +73,9 @@ function onHoldingPenPanelRecordIdChanged(recordId){
   */
 
   holdingPenPanelRemoveEntries();
-  createReq({recID: recordId, requestType: 'getHoldingPenUpdates'}, holdingPenPanelSetChanges);
+  createReq({recID: recordId, requestType: 'getHoldingPenUpdates'}, holdingPenPanelSetChanges).done(function () {
+    $.event.trigger('HoldingPenPageLoaded');
+  });
 }
 
 

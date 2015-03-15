@@ -883,7 +883,7 @@ function createAddFieldRow(fieldTmpNo, subfieldTmpNo, defaultCode, defaultValue,
             subfieldTmpNo, 'bibEditTxtSubfieldCode', {
                 maxlength: 1,
                 value: fieldCode
-        }) + '</td>' + '<td>' + input('text', 'txtAddFieldValue_' + fieldTmpNo +
+        }) + '</td>' + '<td>' + input('text', 'content_' + fieldTmpNo +
         '_' + subfieldTmpNo, 'bibEditTxtValue' + additionalClass, {
             value: fieldValue}) + '</td>' + '<td>' + btnAddFieldRemove +
         '</td>' + '</tr>';

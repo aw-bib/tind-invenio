@@ -563,6 +563,16 @@
     margin-top: 5px;
 }
 
+.error {
+  color: #A94442;
+  background-color:#F2DEDE;
+  border: 1px solid;
+  border-color: #EBCCD1;
+  padding:15px;
+  margin:2px;
+  height:100%;
+}
+
 #bibEditMenu {
     width: 135px;
     float: left;
@@ -622,7 +632,7 @@ div.refextracted {
  }
 
  #bibEditTable td textarea {
-    min-height: 65px;
+    min-height: 0px;
     max-height: 600px;
 }
 

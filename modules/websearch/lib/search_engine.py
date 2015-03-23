@@ -1198,7 +1198,7 @@ def create_search_box(cc, colls, p, f, rg, sf, so, sp, rm, of, ot, aas,
 
     colls_nice = []
     for (cx, cx_printable) in colls_nicely_ordered:
-        if not cx.startswith("Unnamed collection"):
+        if not cx.startswith("Unnamed collection") and not collection_restricted_p(cx):
             colls_nice.append({'value': cx,
                                'text': cx_printable
                               })

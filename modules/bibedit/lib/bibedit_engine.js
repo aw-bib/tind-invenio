@@ -219,14 +219,15 @@ window.onload = function(){
 
 function resize_content() {
   /*
-   * Resize content table to always fit in the avaiable screen and not have two
+   * Resize content table to always fit in the available screen and not have two
    * different scroll bars
    */
+
   var bibEditTable = $("#bibEditTable");
   var bibEditContentTable = $("#bibEditContentTable");
   var topToolBar = $("#Toptoolbar");
   var bibEditMenu = $("#bibEditMenu");
-  var bibEditTableTop = bibEditContentTable.offset().top;
+  var bibEditTableTop = bibEditMenu.offset().top;
   var bibEditTableLeft = bibEditContentTable.offset().left;
   var bibEditTableHeight = Math.round(($(window).height() - bibEditTableTop));
   var bibEditTableWidth = Math.round(($(window).width() - bibEditTableLeft) - bibEditMenu.offset().left);
@@ -4073,6 +4074,7 @@ function onAutosuggest(event) {
   var i = 0;
   var n = 0;
   var mysel;
+  var myselb;
   for (i=0;i<gAUTOSUGGEST_TAGS.length;i++) {if (fullcode == gAUTOSUGGEST_TAGS[i]) {reqtype = "autosuggest"}}
   for (i=0;i<gAUTOCOMPLETE_TAGS.length;i++) {if (fullcode == gAUTOCOMPLETE_TAGS[i]) {reqtype = "autocomplete"}}
   if (fullcode == gKEYWORD_TAG) {reqtype = "autokeyword"}
@@ -4132,24 +4134,52 @@ function onAutosuggest(event) {
         if ((suggestions != null) && (suggestions.length > 0)) {
             /*put the suggestions in the div autosuggest_xxxx*/
             //make a nice box..
-            mysel = '<table width="605px" border="0"><tr><td><span class="bibeditscrollArea"><ul>';
+            var myselb_count = 0;
+            var mysel_count = 0;
+            var final_shape = ""
+            myselb = '<h3 class="bibeditscrollAreaTitle">Authorities</h3><table border="0" class="bibeditscrollTable"><tr><td><span class="bibeditscrollArea"><ul>';
+            mysel = '<h3 class="bibeditscrollAreaTitle">Knowledge base</h3><table border="0" class="bibeditscrollTable"><tr><td><span class="bibeditscrollArea"><ul>';
             //create the select items..
+            var finalText = "";
+            var textSplited = "";
             for (var i=0, n=suggestions.length; i < n; i++) {
                if(typeof(suggestions[i])=="string")
                {
-                    mysel = mysel +'<li onClick="onAutosuggestSelect('+ i +',\''+ param_tag +'\');">'+suggestions[i]+"</li>";
+                    mysel = mysel +'<li onClick="onAutosuggestSelect('+ i +',\''+ param_tag +'\');"><b>'+suggestions[i]+"</b></li>";
+                    mysel_count += 1;
                } else {
-                    mysel = mysel +'<li onClick="onAutosuggestSelect('+ i +',\''+ param_tag +'\');">'+suggestions[i]["print"]+"</li>";
+                    textSplited = suggestions[i]["print"].split(";");
+                    for(var part=0;part < textSplited.length; part++)
+                    {
+                      if(part===0) {
+                        finalText = "<b>" + textSplited[part] + "</b>";
+                      } else {
+                        finalText += textSplited[part];
+                      }
+                    }
+                    myselb = myselb +'<li onClick="onAutosuggestSelect('+ i +',\''+ param_tag +'\');">'+finalText+"</li>";
+                    myselb_count += 1;
                }
             }
-            mysel = mysel + "</ul></td></tr>";
-            //add a stylish close link in case the user does not find
+            mysel = mysel + "</ul></td></tr></table>";
+            myselb = myselb + "</ul></td></tr></table>";
+             //add a stylish close link in case the user does not find
             //the value among the suggestions
-            mysel = mysel + "<tr><td><form><input type='button' value='close' onClick='onAutosuggestSelect(\"-1\", \"" + param_tag + "\");'></form></td></tr>";
-            mysel = mysel+"</table>";
+
+
+
+            if(mysel_count > 0) { 
+              final_shape += mysel;
+            }
+            if(myselb_count > 0) {
+              final_shape += myselb;
+            }
+
+            final_shape += "<table border='0'><tr><td><form><input type='button' class='formbutton' value='Close' onClick='onAutosuggestSelect(\"-1\", \"" + param_tag + "\");'></form></td></tr></table>";
+
             //for (var i=0;i<suggestions.length;i++) { mysel = mysel + +suggestions[i]+ " "; }
             autosugg_in = document.getElementById(autosuggest_id);
-            if (autosugg_in != null) {autosugg_in.innerHTML = mysel;}
+            if (autosugg_in != null) {autosugg_in.innerHTML = final_shape;}
          } else { //there were no suggestions
           if (!$("#nosuggestion").length) {
             autosugg_in = document.getElementById(autosuggest_id);
@@ -4201,7 +4231,6 @@ function onAutosuggestSelect(i, val_to_modify) {
         content.innerHTML = suggestions[i];
         content.value = suggestions[i];
       } else {
-        console.log(discomposure);
         if (discomposure.length < 3) {
           var idAdd = discomposure[0];
           var idAddPos = discomposure[1];
@@ -6973,17 +7002,17 @@ function checkISBN(isbn, elem) { 
   var data = {"isbn": isbn, "requestType": "checkISBN"};
   createReq(data, null, true, undefined, onAjaxError).done(function (result) {
     var whereToAddFlashMessage = $(elem).parent().parent();
-    console.log("testing");
-    console.log(whereToAddFlashMessage);
-    console.log(whereToAddFlashMessage.nodeName);
     if(whereToAddFlashMessage[0].nodeName == "TR") { 
-      console.log(whereToAddFlashMessage);
       whereToAddFlashMessage = $(elem).parent();
     }
-    console.log(whereToAddFlashMessage);
     var res = result['resultSet'];
-    var recid = $("#content_001_0")[0].innerHTML;
-    for (var i = 0; i < res.length; i++) {
+    var recid = $("#content_001_0");
+    if(recid.length > 0) {
+      recid = recid[0].innerHTML;
+    } else {
+      recid = gRecID;
+    }
+    for(var i = 0; i < res.length; i++) {
       if ((res[i]) && (res[i][0] != recid)) {
         if (!$("#isbnduplicate").length) {
           whereToAddFlashMessage.append("<p id='isbnduplicate' class='error'> <b>Duplicate ISBN</b> with record <a target='_blank' href='/record/" + res[i][0] + "'>" + res[i][0] + "</a> (edit:  <a target='_blank' href='/record/" + res[i][0] + "/edit'>" + res[i][0] + "</a> ) </p>");

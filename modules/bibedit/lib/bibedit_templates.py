@@ -79,7 +79,7 @@ class Template:
             '            <td colspan="3">%(btnDeleteRecord)s</td>\n' \
             '          </tr>\n' \
             '          <tr class="bibEditmenuMore">\n' \
-            '            <td>Switch to:</td>\n' \
+            '            <td><p>Switch to:</p></td>\n' \
             '            <td colspan="3">%(btnSwitchReadOnly)s</td>\n' \
             '          </tr>' \
             '        </table>' % {
@@ -337,7 +337,7 @@ class Template:
 
         html = """
         <div id='display_div'>
-            <strong>Display</strong> <br />
+            <strong><p class='bibEditMenuSectionHeader'>Display</p></strong>
             <ul id='focuson_list' class='list-plain'>
                 <li>
                     <input type="checkbox" name="references" id="focuson_references" value="references" checked/>

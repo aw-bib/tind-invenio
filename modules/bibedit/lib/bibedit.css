@@ -203,22 +203,29 @@
     display: table-cell;
 }
 
+.bibeditscrollTable {
+    width:100%;
+}
+
 .bibeditscrollArea {
-    width: 550px;
-    height: 100px;
-    padding-left: 5px;
-    padding-right: 5px;
+    padding-left: 0px;
+    padding-right: 0px;
     border-color: #6699CC;
     border-width: 1px;
     border-style: solid;
     float: left;
     overflow: auto;
     white-space: nowrap;
-
+    width:98%;
 }
 
 .bibeditscrollArea li:hover {
     background-color: #C3C3C3;
+}
+
+.bibeditscrollArea li {
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
 .bibeditscrollArea ul {
@@ -228,6 +235,14 @@
     margin-left: 0;
     padding-left: 0;
 
+}
+
+.bibeditscrollAreaTitle {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    list-style: none;
+    margin-left: 0;
+    padding-left: 0;
 }
 
 #bibeditHoldingPenGC {
@@ -553,7 +568,6 @@
 
 #bibEditContent {
     margin-left: 175px;
-    width: 750px;
 }
 
 #bibEditContentTable {

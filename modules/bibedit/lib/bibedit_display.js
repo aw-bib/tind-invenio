@@ -40,17 +40,8 @@ function displayRecord() {
         '<col span="1" class="bibEditColFieldBox" />' +
         '<col span="1" id="bibEditColSubfieldTag" />' +
         '<col span="1" />' +
-        '<col span="1" id="bibEditColSubfieldAdd" />' +
+        '<col span="1" id="bibEditColSubfieldAdd" />';
         // Create a dummy row to hack layout in like FF..
-        '<tbody style="border: 0px;">' + '<tr>' +
-        '<td style="padding: 0px; max-width: 14px;"></td>' +
-        '<td style="padding: 0px; max-width: 100px;"></td>' +
-        '<td style="padding: 0px; max-width: 14px;"></td>' +
-        '<td style="padding: 0px; max-width: 80px;"></td>' +
-        '<td style="padding: 0px"></td>' +
-        '<td style="padding: 0px; max-width: 16px;"></td>' +
-        '</tr>' +
-        '</tbody>';
 
     var tags = getTagsSorted(),
         tag, fields;

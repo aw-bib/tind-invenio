@@ -50,23 +50,24 @@ function initInputHotkeys(inputElement, original) {
       var tmpArray = event.target.id.split('_');
       var idAdd = tmpArray[1];
       var idAddPos = tmpArray[2];
-      var maintag = $("#txtAddFieldTag_" + idAdd)[0].value;
-      var subfieldcode = $("#txtAddFieldSubfieldCode_" + idAdd + "_" + idAddPos)[0].value;
-      console.log(maintag);
-      console.log(subfieldcode);
-      if ((maintag === "020") && (subfieldcode === "a")) {
-        checkISBN(event.target.value, event.target);
+
+      var maintag = $("#txtAddFieldTag_" + idAdd);
+      if (maintag.length > 0) {
+        maintag = maintag[0].value;
+        var subfieldcode = $("#txtAddFieldSubfieldCode_" + idAdd + "_" + idAddPos)[0].value;
+        if ((maintag === "020") && (subfieldcode === "a")) {
+          checkISBN(event.target.value, event.target);
+        }
       }
+
     });
   }
 
-  if (os.indexOf("Mac") < 0) {
-    element.bind('keydown', 'ctrl+shift+a', function (event) {
-      console.log("autosuggesting");
-      onAutosuggest(event);
-    });
-  } else {
-    console.log("mac");
+
+  element.bind('keydown', 'ctrl+shift+a', function (event) {
+    onAutosuggest(event);
+  });
+  if (os.indexOf("Mac") > 0) {
     element.bind('keydown', 'ctrl+alt', function (event) {
       console.log(event);
       if (event.metaKey) {
@@ -321,13 +322,11 @@ function onKeyReturn(event) {
   /*
    * Handle key return (edit subfield).
    */
-  if (event.target.nodeName == 'TEXTAREA') {
+  if ((event.target.nodeName == 'TEXTAREA')||(event.target.nodeName == 'INPUT')) {
     $(event.target).parent().submit();
-    console.log("return");
     event.preventDefault();
   }
   else if (event.target.nodeName == 'TD') {
-    console.log("returnB");
     var targetID = event.target.id;
     var type = targetID.slice(0, targetID.indexOf('_'));
     if (type == 'content'){
@@ -335,7 +334,6 @@ function onKeyReturn(event) {
       event.preventDefault();
     }
   }
-  console.log("returnC");
 }
 
 function onKeyTab(event){

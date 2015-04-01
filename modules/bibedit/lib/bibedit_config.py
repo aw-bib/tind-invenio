@@ -94,33 +94,33 @@ CFG_BIBEDIT_REQUESTS_UNTIL_SAVE = 3
 # by the Ajax engine.
 
 CFG_BIBEDIT_AJAX_RESULT_CODES_REV = {
-    #TODO: all the result codes should be accessible through the constants rather than
-    #      a direct number ! some parts of the bibedit_engine.py are not readable because
+    # TODO: all the result codes should be accessible through the constants rather than
+    # a direct number ! some parts of the bibedit_engine.py are not readable because
     #      of using the numbers
     #      The dictionary is convenient at this place because it can be imported with one command
     #      unlike a number of constants
     'record_submitted': 4,
     'editor_modifications_changed': 33,
-    'disabled_hp_changeset' : 34,
-    'added_positioned_subfields' : 35,
-    'autosuggestion_scanned' : 36,
-    'error_rec_locked_by_user' : 104,
-    'error_rec_locked_by_queue' : 105,
-    'server_error' : 111,
+    'disabled_hp_changeset': 34,
+    'added_positioned_subfields': 35,
+    'autosuggestion_scanned': 36,
+    'error_rec_locked_by_user': 104,
+    'error_rec_locked_by_queue': 105,
+    'server_error': 111,
     'error_physical_copies_exist': 112,
     'cache_updated_with_references': 114,
-    'textmarc_parsing_error' : 115,
-    'tableview_change_success' : 116,
+    'textmarc_parsing_error': 115,
+    'tableview_change_success': 116,
     'error_no_doi_specified': 117,
     'error_crossref_record_not_found': 118,
     'error_crossref_malformed_doi': 119,
-    'error_crossref_no_account' : 120,
-    'ticket_closed' : 121,
+    'error_crossref_no_account': 120,
+    'ticket_closed': 121,
     'error_ticket_closed': 122,
-    'ticket_opened' : 123,
+    'ticket_opened': 123,
     'error_ticket_opened': 124,
     'error_rt_connection': 125,
-    'ticket_created' : 126,
+    'ticket_created': 126,
     'error_ticket_created': 127
 }
 
@@ -172,7 +172,7 @@ CFG_BIBEDIT_AJAX_RESULT_CODES = {
 }
 
 CFG_BIBEDIT_MSG = {
-    "not_authorised" : "You are not authorised to submit a record into the given \
+    "not_authorised": "You are not authorised to submit a record into the given \
                         collection. Please, review the collection tags."
 }
 # CFG_BIBEDIT_MAX_SEARCH_RESULTS
@@ -188,26 +188,30 @@ CFG_BIBEDIT_TO_MERGE_SUFFIX = 'merge'
 
 # CFG_BIBEDIT_RECORD_TEMPLATES_PATH - path to record template directory
 
-CFG_BIBEDIT_RECORD_TEMPLATES_PATH = "%s%sbibedit%srecord_templates" % (CFG_ETCDIR, os.sep, os.sep)
-CFG_BIBEDIT_FIELD_TEMPLATES_PATH = "%s%sbibedit%sfield_templates" % (CFG_ETCDIR, os.sep, os.sep)
+CFG_BIBEDIT_RECORD_TEMPLATES_PATH = "%s%sbibedit%srecord_templates" % (
+    CFG_ETCDIR, os.sep, os.sep)
+CFG_BIBEDIT_FIELD_TEMPLATES_PATH = "%s%sbibedit%sfield_templates" % (
+    CFG_ETCDIR, os.sep, os.sep)
 
 # CFG_BIBEDIT_AUTOSUGGEST_TAGS - for which tags the editor should try to autosuggest values
 # This is "safe" to have configured since it does not rely to a particular existing KB
-CFG_BIBEDIT_AUTOSUGGEST_TAGS = ['100__a']
+CFG_BIBEDIT_AUTOSUGGEST_TAGS = ['100%%a', '110%%a', '111%%a', '611%%a',
+                                '700%%a', '711%%a', '130%%a', '630%%a',
+                                '730%%a', '650%%a', '651%%a', '751%%a']
 
 # CFG_BIBEDIT_AUTOCOMPLETE_TAGS_KBS - a dictionary whose keys are tags and values kb names
 # This is better left empty when in doubt
-CFG_BIBEDIT_AUTOCOMPLETE_TAGS_KBS = {} # { '65017a': 'SISC-65017a---65017a' }
+CFG_BIBEDIT_AUTOCOMPLETE_TAGS_KBS = {}  # { '65017a': 'SISC-65017a---65017a' }
 
 # CFG_BIBEDIT_KEYWORD_TAXONOMY - the name of the taxonomy DB that holds the taxonomy file used
 # for getting the keywords. Use only if you have a taxonomy KB.
-CFG_BIBEDIT_KEYWORD_TAXONOMY = "" #'HEP.RDF'
+CFG_BIBEDIT_KEYWORD_TAXONOMY = ""  # 'HEP.RDF'
 
-#what tag is used for keywords
-CFG_BIBEDIT_KEYWORD_TAG = "" # '6531_a'
+# what tag is used for keywords
+CFG_BIBEDIT_KEYWORD_TAG = ""  # '6531_a'
 
-#what label inside the RDF file contains the term
-CFG_BIBEDIT_KEYWORD_RDFLABEL = "" #'prefLabel'
+# what label inside the RDF file contains the term
+CFG_BIBEDIT_KEYWORD_RDFLABEL = ""  #'prefLabel'
 
 #where are BibEdit cache files stored
 CFG_BIBEDIT_CACHEDIR = CFG_TMPSHAREDDIR + '/bibedit-cache'
@@ -230,7 +234,8 @@ CFG_BIBEDIT_DISPLAY_AUTHOR_TAGS = ['100', '700']
 
 # CFG_BIBEDIT_EXCLUDE_CURATOR_TAGS - which tags to be excluded in the
 # curator view
-CFG_BIBEDIT_EXCLUDE_CURATOR_TAGS = ['035', '041', '520', '540', '595', '650', '653', '690', '695', '856']
+CFG_BIBEDIT_EXCLUDE_CURATOR_TAGS = ['035', '041', '520', '540', '595', '650',
+                                    '653', '690', '695', '856']
 
 # CFG_BIBEDIT_AUTHOR_DISPLAY_THRESHOLD - if number of authors is higher than this number
 # they will be hidden by default

@@ -4076,15 +4076,16 @@ function onAutosuggest(event) {
   var mysel;
   var myselb;
   for (i=0;i<gAUTOSUGGEST_TAGS.length;i++) {
-    if (fullcode == gAUTOSUGGEST_TAGS[i]) {
-      reqtype = "autosuggest";
-    } else { 
+    reqtype = "autosuggest";
+    if (fullcode != gAUTOSUGGEST_TAGS[i]) { 
       for(var letter=0; letter <fullcode.length; letter++)
       {
-        reqtype = "autosuggest";
         if((gAUTOSUGGEST_TAGS[i][letter]!="%")&&(gAUTOSUGGEST_TAGS[i][letter] != fullcode[letter])) {
           reqtype = "";
         }
+      }
+      if (reqtype == "autosuggest") {
+        i = gAUTOSUGGEST_TAGS.length + 1;
       }
     }
   }
@@ -4189,7 +4190,6 @@ function onAutosuggest(event) {
 
             final_shape += "<table border='0'><tr><td><form><input type='button' class='formbutton' value='Close' onClick='onAutosuggestSelect(\"-1\", \"" + param_tag + "\");'></form></td></tr></table>";
 
-            //for (var i=0;i<suggestions.length;i++) { mysel = mysel + +suggestions[i]+ " "; }
             autosugg_in = document.getElementById(autosuggest_id);
             if (autosugg_in != null) {autosugg_in.innerHTML = final_shape;}
          } else { //there were no suggestions

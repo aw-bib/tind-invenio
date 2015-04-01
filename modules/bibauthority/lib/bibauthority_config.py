@@ -22,19 +22,32 @@ CFG_BIBAUTHORITY_RECORD_CONTROL_NUMBER_FIELD = '035__a'
 
 # the record field for authority control numbers
 CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS = {
-    'AUTHOR': ['100', '700'],
-    'INSTITUTE': ['110', '920'],
-    'JOURNAL': ['130'],
-    'SUBJECT': ['150']
+    'AUTHOR': ['100', '700', '600'],
+    'CORPORATE': ['110', '710', '610'],
+    'MEETING': ['111', '711', '611'],
+    'UNIFORM': ['130', '730'],
+    'SUBJECT': ['150', '650'],
+    'GEOGRAPHICAL': ['151', '751', '651']
 }
 
 CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS_REVERSED = {
     '100': 'AUTHOR',
     '700': 'AUTHOR',
-    '110': 'INSTITUTE',
-    '920': 'INSTITUTE',
-    '130': 'JOURNAL',
+    '600': 'AUTHOR',
+    '110': 'CORPORATE',
+    '710': 'CORPORATE',
+    '610': 'CORPORATE',
+    '111': 'MEETING',
+    '711': 'MEETING',
+    '611': 'MEETING',
+    '130': 'UNIFORM',
+    '630': 'UNIFORM',
+    '730': 'UNIFORM',
     '150': 'SUBJECT',
+    '650': 'SUBJECT',
+    '151': 'GEOGRAPHICAL',
+    '751': 'GEOGRAPHICAL',
+    '651': 'GEOGRAPHICAL'
 }
 
 # Config variable to define if yes or no should the autocomplete check for authority record.
@@ -61,11 +74,14 @@ CFG_BIBAUTHORITY_AUTHORITY_COLLECTION_NAME = 'Authorities'
 # ... including the 980__a subfields of all authority records
 # ... and the $0 subfields of the bibliographic fields under authority control
 CFG_BIBAUTHORITY_TYPE_NAMES = {
-    'INSTITUTE': 'INSTITUTE',
     'AUTHOR': 'AUTHOR',
-    'JOURNAL': 'JOURNAL',
+    'CORPORATE': 'CORPORATE',
+    'MEETING': 'MEETING',
+    'UNIFORM': 'UNIFORM',
     'SUBJECT': 'SUBJECT',
+    'GEOGRAPHICAL': 'GEOGRAPHICAL'
 }
+
 
 # CFG_BIBAUTHORITY_CONTROLLED_FIELDS_BIBLIOGRAPHIC
 # 1. tells us which bibliographic subfields are under authority control
@@ -75,13 +91,21 @@ CFG_BIBAUTHORITY_TYPE_NAMES = {
 # to the miscellaneous index on the BibIndex Admin Site
 CFG_BIBAUTHORITY_CONTROLLED_FIELDS_BIBLIOGRAPHIC = {
     '100__a': 'AUTHOR',
-    '100__u': 'INSTITUTE',
-    '110__a': 'INSTITUTE',
-    '130__a': 'JOURNAL',
+    '110__a': 'CORPORATE',
+    '111__a': 'MEETING',
+    '130__a': 'UNIFORM',
     '150__a': 'SUBJECT',
-    '260__b': 'INSTITUTE',
+    '151__a': 'GEOGRAPHICAL',
     '700__a': 'AUTHOR',
-    '700__u': 'INSTITUTE',
+    '600__a': 'AUTHOR',
+    '710__a': 'CORPORATE',
+    '610__a': 'CORPORATE',
+    '711__a': 'MEETING',
+    '611__a': 'MEETING',
+    '730__a': 'UNIFORM',
+    '650__a': 'SUBJECT',
+    '751__a': 'GEOGRAPHICAL',
+    '651__a': 'GEOGRAPHICAL',
 }
 
 # CFG_BIBAUTHORITY_CONTROLLED_FIELDS_AUTHORITY
@@ -90,11 +114,13 @@ CFG_BIBAUTHORITY_CONTROLLED_FIELDS_BIBLIOGRAPHIC = {
 # authority record subfields use the $4 field for the control_no (not $0)
 CFG_BIBAUTHORITY_CONTROLLED_FIELDS_AUTHORITY = {
     '500__a': 'AUTHOR',
-    '510__a': 'INSTITUTE',
-    '530__a': 'JOURNAL',
+    '510__a': 'CORPORATE',
+    '511__a': 'MEETING',
+    '530__a': 'UNIFORM',
     '550__a': 'SUBJECT',
-    '909C1u': 'INSTITUTE',  # used in bfe_affiliation
-    '920__v': 'INSTITUTE',  # used by FZ Juelich demo data
+    '551__a': 'GEOGRAPHICAL',
+    '909C1u': 'INSTITUTE', # used in bfe_affiliation
+    '920__v': 'INSTITUTE', # used by FZ Juelich demo data
 }
 
 # constants for CFG_BIBEDIT_AUTOSUGGEST_TAGS
@@ -119,22 +145,30 @@ CFG_BIBAUTHORITY_AUTOSUGGEST_CONFIG = {
         'field': 'authorityauthor',
         'insert_here_field': '100__a',
         'sort_by': CFG_BIBAUTHORITY_AUTOSUGGEST_SORT_POPULAR,
-        'disambiguation_fields': ['100__d', '035__a'],
     },
-    'INSTITUTE': {
-        'field': 'authorityinstitute',
+    'CORPORATE': {
+        'field': 'authoritycorporate',
         'insert_here_field': '110__a',
         'sort_by': CFG_BIBAUTHORITY_AUTOSUGGEST_SORT_ALPHA,
-        'disambiguation_fields': ['270__b', "035__a"],
     },
-    'JOURNAL': {
-        'field': 'authorityjournal',
-        'insert_here_field': '130__a',
+    'MEETING': {
+        'field': 'authoritymeeting',
+        'insert_here_field': '111__a',
         'sort_by': CFG_BIBAUTHORITY_AUTOSUGGEST_SORT_POPULAR,
+    },
+    'UNIFORM': {
+        'field': 'authorityuniform',
+        'insert_here_field': '130__a',
+        'sort_by': CFG_BIBAUTHORITY_AUTOSUGGEST_SORT_ALPHA,
     },
     'SUBJECT': {
         'field': 'authoritysubject',
         'insert_here_field': '150__a',
+        'sort_by': CFG_BIBAUTHORITY_AUTOSUGGEST_SORT_ALPHA,
+    },
+    'GEOGRAPHICAL': {
+        'field': 'authoritygeopgrahical',
+        'insert_here_field': '151__a',
         'sort_by': CFG_BIBAUTHORITY_AUTOSUGGEST_SORT_ALPHA,
     },
 }
@@ -144,26 +178,34 @@ CFG_BIBAUTHORITY_AUTOSUGGEST_CONFIG = {
 # NR stands for 'non-repeatable'
 CFG_BIBAUTHORITY_AUTHORITY_SUBFIELDS_TO_INDEX = {
     'AUTHOR': [
-        '100__a',  #Personal Name (NR, NR)
+        '100__a',  # Personal Name (NR, NR)
         '100__d',  #Year of birth or other dates (NR, NR)
         '100__q',  #Fuller form of name (NR, NR)
         '400__a',  #(See From Tracing) (R, NR)
         '400__d',  #(See From Tracing) (R, NR)
         '400__q',  #(See From Tracing) (R, NR)
     ],
-    'INSTITUTE': [
-        '110__a',  #(NR, NR)
+    'CORPORATE': [
+        '110__a',  # (NR, NR)
         '410__a',  #(R, NR)
     ],
-    'JOURNAL': [
-        '130__a',  #(NR, NR)
-        '130__f',  #(NR, NR)
-        '130__l',  #(NR, NR)
+    'MEETING': [
+        '111__a',  # (NR, NR)
+        '111__f',  #(NR, NR)
+        '111__l',  #(NR, NR)
+        '411__a',  #(R, NR)
+    ],
+    'UNIFORM': [
+        '130__a',  # (NR, NR)
         '430__a',  #(R, NR)
     ],
     'SUBJECT': [
-        '150__a',  #(NR, NR)
+        '150__a',  # (NR, NR)
         '450__a',  #(R, NR)
+    ],
+    'GEOGRAPHICAL': [
+        '151__a',  # (NR, NR)
+        '451__a',  #(R, NR)
     ],
 }
 

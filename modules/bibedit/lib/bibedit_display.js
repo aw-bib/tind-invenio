@@ -147,9 +147,18 @@ function createRow(tag, ind1, ind2, subfieldCode, subfieldValue, fieldID,
     var autocomplete = false;
     var autokeyword = false;
     for (var i = 0, n = gAUTOSUGGEST_TAGS.length; i < n; i++) {
-        if (MARC == gAUTOSUGGEST_TAGS[i]) {
-            autosuggest = true;
+      autosuggest = true;
+      if (MARC != gAUTOSUGGEST_TAGS[i]) {
+        for(var letter=0; letter <MARC.length; letter++)
+        {
+          if((gAUTOSUGGEST_TAGS[i][letter]!= "%")&&(gAUTOSUGGEST_TAGS[i][letter] != MARC[letter])) {
+                 autosuggest = false;
+          }
         }
+        if (autosuggest === true) {
+          i = gAUTOSUGGEST_TAGS.length + 1;
+        }
+      }
     }
     for (var i = 0, n = gAUTOCOMPLETE_TAGS.length; i < n; i++) {
         if (MARC == gAUTOCOMPLETE_TAGS[i]) {

@@ -4075,7 +4075,19 @@ function onAutosuggest(event) {
   var n = 0;
   var mysel;
   var myselb;
-  for (i=0;i<gAUTOSUGGEST_TAGS.length;i++) {if (fullcode == gAUTOSUGGEST_TAGS[i]) {reqtype = "autosuggest"}}
+  for (i=0;i<gAUTOSUGGEST_TAGS.length;i++) {
+    if (fullcode == gAUTOSUGGEST_TAGS[i]) {
+      reqtype = "autosuggest";
+    } else { 
+      for(var letter=0; letter <fullcode.length; letter++)
+      {
+        reqtype = "autosuggest";
+        if((gAUTOSUGGEST_TAGS[i][letter]!="%")&&(gAUTOSUGGEST_TAGS[i][letter] != fullcode[letter])) {
+          reqtype = "";
+        }
+      }
+    }
+  }
   for (i=0;i<gAUTOCOMPLETE_TAGS.length;i++) {if (fullcode == gAUTOCOMPLETE_TAGS[i]) {reqtype = "autocomplete"}}
   if (fullcode == gKEYWORD_TAG) {reqtype = "autokeyword"}
   if (reqtype == "") {

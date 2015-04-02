@@ -804,7 +804,7 @@ class Template:
                             user_must_confirm_before_leaving_page = false;
                             document.forms[0].submit();
                             $("form").find("button:submit").parent().hide();
-                 $("form").find("button:submit").parent().parent().append("<div id='waitarea'><h2>Submission in progress, please be patient!</h2> <b>You will be redirected automatically</b><img src='https://ir.tind.io/img/loading.gif'> </div>");
+                 $("form").find("button:submit").parent().parent().append("<div id='waitarea'><h2>Submission in progress, please be patient!</h2> <b>You will be redirected automatically</b><img src='""" + CFG_SITE_URL + """/img/loading.gif'> </div>");
                           } else {
                             return false;
                           }

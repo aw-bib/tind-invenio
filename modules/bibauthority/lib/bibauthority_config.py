@@ -145,6 +145,7 @@ CFG_BIBAUTHORITY_AUTOSUGGEST_CONFIG = {
         'field': 'authorityauthor',
         'insert_here_field': '100__a',
         'sort_by': CFG_BIBAUTHORITY_AUTOSUGGEST_SORT_POPULAR,
+        'disambiguation_fields': ['100__d', '270__m'],
     },
     'CORPORATE': {
         'field': 'authoritycorporate',

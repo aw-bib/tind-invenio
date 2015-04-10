@@ -360,13 +360,13 @@ else:
                    '\t isbn: %s \n'\
                    '\t publisher: %s \n'\
                    '\t due date: %s \n\n'\
-                   'Please return the book to the UNOV Library as soon as possible.\n'
+                   'Please return the book to the %s as soon as possible.\n'
                    'If you would like to renew it, please login to your account to do so (https://unov.tind.io/youraccount/login?ln=en) or contact the Library.\n'
                    ' \n'
                    'Sincerely,\n'
-                   'UNOV Library team\n'
-                   '8.9790\n'
-                   'library@unvienna.org\n',
+                   '%s\n'
+                   '%s\n'
+                   '%s\n',
 
         'RECALL1': 'Dear Colleague,\n\n'\
                    'This is an automated notification from the UNOV Library. We would like to remind you that the '\
@@ -381,12 +381,14 @@ else:
                    '\t author(s): %s \n'\
                    '\t isbn: %s \n'\
                    '\t publisher: %s \n'\
-                '\t due date: %s\n\n'\
+                   '\t due date: %s\n\n'\
+
+                   'Please return the book to the %s as soon as possible.\n\n'
 
                    'Thank you for using our services\n'\
-                   'UNOV Library team\n'\
-                   '8.9790\n'\
-                   'library@unvienna.org\n\n'\
+                   '%s\n'\
+                   '%s\n'\
+                   '%s\n'\
 
                    'If you are not able to update your loans via WWW or for any other ' \
                    'matter concerning circulation of library material, please simply ' \
@@ -409,13 +411,15 @@ else:
                    '\t publisher: %s \n'\
                    '\t due date: %s \n\n'\
 
+                   'Please return the book to the %s as soon as possible.\n\n'
+
                    'Thank you in advance for your cooperation\n'\
-                   'UNOV Library team\n'
-                   '8.9790\n'
-                   'library@unvienna.org\n',
+                   '%s\n'
+                   '%s\n'
+                   '%s\n',
 
         'RECALL3': 'Dear Colleague,\n\n'\
-                   'This is an automated notification from the UNOV Library. We have already sent '\
+                   'This is an automated notification. We have already sent '\
                    'you two messages about the following Library item, which should have been returned '\
                    'a long time ago. According to our records, you have not responded to either of them. '\
                    'Please return the item to the Library without delay (either personally or by internal '\
@@ -433,10 +437,12 @@ else:
                    '\t publisher: %s \n'\
                    '\t due date: %s \n\n'\
 
+                   'Please return the book to the %s as soon as possible.\n\n'
+
                    'Thank you in advance for your cooperation\n'\
-                   'UNOV Library team\n'
-                   '8.9790\n'
-                   'library@unvienna.org\n',
+                   '%s\n'
+                   '%s\n'
+                   '%s\n',
         'EMPTY': 'Please choose one template'
         }
 

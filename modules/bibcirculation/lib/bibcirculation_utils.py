@@ -140,17 +140,17 @@ def update_user_info_from_ldap(user_id):
         result = ()
     else:
         try:
-            name    = ldap_info['displayName'][0]
+            name = ldap_info['displayName'][0]
         except KeyError:
-            name    = ""
+            name = ""
         try:
-            email   = ldap_info['mail'][0]
+            email = ldap_info['mail'][0]
         except KeyError:
-            email   = ""
+            email = ""
         try:
-            phone   = ldap_info['telephoneNumber'][0]
+            phone = ldap_info['telephoneNumber'][0]
         except KeyError:
-            phone   = ""
+            phone = ""
         try:
             address = ldap_info['physicalDeliveryOfficeName'][0]
         except KeyError:
@@ -818,8 +818,13 @@ def generate_email_body(template, loan_id, ill=0):
         book_isbn, book_editor) = book_information_from_MARC(int(recid))
         due_date = db.get_due_date(loan_id)
 
+        lib_id = db.get_library_for_loan(loan_id)
+        library_details = db.get_library_details(lib_id)
+        (library_id, name, address, email, phone,
+            lib_type, notes) = library_details
+
         out = template % (book_title, book_year, book_author,
-                      book_isbn, book_editor, due_date)
+                      book_isbn, book_editor, due_date, name, name, phone, email)
 
     return out
 

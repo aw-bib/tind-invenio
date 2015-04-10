@@ -2299,6 +2299,29 @@ def search_library_by_email(string):
                      """, (string, ))
     return res
 
+def get_library_for_loan(loan_id):
+    """
+    Get library id based on loan id
+    loan_id: the primary key in crcLOAN
+    """
+
+    res = run_sql("""SELECT id_crcLIBRARY
+                     FROM crcITEM
+                     LEFT JOIN crcLOAN
+                     ON crcITEM.barcode = crcLOAN.barcode
+                     WHERE crcLOAN.id = %s""", (loan_id, ))
+
+    if res:
+        return res[0]
+
+    # If no library, get a main library
+    (lib_id, name) = get_main_libraries()[0]
+    if lib_id:
+        return lib_id
+
+    # If no main library either, just pick one:
+    (lib_id, name) = get_all_libraries()[0]
+    return lib_id
 
 def get_library_holding_barcode(barcode):
     """
@@ -2325,8 +2348,6 @@ def get_library_holding_barcode(barcode):
 ###
 ### "Vendor" related functions ###
 ###
-
-
 
 
 def get_all_vendors():

@@ -224,7 +224,18 @@ if CFG_CERN_SITE == 1:
 
 else:
     CFG_BIBCIRCULATION_TEMPLATES = {
-        'OVERDUE': 'Overdue letter template (write some text)',
+       'OVERDUE':
+'Dear colleague,\n'
+'We would like to inform you that another staff member has requested the book that you have at your disposal:\n'
+' \n'
+' \n'
+'As the book is overdue please return the book to the UNOV Library as soon as possible.\n'
+' \n'
+' \n'
+'Sincerely,\n'
+'UNOV Library team\n'
+'8.9790\n'
+'library@unvienna.org\n',
         'REMINDER': 'Reminder letter template (write some text)',
         'NOTIFICATION': 'Hello,\n'\
                     'This is an automatic email for confirming the request for a book on behalf of:\n'\
@@ -239,7 +250,11 @@ else:
                     '\tLibrary: %s\n'\
                     '\t%s\n\n'\
                     '\tRequest date: %s\n\n'\
-                    'Best regards\n',
+                    'The book will be sent to you via the internal mail.\n'
+                    'Sincerely \n\n'\
+                    'UNOV Library team \n\n'\
+                    '8.9790 \n\n'\
+                    'library@unvienna.org \n',
 
         'ILL_RECEIVED': 'Dear colleague,\n\n'\
                     'The document you requested has been received. '\
@@ -276,13 +291,34 @@ else:
                         'this mail giving any comments. '\
                         'Failure to do that could result in the Library being fined. If you have already returned the document, please ignore this message.\n\n'\
                         'Thank you for using our services,\n\n'\
-                        'Jens Vigen, Head of Library',
+                        'Library Staff',
 
-        'PURCHASE_NOTIFICATION': 'Dear colleague,\n\n'\
-                        'We have received your request.\n'\
+        'PURCHASE_NOTIFICATION':
+'Hello,\n'
+'This is an automatic email confirming the request to purchase the following book on behalf of:\n'
+' \n'
+' \n'
                         '\tTitle: %s\n\n'\
-                        'We will process your order of the document immediately and will contact you as soon as it is delivered.\n\n'\
-                        'Best regards,\nLibrary team\n',
+' \n'
+'               \n'
+'Sincerely,\n'
+'UNOV Library team\n'
+'8.9790\n'
+'library@unvienna.org\n'
+' \n'
+,
+        'PURCHASE_RECEIVED': 'Dear colleague,\n\n'\
+
+                        'The book you requested has been received.\n'\
+                        'Would you like to come to the Library to pick it up or do you prefer '\
+                        'we send it to you by internal mail?\n\n'\
+
+                        'Best regards,\n'\
+                        'UNOV Library team \n\n'\
+
+                        '8.9790 \n\n'\
+
+                        'library@unvienna.org \n',
 
         'PURCHASE_RECEIVED_TID': 'Dear colleague,\n\n'\
                         'The document you requested has been received. '\
@@ -315,21 +351,28 @@ else:
                     'Please let us know if this solution suits you.\n\n'\
                     'Best regards,\nLibrary team\n',
 
-        'SEND_RECALL': 'Dear Colleague,\n\n'\
-                       'The loan for the document(s)\n\n'\
-                       'Item information:\n\n'\
-                       '\t title: %s \n'\
-                       '\t year: %s \n'\
-                       '\t author(s): %s \n'\
-                       '\t isbn: %s \n'\
-                       '\t publisher: %s \n\n'\
-                       'is overdue and another reader(s) is/are waiting for the document(s). '\
-                       'Please return them to the Library as soon as possible.'\
-                       '\n\nBest regards',
+        'SEND_RECALL': 'Dear colleague,\n'
+                   'We would like to remind you that the following item at your disposal is overdue:\n'
+                   ' \n'
+                   '\t title: %s \n'\
+                   '\t year: %s \n'\
+                   '\t author(s): %s \n'\
+                   '\t isbn: %s \n'\
+                   '\t publisher: %s \n'\
+                   '\t due date: %s \n\n'\
+                   'Please return the book to the UNOV Library as soon as possible.\n'
+                   'If you would like to renew it, please login to your account to do so (https://unov.tind.io/youraccount/login?ln=en) or contact the Library.\n'
+                   ' \n'
+                   'Sincerely,\n'
+                   'UNOV Library team\n'
+                   '8.9790\n'
+                   'library@unvienna.org\n',
+
         'RECALL1': 'Dear Colleague,\n\n'\
-                   'The loan period has now expired for the following Library item which you '\
-                   ' borrowed. Please return it to the Library (either personally or by '\
-                   ' internal mail) or extend the loan at:\n\n'\
+                   'This is an automated notification from the UNOV Library. We would like to remind you that the '\
+                   'following Library item, which you borrowed, is now overdue. Please return it to the Library '\
+                   '(either personally or by internal mail) or extend the loan at:\n\n'\
+
                    '%s/yourloans/display \n\n' % CFG_SITE_URL +
                    'If you have already done so, please ignore this message.\n\n'\
                    'Item information:\n\n'\
@@ -337,41 +380,63 @@ else:
                    '\t year: %s \n'\
                    '\t author(s): %s \n'\
                    '\t isbn: %s \n'\
-                   '\t publisher: %s \n\n'\
-                   'Thank you for using our services, Library Staff \n\n\n\n'\
+                   '\t publisher: %s \n'\
+                '\t due date: %s\n\n'\
+
+                   'Thank you for using our services\n'\
+                   'UNOV Library team\n'\
+                   '8.9790\n'\
+                   'library@unvienna.org\n\n'\
+
                    'If you are not able to update your loans via WWW or for any other ' \
                    'matter concerning circulation of library material, please simply ' \
                    'reply to this mail.',
+
         'RECALL2': 'Dear Colleague\n\n'\
                    'The return date for the following Library item which you borrowed is now ' \
                    'well past. According to our records you have not responded to our first ' \
                    'recall message, so we now ask you to return the item to the Library '\
                    'without delay (either personally or by internal mail) or extend the loan at:\n\n'\
                    '%s/yourloans/display \n\n' % CFG_SITE_URL +
-                   'If you have already done so, please ignore this message. To send any comments, '\
-                   'reply to this mail. \n' \
+
+                   'If you have already done so, please ignore this message.\n' \
                    'Item information:\n\n'\
-                   '%s \n'\
-                   '%s \n'\
-                   '%s \n'\
-                   '%s \n'\
-                   '%s \n\n'\
-                   'Thank you in advance for your cooperation, Library Staff',
+
+                   '\t title: %s \n'\
+                   '\t year: %s \n'\
+                   '\t author(s): %s \n'\
+                   '\t isbn: %s \n'\
+                   '\t publisher: %s \n'\
+                   '\t due date: %s \n\n'\
+
+                   'Thank you in advance for your cooperation\n'\
+                   'UNOV Library team\n'
+                   '8.9790\n'
+                   'library@unvienna.org\n',
+
         'RECALL3': 'Dear Colleague,\n\n'\
-               'We have already sent you two messages about the following Library item, '\
-               'which should have been returned a long time ago. According to our records, '\
-               'you have not responded to either of them. Please return the item to the '\
-               'Library without delay (either personally or by internal mail) or reply to '\
-               'this mail giving any comments or extend the loan at:\n\n'\
-               '%s/yourloans/display \n\n' % CFG_SITE_URL +
-               'If you have already returned the item, please ignore this message.\n\n'\
-               'Item information:\n\n'\
-               '%s \n'\
-               '%s \n'\
-               '%s \n'\
-               '%s \n'\
-               '%s \n\n'\
-               'Thank you in advance for your cooperation, Library Staff',
+                   'This is an automated notification from the UNOV Library. We have already sent '\
+                   'you two messages about the following Library item, which should have been returned '\
+                   'a long time ago. According to our records, you have not responded to either of them. '\
+                   'Please return the item to the Library without delay (either personally or by internal '\
+                   'mail) or reply to this mail giving any comments or extend the loan at:\n\n'\
+
+                   '%s/yourloans/display \n\n' % CFG_SITE_URL +
+
+                   'If you have already returned the item, please ignore this message.\n'\
+                   'Item information:\n\n'\
+
+                   '\t title: %s \n'\
+                   '\t year: %s \n'\
+                   '\t author(s): %s \n'\
+                   '\t isbn: %s \n'\
+                   '\t publisher: %s \n'\
+                   '\t due date: %s \n\n'\
+
+                   'Thank you in advance for your cooperation\n'\
+                   'UNOV Library team\n'
+                   '8.9790\n'
+                   'library@unvienna.org\n',
         'EMPTY': 'Please choose one template'
         }
 
@@ -380,8 +445,8 @@ if CFG_CERN_SITE == 1:
     CFG_BIBCIRCULATION_LIBRARIAN_EMAIL = 'CERN Library Desk<library.desk@cern.ch>'
     CFG_BIBCIRCULATION_LOANS_EMAIL = 'CERN Lib loans<lib.loans@cern.ch>'
 else:
-    CFG_BIBCIRCULATION_ILLS_EMAIL = 'Atlantis Library<balthasar.montague@cds.cern.ch>'
-    CFG_BIBCIRCULATION_LIBRARIAN_EMAIL = 'Atlantis Library<balthasar.montague@cds.cern.ch>'
+    CFG_BIBCIRCULATION_ILLS_EMAIL = 'UNOV Library<library@unvienna.org>'
+    CFG_BIBCIRCULATION_LIBRARIAN_EMAIL = 'UNOV Library<library@unvienna.org>'
     CFG_BIBCIRCULATION_LOANS_EMAIL = CFG_BIBCIRCULATION_LIBRARIAN_EMAIL
 
 if CFG_CERN_SITE:
@@ -403,11 +468,13 @@ CFG_BIBCIRCULATION_ITEM_STATUS = CFG_BIBCIRCULATION_ITEM_STATUS_OPTIONAL + \
                                  [CFG_BIBCIRCULATION_ITEM_STATUS_ON_SHELF,
                                   CFG_BIBCIRCULATION_ITEM_STATUS_ON_LOAN,
                                   CFG_BIBCIRCULATION_ITEM_STATUS_IN_PROCESS,
-                                  CFG_BIBCIRCULATION_ITEM_STATUS_UNDER_REVIEW,
-                                  CFG_BIBCIRCULATION_ITEM_STATUS_CANCELLED,
-                                  CFG_BIBCIRCULATION_ITEM_STATUS_NOT_ARRIVED,
+                                  #CFG_BIBCIRCULATION_ITEM_STATUS_UNDER_REVIEW,
+                                  #CFG_BIBCIRCULATION_ITEM_STATUS_CANCELLED,
+                                  #CFG_BIBCIRCULATION_ITEM_STATUS_NOT_ARRIVED,
                                   CFG_BIBCIRCULATION_ITEM_STATUS_ON_ORDER,
-                                  CFG_BIBCIRCULATION_ITEM_STATUS_CLAIMED]
+                                  CFG_BIBCIRCULATION_ITEM_STATUS_CLAIMED,
+                                  'lost',
+                                  'withdrawn',]
 
 CFG_BIBCIRCULATION_LOAN_STATUS = [CFG_BIBCIRCULATION_LOAN_STATUS_ON_LOAN,
                                   CFG_BIBCIRCULATION_LOAN_STATUS_EXPIRED,
@@ -432,10 +499,11 @@ CFG_BIBCIRCULATION_ACQ_TYPE = ['acq-book', 'acq-standard']
 
 CFG_BIBCIRCULATION_PROPOSAL_TYPE = ['proposal-book']
 
-CFG_BIBCIRCULATION_COLLECTION = ['Monograph', 'Reference', 'Archives',
-                                 'Library', 'Conference', 'LSL Depot',
-                                 'Oversize', 'Official', 'Pamphlet', 'CDROM',
-                                 'Standards', 'Video & Trainings', 'Periodical']
+CFG_BIBCIRCULATION_COLLECTION = ["Articles", "Bibliographies", "Books", "Conferences",
+                                 "Directories", "Multimedia", "Occasional papers",
+                                 "Pamphlets/Leaflets", "Periodicals", "Picture books",
+                                 "Plans of action", "Reports", "Reference materials",
+                                 "Teaching materials, manuals", "UDHR", "Textbooks"]
 
 AMZ_ACQUISITION_IDENTIFIER_TAG = '595__a'
 
@@ -464,3 +532,9 @@ CFG_BIBCIRCULATION_ACQ_STATUS = [CFG_BIBCIRCULATION_ACQ_STATUS_NEW,
                                  CFG_BIBCIRCULATION_ACQ_STATUS_PARTIAL_RECEIPT,
                                  CFG_BIBCIRCULATION_ACQ_STATUS_RECEIVED,
                                  CFG_BIBCIRCULATION_ACQ_STATUS_CANCELLED]
+
+CFG_BIBCIRCULATION_COLLECTION_SEARCH = ['UNLV General Collection',
+                                        'UNODC-Drug and Crime Collection',
+                                        'UNCITRAL Law Library',
+                                        'OOSA Collection',
+                                        'CTBTO Library',]

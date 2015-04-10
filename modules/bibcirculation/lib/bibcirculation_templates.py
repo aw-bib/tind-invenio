@@ -909,7 +909,7 @@ class Template:
         _ = gettext_set_language(ln)
 
         today = datetime.date.today()
-        gap = datetime.timedelta(days=180)
+        gap = datetime.timedelta(days=28)
         gap_1yr = datetime.timedelta(days=360)
         more_6_months = (today + gap).strftime('%Y-%m-%d')
         more_1_year = (today + gap_1yr).strftime('%Y-%m-%d')
@@ -8662,7 +8662,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                borrower_id,
                from_address,
                _("From"),
-               _("CERN Library"),
+               _("OHCHR Library"),
                _("To"),
                email)
 
@@ -8703,10 +8703,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                          <option value ="notification">%s</option>
                          <option value ="claim_return">%s</option>
                          <option value ="ill_recall1">%s</option>
-                         <option value ="proposal_acceptance">%s</option>
-                         <option value ="proposal_refusal">%s</option>
-                         <option value ="purchase_received_cash">%s</option>
-                         <option value ="purchase_received_tid">%s</option>
+                         <option value ="purchase_received">%s</option>
                     </select>
                     <br />
                     <br />
@@ -8720,10 +8717,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                _("Notification"),
                _("Loan recall"),
                _("ILL recall"),
-               _("Proposal-accept"),
-               _("Proposal-refuse"),
-               _("Purchase-received-cash"),
-               _("Purchase-received-TID"),
+               _("Purchase-received"),
                _("Load"))
 
         out += """

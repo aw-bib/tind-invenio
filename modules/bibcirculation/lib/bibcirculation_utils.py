@@ -815,10 +815,11 @@ def generate_email_body(template, loan_id, ill=0):
     else:
         recid = db.get_loan_recid(loan_id)
         (book_title, book_year, book_author,
-         book_isbn, book_editor) = book_information_from_MARC(int(recid))
+        book_isbn, book_editor) = book_information_from_MARC(int(recid))
+        due_date = db.get_due_date(loan_id)
 
         out = template % (book_title, book_year, book_author,
-                      book_isbn, book_editor)
+                      book_isbn, book_editor, due_date)
 
     return out
 

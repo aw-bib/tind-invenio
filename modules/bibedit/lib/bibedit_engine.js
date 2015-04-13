@@ -529,6 +529,28 @@ function onBulkReqError(data) {
           };
 }
 
+function computeRecordLenth() {
+    createReq({recID: gRecID, requestType: 'getTextMarc'},function(json) {
+    if($('#content_000_0').length > 0) {
+         var tag_000_value = $('#content_000_0')[0].innerHTML;
+         var truncated_000_value = tag_000_value.substring(5,tag_000_value.length)
+         var length_record = json["textmarc"].length.toString();
+         length_record = new Array(6 - length_record.length).join('0') + length_record;
+         var full_value = length_record + truncated_000_value
+
+         if(full_value != tag_000_value) {
+                 $('#content_000_0')[0].innerHTML = full_value;
+                gRecord["000"][0][3] = full_value;
+            }
+         onContentChange(full_value, {type:"content", tag:"000", fieldPosition:0, subfieldIndex:undefined,tag_ind:"000"});
+         if(full_value!==tag_000_value)
+         {
+            save_changes();
+         }
+         }}
+
+       );
+}
 
 function createBulkReq(reqsData, onSuccess, optArgs){
   /* optArgs is a disctionary containning the optional arguments
@@ -547,7 +569,9 @@ function createBulkReq(reqsData, onSuccess, optArgs){
 
     var errorCallback = onBulkReqError(data);
 
-    createReq(data, onSuccess, optArgs.asynchronous, undefined, errorCallback);
+
+    createReq(data, onSuccess, optArgs.asynchronous, undefined, errorCallback)
+
 }
 
 
@@ -667,6 +691,10 @@ function save_changes() {
   */
   var optArgs = {};
   var saveChangesPromise = new $.Deferred();
+
+  saveChangesPromise.done(function() {
+    computeRecordLenth();
+  });
 
   if (gReqQueue.length > 0) {
     updateStatus('saving');
@@ -3805,6 +3833,9 @@ function convertFieldIntoEditable(cell, shouldSelect){
               addChangeControl(changeNum, true);
           }
         }
+        if (subfieldIndex == undefined) {
+            gRecord[tag][0][3] = data;
+        }
         var autosuggest_id = 'autosuggest_' + tmpArray[1] + '_' + tmpArray[2] + '_' + tmpArray[3];
         var autosugg_in = document.getElementById(autosuggest_id);
         if (autosugg_in != null) {autosugg_in.innerHTML = "";}
@@ -3825,7 +3856,7 @@ function convertFieldIntoEditable(cell, shouldSelect){
         }
         else if (subfieldIndex == undefined){
           // Controlfield
-          tmpResult = field[3];
+         tmpResult = field[3];
         }
         else if (tmpArray[0] == 'subfieldTag'){
             tmpResult = field[0][subfieldIndex][0];
@@ -3880,7 +3911,7 @@ function updateSubfieldValue(tag, fieldPosition, subfieldIndex, subfieldCode,
   if (consumedChange == undefined || consumedChange == null){
     consumedChange = -1;
   }
-
+  console.log("Aa");
   var data = getUpdateSubfieldValueRequestData(tag,
                                                fieldPosition,
                                                subfieldIndex,
@@ -3905,7 +3936,7 @@ function getBulkUpdateSubfieldContentRequestData(tag, fieldPosition,
      *
      */
     var changesAdd = [];
-
+    console.log("Ab");
     var data = getUpdateSubfieldValueRequestData(tag,
                                                  fieldPosition,
                                                  subfieldIndex,
@@ -6534,7 +6565,6 @@ function onSubfieldCodeChange(value, cell) {
 
   var field_instance = gRecord[cell.tag][cell.fieldPosition];
   var subfield_instance = field_instance[0][cell.subfieldIndex];
-
   if (subfield_instance[0] == value) {
     return value;
   }
@@ -6582,6 +6612,7 @@ function onContentChange(value, cell) {
   }
 
   /* Get field instance to be updated from global variable gRecord */
+  console.log(cell);
   var field_instance = gRecord[cell.tag][cell.fieldPosition];
   var subfield_instance = field_instance[0][cell.subfieldIndex];
 
@@ -6655,7 +6686,8 @@ function onContentChange(value, cell) {
                                                  old_subfield_code,
                                                  operation_type);
     addUndoOperation(urHandler);
-
+    console.log("omg");
+    console.log(value);
     updateSubfieldValue(cell.tag, cell.fieldPosition, cell.subfieldIndex, old_subfield_code,
                         value, null, urHandler);
     updateModel();

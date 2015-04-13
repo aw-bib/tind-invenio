@@ -323,6 +323,7 @@ function onKeyReturn(event) {
    * Handle key return (edit subfield).
    */
   if ((event.target.nodeName == 'TEXTAREA')||(event.target.nodeName == 'INPUT')) {
+    console.log($(event.target).parent().submit);
     $(event.target).parent().submit();
     event.preventDefault();
   }

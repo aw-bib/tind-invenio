@@ -52,7 +52,8 @@ from invenio.bibedit_config import CFG_BIBEDIT_AJAX_RESULT_CODES, \
     CFG_BIBEDIT_KEYWORD_RDFLABEL, CFG_BIBEDIT_REQUESTS_UNTIL_SAVE, \
     CFG_BIBEDIT_DOI_LOOKUP_FIELD, CFG_DOI_USER_AGENT, \
     CFG_BIBEDIT_DISPLAY_REFERENCE_TAGS, CFG_BIBEDIT_DISPLAY_AUTHOR_TAGS, \
-    CFG_BIBEDIT_EXCLUDE_CURATOR_TAGS, CFG_BIBEDIT_AUTHOR_DISPLAY_THRESHOLD
+    CFG_BIBEDIT_EXCLUDE_CURATOR_TAGS, CFG_BIBEDIT_AUTHOR_DISPLAY_THRESHOLD, \
+    CFG_BIBEDIT_PROTECTED_CONTROLFIELD, CFG_BIBEDIT_ADVANCED_GUI_CF
 
 from invenio.dbquery import run_sql
 
@@ -270,7 +271,9 @@ def perform_request_init(uid, ln, req, lastupdated):
             'gExcludeCuratorTags': CFG_BIBEDIT_EXCLUDE_CURATOR_TAGS,
             'gSHOW_HP_REMOVED_FIELDS': CFG_BIBEDIT_SHOW_HOLDING_PEN_REMOVED_FIELDS,
             'gBIBCATALOG_SYSTEM_RT_URL': repr(CFG_BIBCATALOG_SYSTEM_RT_URL),
-            'gAutoComplete': json.dumps(CFG_BIBEDIT_AUTOCOMPLETE)
+            'gAutoComplete': json.dumps(CFG_BIBEDIT_AUTOCOMPLETE),
+            'gProtectedControlfield':json.dumps(CFG_BIBEDIT_PROTECTED_CONTROLFIELD),
+            'gAdvancedGuiCf':json.dumps(CFG_BIBEDIT_ADVANCED_GUI_CF)
             }
     body += '<script type="text/javascript">\n'
     for key in data:

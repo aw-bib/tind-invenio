@@ -452,6 +452,8 @@ function createRow(tag, ind1, ind2, subfieldCode, subfieldValue, fieldID,
         if (autosuggest === true) {
           i = gAUTOSUGGEST_TAGS.length + 1;
         }
+      } else { 
+        break;
       }
     }
     for (var i = 0, n = gAUTOCOMPLETE_TAGS.length; i < n; i++) {
@@ -572,8 +574,11 @@ function redrawFields(tag, skipAddFileds) {
     } else {
         // New tag. Determine previous sibling.
         var prevTag = getPreviousTag(tag);
-        var lastIndex = gRecord[prevTag].length - 1;
-        prevRowGroup = $('#rowGroup_' + prevTag + '_' + lastIndex);
+        if(prevTag!==0) {
+            var lastIndex = gRecord[prevTag].length - 1;
+            prevRowGroup = $('#rowGroup_' + prevTag + '_' + lastIndex);
+        }
+
     }
 
     // Redraw all fields and append to table.
@@ -590,7 +595,12 @@ function redrawFields(tag, skipAddFileds) {
                 result += createField(tag, fields[i], i);
             }
         }
-        prevRowGroup.after(result);
+        if(prevRowGroup!==undefined) { 
+            prevRowGroup.after(result);
+        } else { 
+            $('#rowGroup_001_0').before(result);
+        }
+
     }
 
     // Now redraw all the Holding Pen changes connected controls

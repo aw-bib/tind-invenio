@@ -35,7 +35,7 @@ var autosuggesting = false;
 function initInputHotkeys(inputElement, original) {
   /* Binding of shortcuts for input elements */
 
-  // Lauch autosuggest
+  // Launch autosuggest
   var os = navigator.platform, element = $(inputElement);
   if (original !== undefined) {
     var originalId = original.id;

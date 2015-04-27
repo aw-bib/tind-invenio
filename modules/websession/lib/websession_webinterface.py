@@ -611,9 +611,9 @@ class WebInterfaceYourAccountPages(WebInterfaceDirectory):
         # load the right message language
         _ = gettext_set_language(args['ln'])
 
-        if uid == -1 or CFG_ACCESS_CONTROL_LEVEL_SITE >= 1:
-            return webuser.page_not_authorized(req, "../youraccount/lost",
-                                               navmenuid='youraccount')
+#        if uid == -1 or CFG_ACCESS_CONTROL_LEVEL_SITE >= 1:
+#            return webuser.page_not_authorized(req, "../youraccount/lost",
+#                                               navmenuid='youraccount')
 
         return page(title=_("Lost your password?"),
                     body=webaccount.perform_lost(args['ln']),

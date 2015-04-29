@@ -226,16 +226,16 @@ else:
     CFG_BIBCIRCULATION_TEMPLATES = {
        'OVERDUE':
 'Dear colleague,\n'
-'We would like to inform you that another staff member has requested the book that you have at your disposal:\n'
+'We would like to inform you that another staff member has requested a book that you have at your disposal:\n'
 ' \n'
 ' \n'
-'As the book is overdue please return the book to the UNOV Library as soon as possible.\n'
+'Please return the book to the UNOV Library as soon as possible.\n'
 ' \n'
 ' \n'
 'Sincerely,\n'
-'UNOV Library team\n'
-'8.9790\n'
-'library@unvienna.org\n',
+'Library team\n'
+'\n'
+'\n',
         'REMINDER': 'Reminder letter template (write some text)',
         'NOTIFICATION': 'Hello,\n'\
                     'This is an automatic email for confirming the request for a book on behalf of:\n'\
@@ -250,11 +250,12 @@ else:
                     '\tLibrary: %s\n'\
                     '\t%s\n\n'\
                     '\tRequest date: %s\n\n'\
+
                     'The book will be sent to you via the internal mail.\n'
                     'Sincerely \n\n'\
-                    'UNOV Library team \n\n'\
-                    '8.9790 \n\n'\
-                    'library@unvienna.org \n',
+                    'Library team \n\n'\
+                    ' \n\n'\
+                    ' \n',
 
         'ILL_RECEIVED': 'Dear colleague,\n\n'\
                     'The document you requested has been received. '\
@@ -305,49 +306,50 @@ else:
 'UNOV Library team\n'
 '8.9790\n'
 'library@unvienna.org\n'
-' \n'
-,
-        'PURCHASE_RECEIVED': 'Dear colleague,\n\n'\
+' \n',
+        'PURCHASE_RECEIVED': 'Dear colleague,\n\n'
 
-                        'The book you requested has been received.\n'\
-                        'Would you like to come to the Library to pick it up or do you prefer '\
-                        'we send it to you by internal mail?\n\n'\
+                        'The book you requested has been received.\n'
+                        'Would you like to come to the library to pick it up '
+                        'or do you prefer we deliver it to your office?\n\n'
 
-                        'Best regards,\n'\
-                        'UNOV Library team \n\n'\
-
-                        '8.9790 \n\n'\
-
+                        'Best regards,\n'
+                        'Library team \n\n'
+                        '\n'
                         'library@unvienna.org \n',
 
-        'PURCHASE_RECEIVED_TID': 'Dear colleague,\n\n'\
-                        'The document you requested has been received. '\
-                        'The price is %s\n\n'\
-                        'A TID will be issued for the payment. \n\n'\
-                        'Do you want to come to the Library desk to pick it up or do you prefer we send it to you by internal mail?\n\n'\
+        'PURCHASE_RECEIVED_TID': 'Dear colleague,\n\n'
+                        'The document you requested has been received. '
+                        'The price is %s\n\n'
+                        'A TID will be issued for the payment. \n\n'
+                        'Do you want to come to the Library desk to pick it '
+                        'up or do you prefer we deliver it to your office?\n\n'
                         'Best regards,\nLibrary team\n',
 
-        'PURCHASE_RECEIVED_CASH': 'Dear colleague,\n\n'\
-                        'The document you requested has been received. '\
-                        'The price is %s\n\n'\
-                        'Please come to the library desk to pay and pick up the document.\n\n'\
+        'PURCHASE_RECEIVED_CASH': 'Dear colleague,\n\n'
+                        'The document you requested has been received. '
+                        'The price is %s\n\n'
+                        'Please come to the library desk to pay '
+                        'and pick up the document.\n\n'
                         'Best regards,\nLibrary team\n',
 
-        'PROPOSAL_NOTIFICATION': 'Dear colleague,\n\n'\
-                    'We thank you for your suggestion for the Library collection: \n'\
-                    '\tTitle: %s\n\n'\
-                    'Our team will review your proposal and will get back to you soon to inform you of our decision.\n\n'\
+        'PROPOSAL_NOTIFICATION': 'Dear colleague,\n\n'
+                    'We thank you for your suggestion for the '
+                    'library collection: \n'
+                    '\tTitle: %s\n\n'
+                    'Our team will review your proposal and will get back to '
+                    'you soon to inform you of our decision.\n\n'\
                     'Best regards,\nLibrary team\n',
 
-    'PROPOSAL_ACCEPTANCE_NOTIFICATION': 'Dear colleague,\n\n'\
-                    'Following your suggestion, our team has decided to acquire the book for the Library collection. '\
-                    'As soon as we receive the book, we will send it on loan to you via internal mail. \n\n'\
+    'PROPOSAL_ACCEPTANCE_NOTIFICATION': 'Dear colleague,\n\n'
+                    'Following your suggestion, our team has decided to acquire the book for the library collection. '
+                    'As soon as we receive the book, we will lend it to you. \n\n'
                     'Best regards,\nLibrary team\n',
 
     'PROPOSAL_REFUSAL_NOTIFICATION': 'Dear colleague,\n\n'\
                     'Concerning your suggestion, we regret to inform you that our team has decided not to acquire the book '\
-                    'for the Library collection for the following reason(s): <Reason> \n\n'\
-                    'However, if you need this document for your work, we will be able to get it on loan from another Library. '\
+                    'for the library collection for the following reason(s): <Reason> \n\n'\
+                    'However, if you need this document for your work, we will be able to get it on loan from another library. '\
                     'Please let us know if this solution suits you.\n\n'\
                     'Best regards,\nLibrary team\n',
 
@@ -361,7 +363,7 @@ else:
                    '\t publisher: %s \n'\
                    '\t due date: %s \n\n'\
                    'Please return the book to the %s as soon as possible.\n'
-                   'If you would like to renew it, please login to your account to do so (https://unov.tind.io/youraccount/login?ln=en) or contact the Library.\n'
+                   'If you would like to renew it, please login to your account to do so (https://unov.tind.io/youraccount/login?ln=en) or contact the library.\n'
                    ' \n'
                    'Sincerely,\n'
                    '%s\n'
@@ -369,8 +371,8 @@ else:
                    '%s\n',
 
         'RECALL1': 'Dear Colleague,\n\n'\
-                   'This is an automated notification from the UNOV Library. We would like to remind you that the '\
-                   'following Library item, which you borrowed, is now overdue. Please return it to the Library '\
+                   'This is an automated notification. We would like to remind you that the '\
+                   'following library item, which you borrowed, is now overdue. Please return it to the library '\
                    '(either personally or by internal mail) or extend the loan at:\n\n'\
 
                    '%s/yourloans/display \n\n' % CFG_SITE_URL +
@@ -394,55 +396,57 @@ else:
                    'matter concerning circulation of library material, please simply ' \
                    'reply to this mail.',
 
-        'RECALL2': 'Dear Colleague\n\n'\
-                   'The return date for the following Library item which you borrowed is now ' \
-                   'well past. According to our records you have not responded to our first ' \
-                   'recall message, so we now ask you to return the item to the Library '\
-                   'without delay (either personally or by internal mail) or extend the loan at:\n\n'\
+        'RECALL2': 'Dear Colleague,\n\n'\
+                   'This is an automated notification. We would like to remind you that the '\
+                   'following library item, which you borrowed, is now overdue. Please return it to the library '\
+                   '(either personally or by internal mail) or extend the loan at:\n\n'\
+
                    '%s/yourloans/display \n\n' % CFG_SITE_URL +
-
-                   'If you have already done so, please ignore this message.\n' \
+                   'If you have already done so, please ignore this message.\n\n'\
                    'Item information:\n\n'\
-
                    '\t title: %s \n'\
                    '\t year: %s \n'\
                    '\t author(s): %s \n'\
                    '\t isbn: %s \n'\
                    '\t publisher: %s \n'\
-                   '\t due date: %s \n\n'\
+                   '\t due date: %s\n\n'\
 
                    'Please return the book to the %s as soon as possible.\n\n'
 
-                   'Thank you in advance for your cooperation\n'\
-                   '%s\n'
-                   '%s\n'
-                   '%s\n',
+                   'Thank you for using our services\n'\
+                   '%s\n'\
+                   '%s\n'\
+                   '%s\n'\
+
+                   'If you are not able to update your loans via WWW or for any other ' \
+                   'matter concerning circulation of library material, please simply ' \
+                   'reply to this mail.',
 
         'RECALL3': 'Dear Colleague,\n\n'\
-                   'This is an automated notification. We have already sent '\
-                   'you two messages about the following Library item, which should have been returned '\
-                   'a long time ago. According to our records, you have not responded to either of them. '\
-                   'Please return the item to the Library without delay (either personally or by internal '\
-                   'mail) or reply to this mail giving any comments or extend the loan at:\n\n'\
+                   'This is an automated notification. We would like to remind you that the '\
+                   'following library item, which you borrowed, is now overdue. Please return it to the library '\
+                   '(either personally or by internal mail) or extend the loan at:\n\n'\
 
                    '%s/yourloans/display \n\n' % CFG_SITE_URL +
-
-                   'If you have already returned the item, please ignore this message.\n'\
+                   'If you have already done so, please ignore this message.\n\n'\
                    'Item information:\n\n'\
-
                    '\t title: %s \n'\
                    '\t year: %s \n'\
                    '\t author(s): %s \n'\
                    '\t isbn: %s \n'\
                    '\t publisher: %s \n'\
-                   '\t due date: %s \n\n'\
+                   '\t due date: %s\n\n'\
 
                    'Please return the book to the %s as soon as possible.\n\n'
 
-                   'Thank you in advance for your cooperation\n'\
-                   '%s\n'
-                   '%s\n'
-                   '%s\n',
+                   'Thank you for using our services\n'\
+                   '%s\n'\
+                   '%s\n'\
+                   '%s\n'\
+
+                   'If you are not able to update your loans via WWW or for any other ' \
+                   'matter concerning circulation of library material, please simply ' \
+                   'reply to this mail.',
         'EMPTY': 'Please choose one template'
         }
 

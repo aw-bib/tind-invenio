@@ -509,18 +509,20 @@ CFG_BIBCIRCULATION_ACQ_TYPE = ['acq-book', 'acq-standard']
 
 CFG_BIBCIRCULATION_PROPOSAL_TYPE = ['proposal-book']
 
-CFG_BIBCIRCULATION_COLLECTION = ["Articles", "Bibliographies", "Books", "Conferences",
-                                 "Directories", "Multimedia", "Occasional papers",
-                                 "Pamphlets/Leaflets", "Periodicals", "Picture books",
-                                 "Plans of action", "Reports", "Reference materials",
-                                 "Teaching materials, manuals", "UDHR", "Textbooks"]
+CFG_BIBCIRCULATION_COLLECTION = ["am", "Monograph", "Article", "Bibliographie",
+                                 "Book", "Conference", "Directory",
+                                 "Multimedia", "Occasional paper",
+                                 "Pamphlets/Leaflets", "Periodical",
+                                 "Picture book", "Plans of action", "Report",
+                                 "Reference material",
+                                 "Teaching materials, manuals", "Textbook"]
 
 AMZ_ACQUISITION_IDENTIFIER_TAG = '595__a'
 
 AMZ_BOOK_PUBLICATION_DATE_TAG = '269__c'
 
-#The library whose id will be used by default at the time inserting a
-#dummy/temporary item.
+# The library whose id will be used by default at the time inserting a
+# dummy/temporary item.
 CFG_BIBCIRCULATION_DEFAULT_LIBRARY_ID = 6
 
 CFG_BIBCIRCULATION_PROPOSAL_STATUS = [CFG_BIBCIRCULATION_PROPOSAL_STATUS_NEW,
@@ -543,8 +545,3 @@ CFG_BIBCIRCULATION_ACQ_STATUS = [CFG_BIBCIRCULATION_ACQ_STATUS_NEW,
                                  CFG_BIBCIRCULATION_ACQ_STATUS_RECEIVED,
                                  CFG_BIBCIRCULATION_ACQ_STATUS_CANCELLED]
 
-CFG_BIBCIRCULATION_COLLECTION_SEARCH = ['UNLV General Collection',
-                                        'UNODC-Drug and Crime Collection',
-                                        'UNCITRAL Law Library',
-                                        'OOSA Collection',
-                                        'CTBTO Library',]

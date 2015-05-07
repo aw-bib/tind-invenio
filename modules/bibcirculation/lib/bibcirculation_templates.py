@@ -8662,7 +8662,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                borrower_id,
                from_address,
                _("From"),
-               _("OHCHR Library"),
+               _(from_address),
                _("To"),
                email)
 

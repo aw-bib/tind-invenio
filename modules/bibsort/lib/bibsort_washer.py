@@ -123,6 +123,19 @@ class BibSortWasher(object):
                         return val
         return strftime(datetext_format, datestruct)
 
+    def _sort_date_008(self, val):
+        """
+        Extract year from 008 field.
+        Replace all non-numeric characters with 0 for better sorting.
+        """
+        year = ""
+        try:
+            year = val[7:11]
+        except ValueError:
+            year = "uuuu"
+        year = re.sub(r'[^\d]+', '0', year)
+        return year
+
     def _sort_numerically(self, val):
         """
         Convert:

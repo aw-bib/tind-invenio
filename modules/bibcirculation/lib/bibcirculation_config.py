@@ -545,3 +545,13 @@ CFG_BIBCIRCULATION_ACQ_STATUS = [CFG_BIBCIRCULATION_ACQ_STATUS_NEW,
                                  CFG_BIBCIRCULATION_ACQ_STATUS_RECEIVED,
                                  CFG_BIBCIRCULATION_ACQ_STATUS_CANCELLED]
 
+CFG_BIBCIRCULATION_COLLECTION_SEARCH = ["UNLV General Collection",
+                                        "OOSA Collection",
+                                        "ATTS",
+                                        "EPLS",
+                                        "Human Trafficking Coll.",
+                                        "Spanish Translation Collection",
+                                        "Staff Development",
+                                        "UNLV Journals Collection",
+                                        "UNCITRAL Law Library",
+                                        "CTBTO Library"]

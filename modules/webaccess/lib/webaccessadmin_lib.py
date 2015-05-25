@@ -64,6 +64,7 @@ from invenio.access_control_config import DEF_DEMO_USER_ROLES, \
     MAXSELECTUSERS, CFG_EXTERNAL_AUTH_DEFAULT, CFG_WEB_API_KEY_STATUS
 from invenio.bibtask import authenticate
 from cgi import escape
+from invenio.bibcirculation_dblayer import new_borrower
 
 def index(req, title='', body='', subtitle='', adminarea=2, authorized=0, ln=CFG_SITE_LANG):
     """main function to show pages for webaccessadmin.
@@ -961,7 +962,7 @@ def perform_accountoverview(req, callback='yes', confirm=0):
     else:
         return addadminbox(subtitle, body)
 
-def perform_createaccount(req, email='', password='', callback='yes', confirm=0):
+def perform_createaccount(req, email='', password='', name='', phone='', address='', mailbox='', callback='yes', confirm=0):
     """Modify default behaviour of a guest user or if new accounts should automatically/manually be modified."""
 
     (auth_code, auth_message) = is_adminuser(req)
@@ -975,6 +976,15 @@ def perform_createaccount(req, email='', password='', callback='yes', confirm=0)
     text += ' <input class="admin_wvar" type="text" name="email" value="%s" /><br />' % (email, )
     text += ' <span class="adminlabel">Password:</span>\n'
     text += ' <input class="admin_wvar" type="text" name="password" value="%s" /><br />' % (password, )
+    text += ' <div class="create_account_bibcirc_info"><strong>Bibcirculation user information:</strong></div>'
+    text += ' <span class="adminlabel">Name:</span>\n'
+    text += ' <input class="admin_wvar" type="text" name="name" value="%s" /><br />' % (name, )
+    text += ' <span class="adminlabel">Phone:</span>\n'
+    text += ' <input class="admin_wvar" type="text" name="phone" value="%s" /><br />' % (phone, )
+    text += ' <span class="adminlabel">Address:</span>\n'
+    text += ' <input class="admin_wvar" type="text" name="address" value="%s" /><br />' % (address, )
+    text += ' <span class="adminlabel">Mailbox:</span>\n'
+    text += ' <input class="admin_wvar" type="text" name="mailbox" value="%s" /><br />' % (mailbox, )
 
     output += createhiddenform(action="createaccount",
                                 text=text,
@@ -985,6 +995,10 @@ def perform_createaccount(req, email='', password='', callback='yes', confirm=0)
         res = run_sql("SELECT email FROM user WHERE email=%s", (email,))
         if not res:
             res = run_sql("INSERT INTO user (email,password, note) values(%s,AES_ENCRYPT(email,%s), '1')", (email, password))
+            # Create bibcirc borrower if name is not empty:
+            if name:
+                new_borrower(None, name, email, phone, address, mailbox, '')
+
             if CFG_ACCESS_CONTROL_NOTIFY_USER_ABOUT_NEW_ACCOUNT == 1:
                 emailsent = send_new_user_account_warning(email, email, password) 
             if password:

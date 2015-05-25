@@ -108,10 +108,10 @@ def deleteaccount(req, userID, callback='yes', confirm=0, ln=CFG_SITE_LANG):
 
     return wal.perform_deleteaccount(req=req, userID=userID, callback=callback, confirm=confirm)
 
-def createaccount(req, email='', password='', callback='yes', confirm=0, ln=CFG_SITE_LANG):
+def createaccount(req, email='', password='', name='', phone='', address='', mailbox='', callback='yes', confirm=0, ln=CFG_SITE_LANG):
     """create account"""
 
-    return wal.perform_createaccount(req=req, email=email, password=password, callback=callback, confirm=confirm)
+    return wal.perform_createaccount(req=req, email=email, password=password, name=name, phone=phone, address=address, mailbox=mailbox, callback=callback, confirm=confirm)
 
 def editaccount(req, userID, mtype='', content='', callback='yes', confirm=0, ln=CFG_SITE_LANG):
     """edit account. """

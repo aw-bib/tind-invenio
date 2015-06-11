@@ -224,99 +224,131 @@ if CFG_CERN_SITE == 1:
 
 else:
     CFG_BIBCIRCULATION_TEMPLATES = {
-       'OVERDUE':
-'Dear colleague,\n'
-'We would like to inform you that another staff member has requested a book that you have at your disposal:\n'
-' \n'
-' \n'
-'Please return the book to the UNOV Library as soon as possible.\n'
-' \n'
-' \n'
-'Sincerely,\n'
-'Library team\n'
-'\n'
-'\n',
-        'REMINDER': 'Reminder letter template (write some text)',
-        'NOTIFICATION': 'Hello,\n'\
-                    'This is an automatic email for confirming the request for a book on behalf of:\n'\
-                    '%s (ccid: %s, email: %s)\n'\
-                    '%s (%s)\n\n'\
-                    '\tTitle: %s\n'\
-                    '\tAuthor: %s\n'\
-                    '\tPublisher: %s\n'\
-                    '\tYear: %s\n'\
-                    '\tIsbn: %s\n\n'\
-                    '\tLocation: %s\n'\
-                    '\tLibrary: %s\n'\
-                    '\t%s\n\n'\
-                    '\tRequest date: %s\n\n'\
+        'OVERDUE': 'Dear colleague,\n'
+                   'We would like to inform you that the following item '
+                   'is now overdue :\n\n'
 
-                    'The book will be sent to you via the internal mail.\n'
-                    'Sincerely \n\n'\
-                    'Library team \n\n'\
-                    ' \n\n'\
-                    ' \n',
+                   'Please return it to the Library as soon as possible. '
+                   'If you would like to renew this title, please contact the '
+                   'Library to do so.\n\n'
 
-        'ILL_RECEIVED': 'Dear colleague,\n\n'\
-                    'The document you requested has been received. '\
-                    'Do you want to come to the Library desk to pick it up or do you prefer we send it to you by internal mail?\n\n'\
-                    'Best regards,\nLibrary team\n',
+                   'Sincerely,',
 
-        'ILL_RECALL1':  'Dear Colleague,\n\n'\
-                        'The loan period has now expired for the following document which has been borrowed for you '\
-                        'from another Library.\n\n'\
-                        'Please return it to the Library (either personally or by internal mail). Failure to do that could result in the library being fined. '\
-                        'If you have already returned the document, please ignore this message.\n'\
-                        'If you still need this title, please let us know by answering this email and we will check '\
-                        'with the external library if the loan can be extended or if we can find another copy for you.\n\n'\
-                        'Thank you for using our services,\n'\
-                        'Library Staff',
+        'REMINDER': 'Reminder letter template (write some text)\n\n\n'
+                    'Dear colleague,\n'
+                    'This is a gentle reminder that the following item at '
+                    'your disposal is now overdue :\n\n'
 
-        'ILL_RECALL2':  'Dear Colleague,\n\n'\
-                        'The return date for the following document which has been borrowed for you from another '\
-                        'library is now well past.\n\n'\
-                        'According to our records you have not responded to our first recall message, so we now ask '\
-                        'you to return the document to the Library without delay (either personally or by internal '\
-                        'mail). Failure to do that could result in the library being fined. '\
-                        'If you have already returned the document, please ignore this message.\n'\
-                        'If you still need this title, please let us know by answering this email and we will check '\
-                        'with the external library if the loan can be extended or if we can find another copy for you.\n\n'\
-                        'Thank you for using our services,\n'\
-                        'Library Staff',
+                    'Please return it to the Library as soon as possible. '
+                    'If you would like to renew this title, please contact '
+                    'the Library to do so.\n\n'
 
-        'ILL_RECALL3':  'Dear Colleague,\n\n'\
-                        'We have already sent you two messages about the following document borrowed for you from '\
-                        'another Library.\n\n'\
-                        'According to our records, you have not responded to either of them. Please return the '\
-                        'document to the  library without delay (either personally or by internal mail) or reply to '\
-                        'this mail giving any comments. '\
-                        'Failure to do that could result in the Library being fined. If you have already returned the document, please ignore this message.\n\n'\
-                        'Thank you for using our services,\n\n'\
-                        'Library Staff',
+                    'Sincerely,',
 
-        'PURCHASE_NOTIFICATION':
-'Hello,\n'
-'This is an automatic email confirming the request to purchase the following book on behalf of:\n'
-' \n'
-' \n'
-                        '\tTitle: %s\n\n'\
-' \n'
-'               \n'
-'Sincerely,\n'
-'UNOV Library team\n'
-'8.9790\n'
-'library@unvienna.org\n'
-' \n',
+        'NOTIFICATION': 'Hello,\n'
+                        'This is an automatic email to confirm the request '
+                        'for a book on behalf of:\n'
+                        '%s (ccid: %s, email: %s)\n'
+                        '%s (%s)\n\n'
+                        '\tTitle: %s\n'
+                        '\tAuthor: %s\n'
+                        '\tPublisher: %s\n'
+                        '\tYear: %s\n'
+                        '\tIsbn: %s\n\n'
+                        '\tLocation: %s\n'
+                        '\tLibrary: %s\n'
+                        '\t%s\n\n'
+                        '\tRequest date: %s\n\n'
+                        'This item is now ready to be picked up in the '
+                        'Library.\n\n'
+                        'Sincerely\n',
+
+        'ILL_RECEIVED': 'Dear colleague,\n\n'
+                        'The interlibrary loan you requested has been '
+                        'received and is ready to be picked up in the '
+                        'Library.\n\n'
+                        'Best regards,\nLibrary team\n',
+
+        'ILL_RECALL1':  'Dear Colleague,\n\n'
+
+                        'The following interlibrary loan is now overdue:\n\n'
+
+                        'Please return it to the Library as soon as possible.'
+                        'Failure to return it in a timely fashion could '
+                        'result in the Library being fined.\n\n'
+
+                        'If you have already returned the item, please '
+                        'ignore this message.\n\n'
+
+                        'If you still need this title, please let us know by '
+                        'answering this email and we will check with the '
+                        'external library if the loan can be extended or '
+                        'if we can find another copy for you.\n\n'
+
+                        'Thank you for using our services',
+
+        'ILL_RECALL2':  'Dear Colleague,\n\n'
+
+                        'This is a follow up message about the following '
+                        'overdue item borrowed for you from another '
+                        'library:\n\n'
+
+                        'According to our records, you have not responded. '
+                        'Please return the item to the Library without delay. '
+                        'Failure to return it in a timely fashion could '
+                        'result in the Library being fined.\n\n'
+
+                        'If you have already returned the item, please '
+                        'ignore this message.\n\n'
+
+                        'If you still need this title, please let us know by '
+                        'answering this email and we will check with the '
+                        'external library if the loan can be extended or if '
+                        'we can find another copy for you.\n\n'
+
+                        'Thank you for using our services',
+
+        'ILL_RECALL3':  'Dear Colleague,\n\n'
+
+                        'We have already sent you two messages about the '
+                        'following item borrowed for you from '
+                        'another Library.\n\n'
+
+                        'According to our records, you have not responded to '
+                        'either of them. Please return the '
+                        'item to the library without delay. '
+                        'Failure to return it in a timely fashion could '
+                        'result in the Library being fined. \n\n'
+
+                        'If you have already returned the document, '
+                        'please ignore this message.\n\n'
+
+                        'Thank you for using our services,\n\n',
+
+        'PURCHASE_NOTIFICATION': 'Hello,\n'
+                                 'This is an automatic email confirming the '
+                                 'request to purchase the following book on '
+                                 'behalf of:\n'
+                                 '\n'
+                                 '\n'
+                                 '\tTitle: %s\n\n'
+                                 '\n'
+                                 '\n'
+                                 'Your request will be evaluated against '
+                                 'our collection development policy and you '
+                                 'will be notified if the Library decides '
+                                 'to proceed with the purchase.\n\n'
+
+                                 'Sincerely,\n',
+
+
         'PURCHASE_RECEIVED': 'Dear colleague,\n\n'
 
                         'The book you requested has been received.\n'
-                        'Would you like to come to the library to pick it up '
-                        'or do you prefer we deliver it to your office?\n\n'
+                        'and is available to be picked up in the Library.'
+                        '\n\n'
 
-                        'Best regards,\n'
-                        'Library team \n\n'
-                        '\n'
-                        'library@unvienna.org \n',
+                        'Best regards,\n',
 
         'PURCHASE_RECEIVED_TID': 'Dear colleague,\n\n'
                         'The document you requested has been received. '
@@ -338,20 +370,31 @@ else:
                     'library collection: \n'
                     '\tTitle: %s\n\n'
                     'Our team will review your proposal and will get back to '
-                    'you soon to inform you of our decision.\n\n'\
-                    'Best regards,\nLibrary team\n',
 
-    'PROPOSAL_ACCEPTANCE_NOTIFICATION': 'Dear colleague,\n\n'
-                    'Following your suggestion, our team has decided to acquire the book for the library collection. '
-                    'As soon as we receive the book, we will lend it to you. \n\n'
-                    'Best regards,\nLibrary team\n',
+                    'you soon to inform you of our decision.\n\n'
+                    'Best regards,',
 
-    'PROPOSAL_REFUSAL_NOTIFICATION': 'Dear colleague,\n\n'\
-                    'Concerning your suggestion, we regret to inform you that our team has decided not to acquire the book '\
-                    'for the library collection for the following reason(s): <Reason> \n\n'\
-                    'However, if you need this document for your work, we will be able to get it on loan from another library. '\
-                    'Please let us know if this solution suits you.\n\n'\
-                    'Best regards,\nLibrary team\n',
+        'PROPOSAL_ACCEPTANCE_NOTIFICATION': 'Dear colleague,\n\n'
+                                            'Following your suggestion, our '
+                                            'team has decided to acquire the '
+                                            'book for the Library collection. '
+                                            'As soon as we receive the book, '
+                                            'we will contact you. \n\n'
+                                            'Best regards,\nLibrary team\n',
+
+        'PROPOSAL_REFUSAL_NOTIFICATION': 'Dear colleague,\n\n'
+                                         'Concerning your suggestion, we '
+                                         'regret to inform you that our team '
+                                         'has decided not to acquire the book '
+                                         'for the Library collection for the '
+                                         'following reason(s): <Reason> \n\n'
+                                         'However, if you need this document '
+                                         'for your work, we will be able to '
+                                         'get it on loan from another '
+                                         'library. '
+                                         'Please let us know if this solution '
+                                         'suits you.\n\n'
+                                         'Best regards,',
 
         'SEND_RECALL': 'Dear colleague,\n'
                    'We would like to remind you that the following item at your disposal is overdue:\n'
@@ -422,31 +465,30 @@ else:
                    'matter concerning circulation of library material, please simply ' \
                    'reply to this mail.',
 
-        'RECALL3': 'Dear Colleague,\n\n'\
-                   'This is an automated notification. We would like to remind you that the '\
-                   'following library item, which you borrowed, is now overdue. Please return it to the library '\
-                   '(either personally or by internal mail) or extend the loan at:\n\n'\
+        'RECALL3': 'Dear Colleague,\n\n'
+                   'This is an automated notification from the Library. '
+                   'We have already sent you several messages about the '
+                   'following Library item, which should have been returned '
+                   'a long time ago. According to our records, you have not '
+                   'responded to either of them. Please return the item to '
+                   'the Library without delay or contact us to extend the '
+                   'loan.\n\n'
 
-                   '%s/yourloans/display \n\n' % CFG_SITE_URL +
-                   'If you have already done so, please ignore this message.\n\n'\
-                   'Item information:\n\n'\
-                   '\t title: %s \n'\
-                   '\t year: %s \n'\
-                   '\t author(s): %s \n'\
-                   '\t isbn: %s \n'\
-                   '\t publisher: %s \n'\
-                   '\t due date: %s\n\n'\
+                   'If you have already returned the item, please ignore '
+                   'this message.\n\n'
+                   'Item information:\n\n'
+                   '\t title: %s \n'
+                   '\t year: %s \n'
+                   '\t author(s): %s \n'
+                   '\t isbn: %s \n'
+                   '\t publisher: %s \n'
+                   '\t due date: %s\n'
+                   '\t library: %s\n\n'
 
-                   'Please return the book to the %s as soon as possible.\n\n'
-
-                   'Thank you for using our services\n'\
-                   '%s\n'\
-                   '%s\n'\
-                   '%s\n'\
-
-                   'If you are not able to update your loans via WWW or for any other ' \
-                   'matter concerning circulation of library material, please simply ' \
-                   'reply to this mail.',
+                   'Thank you in advance for your cooperation,\n'
+                   '%s\n'
+                   '%s\n'
+                   '%s\n',
         'EMPTY': 'Please choose one template'
         }
 

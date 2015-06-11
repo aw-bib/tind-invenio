@@ -887,6 +887,7 @@ def get_last_loan():
     """
 
     res = run_sql("""SELECT id_bibrec,
+                            barcode,
                             id_crcBORROWER,
                             DATE_FORMAT(due_date, '%d-%m-%Y')
                      FROM   crcLOAN ORDER BY id DESC LIMIT 1""")

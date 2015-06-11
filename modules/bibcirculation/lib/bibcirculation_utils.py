@@ -366,11 +366,13 @@ def print_new_loan_information(req, ln=CFG_SITE_LANG):
     _ = gettext_set_language(ln)
 
     # get the last loan from crcLOAN
-    (recid, borrower_id, due_date) = db.get_last_loan()
+    (recid, book_barcode, borrower_id, due_date) = db.get_last_loan()
 
     # get book's information
     (book_title, book_year, book_author,
                  book_isbn, book_editor) = book_information_from_MARC(recid)
+
+    book_location = db.get_item_info(book_barcode)[4]
 
     # get borrower's data/information (name, address, email)
     (borrower_name, borrower_address,
@@ -423,11 +425,21 @@ def print_new_loan_information(req, ln=CFG_SITE_LANG):
                     <td width="70"><strong>%s</strong></td>
                     <td style='color: black;'>%s</td>
                 </tr>
-                  """ % (_("Title"),  book_title,
+                <tr>
+                    <td width="70"><strong>%s</strong></td>
+                    <td style='color: black;'>%s</td>
+                </tr>
+                <tr>
+                    <td width="70"><strong>%s</strong></td>
+                    <td style='color: black;'>%s</td>
+                </tr>
+                  """ % (_("Title"), book_title,
                          _("Author"), book_author,
                          _("Editor"), book_editor,
-                         _("ISBN"),   book_isbn,
-                         _("Year"),   book_year)
+                         _("Barcode"), book_barcode,
+                         _("ISBN"), book_isbn,
+                         _("Location"), book_location,
+                         _("Year"), book_year)
 
     out += """</table><br />"""
 

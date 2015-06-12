@@ -101,7 +101,9 @@ function generateAdvancedControlFieldGUI(list_of_fields, current_value) { 
         title = "";
         if (typeof(list_of_fields[nb_fields]) === "function") {
             sub_list = list_of_fields[nb_fields]();
-            title_comp = sub_list[1];
+            if(title_comp == "" ) {
+                title_comp = sub_list[1];
+            }
             sub_list = sub_list[0];
             form_html += '<tr><td><hr></td><td><hr></td></tr>';
             for(var nb_subfields=0; nb_subfields<sub_list.length; nb_subfields++) {
@@ -155,8 +157,6 @@ function define_008 () {
     var leader = leader[0].innerHTML;
     var typel = leader[6];
     var bvl = leader[7];
-    console.log(typel);
-    console.log(bvl);
     var MARC_008 = {"BK": [["Illustrations",4],["Target audience",1],["Form of item",1],["Nature of contents",4],["Government publication",1],["Conference publication",1],["Festschrift",1],["Index",1],["Undefined",1],["Literary form",1],["Biography",1]],
      "CF": [["Undefined",4], ["Target audience",1], ["Form of item",1], ["Undefined",2],["Type of computer file",1],["Undefined",1],["Government publication",1],["Undefined",6]],
      "MP": [["Relief",4], ["Projection",2], ["Undefined",1],["Type of cartographic material",1],["Undefined",2],["Government publication",1],["Form of item",1],["Undefined",1],["Index",1],["Undefined",1],["Special format characteristics",2],],
@@ -264,7 +264,27 @@ function createPopUp(current_value, id) {
     "008": [['Date entered on file',6],["Type of date/Publication status",1],["Date 1",4],["Date 2",4], ["Place of publication, production, or execution",3],define_008,["Language",3],["Modified record",1], ["Cataloging source",1]]};
 
     var array_form = tags_list[id.split("_")[1]];
-    var dialogContent = generateAdvancedControlFieldGUI(array_form, current_value);
+
+    var regex = /^[0-9]{6}/;
+    date_field = current_value.substring(0, 6);
+    if (!regex.test(date_field))
+    {
+        console.log(date_field);
+        console.log(parseInt(date_field));
+        console.log(parseInt(date_field).toString().length);
+        createReq({recID: gRecID, requestType: 'getRecordCreationDate'},function(json) {
+            current_value = json["creation_date"] +  current_value.slice(6);
+            advGenControlFieldGUI(array_form, current_value, id);
+        });
+    }
+    else {
+        advGenControlFieldGUI(array_form, current_value, id);
+    }
+
+}
+
+function advGenControlFieldGUI(array_form, current_value, id) {
+   var dialogContent = generateAdvancedControlFieldGUI(array_form, current_value);
 
     var new_title = "Advanced Controlfield Window";
 
@@ -299,6 +319,7 @@ function createPopUp(current_value, id) {
                 $(this).remove();
             }
         }});
+
 }
 
 function createControlField(tag, field, fieldPosition) {

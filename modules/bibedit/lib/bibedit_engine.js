@@ -529,7 +529,7 @@ function onBulkReqError(data) {
           };
 }
 
-function computeRecordLenth() {
+function computeRecordLength() {
     createReq({recID: gRecID, requestType: 'getTextMarc'},function(json) {
     if($('#content_000_0').length > 0) {
          var tag_000_value = $('#content_000_0')[0].innerHTML;
@@ -551,6 +551,26 @@ function computeRecordLenth() {
 
        );
 }
+
+function computeRecordDate() {
+    console.log("computeRecordDate");
+    var regex = /^[0-9]{6}/;
+    if($('#content_008_0').length > 0) {
+        var tag_008_value = $('#content_008_0')[0].innerHTML;
+        var date_field = tag_008_value.substring(0, 6);
+        if (!regex.test(date_field)) {
+            createReq({recID: gRecID, requestType: 'getRecordCreationDate'},function(json) {
+            if($('#content_008_0').length > 0) {
+
+                date_field = json["creation_date"].split("/").join("") +  tag_008_value.slice(6);
+                $('#content_008_0')[0].innerHTML = date_field;
+                gRecord["008"][0][3] = date_field;
+                onContentChange(date_field, {type:"content", tag:"008", fieldPosition:0, subfieldIndex:undefined,tag_ind:"008"});
+            }});
+        }
+    }
+}
+
 
 function createBulkReq(reqsData, onSuccess, optArgs){
   /* optArgs is a disctionary containning the optional arguments
@@ -693,7 +713,8 @@ function save_changes() {
   var saveChangesPromise = new $.Deferred();
 
   saveChangesPromise.done(function() {
-    computeRecordLenth();
+    computeRecordLength();
+    computeRecordDate();
   });
 
   if (gReqQueue.length > 0) {
@@ -3911,7 +3932,6 @@ function updateSubfieldValue(tag, fieldPosition, subfieldIndex, subfieldCode,
   if (consumedChange == undefined || consumedChange == null){
     consumedChange = -1;
   }
-  console.log("Aa");
   var data = getUpdateSubfieldValueRequestData(tag,
                                                fieldPosition,
                                                subfieldIndex,
@@ -3936,7 +3956,6 @@ function getBulkUpdateSubfieldContentRequestData(tag, fieldPosition,
      *
      */
     var changesAdd = [];
-    console.log("Ab");
     var data = getUpdateSubfieldValueRequestData(tag,
                                                  fieldPosition,
                                                  subfieldIndex,
@@ -6612,7 +6631,6 @@ function onContentChange(value, cell) {
   }
 
   /* Get field instance to be updated from global variable gRecord */
-  console.log(cell);
   var field_instance = gRecord[cell.tag][cell.fieldPosition];
   var subfield_instance = field_instance[0][cell.subfieldIndex];
 
@@ -6686,8 +6704,6 @@ function onContentChange(value, cell) {
                                                  old_subfield_code,
                                                  operation_type);
     addUndoOperation(urHandler);
-    console.log("omg");
-    console.log(value);
     updateSubfieldValue(cell.tag, cell.fieldPosition, cell.subfieldIndex, old_subfield_code,
                         value, null, urHandler);
     updateModel();

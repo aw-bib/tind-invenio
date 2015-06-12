@@ -28,6 +28,9 @@
 
 var gSelectionModeOn = false;
 var gReady = true;
+var tabkey = false;
+var akey = false;
+var autosuggesting = false;
 
 function initInputHotkeys(inputElement, original) {
   /* Binding of shortcuts for input elements */
@@ -64,12 +67,58 @@ function initInputHotkeys(inputElement, original) {
   }
 
 
+  element.bind('keydown', 'a', function (event) {
+    akey = true
+    if(tabkey) {
+        event.preventDefault();
+        autosuggesting = true;
+        event.stopPropagation();
+        onAutosuggest(event);
+        akey = false
+    }
+    console.log("a down");
+  });
+
+  element.bind('keyup', 'a', function(even) { 
+    akey = false;
+    console.log("a up");
+  });
+
+
+  element.bind('keydown', 'tab', function (event) {
+     event.preventDefault();
+     tabkey = true;
+     console.log("tab down")
+
+     if(akey) {
+
+        event.preventDefault();
+        event.stopPropagation();console.log("victory");
+        onAutosuggest(event);
+        tabkey = false;
+        autosuggesting = true;
+
+     }
+
+
+  });
+  element.bind('keyup', 'tab', function (event) {
+    tabkey = false;
+    console.log("tab up");
+    console.log(autosuggesting);
+    if(!autosuggesting) {
+        onKeyTab(event);
+    }
+    autosuggesting = false
+  });
+
+
   element.bind('keydown', 'ctrl+shift+a', function (event) {
     onAutosuggest(event);
   });
+
   if (os.indexOf("Mac") > 0) {
     element.bind('keydown', 'ctrl+alt', function (event) {
-      console.log(event);
       if (event.metaKey) {
         onAutosuggest(event);
       }
@@ -78,8 +127,7 @@ function initInputHotkeys(inputElement, original) {
   element.bind('keydown', 'ctrl+/', function (event) {onJumpField(event, original, -1); });
   element.bind('keydown', 'ctrl+*', function (event) {onJumpField(event, original, 1); });
 
-  // Save content and jump to next content field.
-  element.bind('keydown', 'tab', onKeyTab);
+
   // Save content and jump to previous content field.
   element.bind('keydown', 'shift+tab', onKeyTab);
 

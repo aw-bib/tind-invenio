@@ -259,8 +259,8 @@ else:
                         '\tLibrary: %s\n'
                         '\t%s\n\n'
                         '\tRequest date: %s\n\n'
-                        'This item is now ready to be picked up in the '
-                        'Library.\n\n'
+                        'You will be notified when this item is ready to be '
+                        'picked up.\n\n'
                         'Sincerely\n',
 
         'ILL_RECEIVED': 'Dear colleague,\n\n'

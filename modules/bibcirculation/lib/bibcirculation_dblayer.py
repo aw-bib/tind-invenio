@@ -2224,7 +2224,27 @@ def search_library_by_email(string):
     return res
 
 
+def get_library_holding_barcode(barcode):
+    """
+    Get library id for the library holding a book
+    barcode: the primary key for crcITEM
+    """
 
+    res = run_sql("""SELECT id_crcLIBRARY
+                     FROM crcITEM
+                     WHERE barcode=%s""", (barcode, ))
+
+    if res:
+        return res[0]
+
+    # If no library, get a main library
+    (lib_id, name) = get_main_libraries()[0]
+    if lib_id:
+        return lib_id
+
+    # If no main library either, just pick one:
+    (lib_id, name) = get_all_libraries()[0]
+    return lib_id
 
 ###
 ### "Vendor" related functions ###

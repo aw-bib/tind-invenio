@@ -322,6 +322,10 @@ def perform_new_request_send_message(uid, recid, period_from, period_to, barcode
 
     user = collect_user_info(uid)
 
+    hodling_library = db.get_library_holding_barcode(barcode)
+    (l_id, l_name, l_address, library_email,
+     l_phone, l_type, l_notes) = db.get_library_details(hodling_library)
+
     if CFG_CERN_SITE:
         try:
             borrower = search_user('ccid', user['external_personid'])
@@ -370,7 +374,7 @@ def perform_new_request_send_message(uid, recid, period_from, period_to, barcode
                                             year, isbn, location, library,
                                             link_to_holdings_details, request_date)
 
-        send_email(fromaddr = CFG_BIBCIRCULATION_LOANS_EMAIL,
+        send_email(fromaddr = library_email,
                    toaddr   = email,
                    subject  = mail_subject,
                    content  = message_for_user,
@@ -390,8 +394,8 @@ def perform_new_request_send_message(uid, recid, period_from, period_to, barcode
                                         year, isbn, location, library,
                                         link_to_item_request_details,
                                         request_date)
-            send_email(fromaddr = CFG_BIBCIRCULATION_LIBRARIAN_EMAIL,
-                       toaddr   = CFG_BIBCIRCULATION_LOANS_EMAIL,
+            send_email(fromaddr = library_email,
+                       toaddr   = library_email,
                        subject  = mail_subject,
                        content  = message_for_librarian,
                        header   = '',

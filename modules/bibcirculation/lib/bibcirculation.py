@@ -401,11 +401,22 @@ def perform_new_request_send_message(uid, recid, period_from, period_to, barcode
             link_to_item_request_details = CFG_SITE_URL + \
                 "/admin2/bibcirculation/get_item_requests_details?ln=%s&recid=%s" \
                 % (ln, str(recid))
-            message_for_librarian = message_template % (name, ccid, email, address,
-                                        mailbox, title, author, publisher,
-                                        year, isbn, location, library,
-                                        link_to_item_request_details,
-                                        request_date)
+            if mail_template == 'notification':
+                message_for_librarian = message_template % (name, ccid, email,
+                                                       address, mailbox,
+                                                       title, author,
+                                                       publisher, year,
+                                                       isbn, location,
+                                                       library,
+                                                       link_to_holdings_details,
+                                                       request_date, l_name,
+                                                       l_phone, library_email)
+            else:
+                message_for_librarian = message_template % (name, ccid, email, address,
+                                            mailbox, title, author, publisher,
+                                            year, isbn, location, library,
+                                            link_to_holdings_details, request_date)
+
             send_email(fromaddr = library_email,
                        toaddr   = library_email,
                        subject  = mail_subject,

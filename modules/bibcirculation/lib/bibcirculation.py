@@ -369,7 +369,19 @@ def perform_new_request_send_message(uid, recid, period_from, period_to, barcode
         else:
             link_to_holdings_details = CFG_SITE_URL + \
                 '/record/%s/holdings' % str(recid)
-            message_for_user = message_template % (name, ccid, email, address,
+
+            if mail_template == 'notification':
+                message_for_user = message_template % (name, ccid, email,
+                                                       address, mailbox,
+                                                       title, author,
+                                                       publisher, year,
+                                                       isbn, location,
+                                                       library,
+                                                       link_to_holdings_details,
+                                                       request_date, l_name,
+                                                       l_phone, library_email)
+            else:
+                message_for_user = message_template % (name, ccid, email, address,
                                             mailbox, title, author, publisher,
                                             year, isbn, location, library,
                                             link_to_holdings_details, request_date)

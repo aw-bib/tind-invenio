@@ -1265,9 +1265,14 @@ def place_new_request_step3(req, barcode, recid, user_info,
         subject = _('New request')
         message = load_template('notification')
 
+        holding_library = db.get_library_holding_barcode(barcode)
+        (l_id, l_name, l_address, library_email,
+         l_phone, l_type, l_notes) = db.get_library_details(holding_library)
+
         message = message % (name, ccid, email, address, mailbox, title,
                              author, publisher, year, isbn, location, library,
-                             link_to_holdings_details, request_date)
+                             link_to_holdings_details, request_date, l_name,
+                             l_phone, library_email)
 
 
         send_email(fromaddr = CFG_BIBCIRCULATION_LIBRARIAN_EMAIL,

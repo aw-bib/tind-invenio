@@ -75,7 +75,7 @@ class WebInterfaceStatsPages(WebInterfaceDirectory):
                  'download_frequency', 'comments_frequency', 'number_of_loans', 'web_submissions',
                  'loans_stats', 'loans_lists', 'renewals_lists', 'returns_table', 'returns_graph',
                  'ill_requests_stats', 'ill_requests_lists', 'ill_requests_graph', 'items_stats',
-                 'items_list', 'loans_requests', 'loans_request_lists', 'user_stats',
+                 'items_list', 'items_stats_coll', 'loans_requests', 'loans_request_lists', 'user_stats',
                  'user_lists', 'error_log', 'customevent', 'customevent_help',
                  'customevent_register', 'custom_summary', 'collections' , 'collection_stats',
                  'export']
@@ -701,6 +701,37 @@ class WebInterfaceStatsPages(WebInterfaceDirectory):
                     req=req,
                     lastupdated=__lastupdated__,
                     navmenuid='circulation items stats',
+                    language=ln)
+
+    def items_stats_coll(self, req, form):
+        """ Circulation statistcs per colletion page."""
+        argd = wash_urlargd(form, {'udc': (str, ""),
+                                   'collection': (str, ""),
+                                   'timespan': (str, "today"),
+                                   's_date': (str, ""),
+                                   'f_date': (str, ""),
+                                   'format': (str, SUITABLE_GRAPH_FORMAT),
+                                   'sql': (int, 0),
+                                   'ln': (str, CFG_SITE_LANG)})
+        ln = argd['ln']
+        user_info = collect_user_info(req)
+        (auth_code, auth_msg) = acc_authorize_action(user_info, 'runwebstatadmin')
+        if auth_code:
+            return page_not_authorized(req,
+                navtrail=self.navtrail % {'ln_link': (ln != CFG_SITE_LANG and '?ln=' + ln) or ''},
+                text=auth_msg,
+                navmenuid='circulation items per collection stats',
+                ln=ln)
+
+        return page(title="Circulation items per collection statistics",
+                    body=perform_display_keyevent('items stats coll', argd, req, ln=ln),
+                    navtrail="""<a class="navtrail" href="%s/stats/%s">Statistics</a>""" % \
+                    (CFG_SITE_URL, (ln != CFG_SITE_LANG and '?ln=' + ln) or ''),
+                    description="Invenio, Statistics, Circulation items per collection statistics",
+                    keywords="Invenio, statistics, Circulation items per collection statistics",
+                    req=req,
+                    lastupdated=__lastupdated__,
+                    navmenuid='circulation items per collection stats',
                     language=ln)
 
     def items_list(self, req, form):

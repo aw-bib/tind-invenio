@@ -129,6 +129,7 @@ class Template:
                     <li><a href="%(CFG_SITE_URL)s/stats/ill_requests_lists%(ln_link)s">Circulation ILL Requests list</a></li>
                     <li><a href="%(CFG_SITE_URL)s/stats/ill_requests_graph%(ln_link)s">Percentage of satisfied circulation ILL requests</a></li>
                     <li><a href="%(CFG_SITE_URL)s/stats/items_stats%(ln_link)s">Circulation items statistics</a></li>
+                    <li><a href="%(CFG_SITE_URL)s/stats/items_stats_coll%(ln_link)s">Circulation items statistics per collection</a></li>
                     <li><a href="%(CFG_SITE_URL)s/stats/items_list%(ln_link)s">Circulation items list</a></li>
                     <li><a href="%(CFG_SITE_URL)s/stats/loans_requests%(ln_link)s">Circulation hold requests statistics</a></li>
                     <li><a href="%(CFG_SITE_URL)s/stats/loans_request_lists%(ln_link)s">Circulation hold requests lists</a></li>

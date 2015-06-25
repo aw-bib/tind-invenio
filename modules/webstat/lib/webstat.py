@@ -66,6 +66,7 @@ from invenio.webstat_engine import get_keyevent_trend_collection_population, \
     get_keyevent_ill_requests_statistics, \
     get_keyevent_ill_requests_lists, \
     get_keyevent_trend_satisfied_ill_requests_percentage, \
+    get_keyevent_items_collection_statistics, \
     get_keyevent_items_statistics, \
     get_keyevent_items_lists, \
     get_keyevent_loan_request_statistics, \
@@ -426,6 +427,21 @@ the moment and the number of new items in the selected time span.', ),
                                 },
                             'cachefilename':
                                    'webstat_%(event_id)s_%(udc)s_%(timespan)s',
+                            'rows': ['The total number of items', 'Total number of new items'],
+                            'output': 'Table',
+                            'type': 'bibcirculation'},
+                          'items stats coll':
+                           {'fullname': 'Circulation items per collection statistics',
+                            'specificname': 'Circulation items statistics per collection',
+                            'description':
+                                   ('The items statistics show the total number of items at \
+the moment and the number of new items in the selected time span.', ),
+                            'gatherer':
+                                   get_keyevent_items_collection_statistics,
+                            'extraparams': {'collection': ('combobox', 'Collection',
+                                                    get_collection_list_plus_all)},
+                            'cachefilename':
+                                   'webstat_%(event_id)s_%(collection)s_%(timespan)s',
                             'rows': ['The total number of items', 'Total number of new items'],
                             'output': 'Table',
                             'type': 'bibcirculation'},

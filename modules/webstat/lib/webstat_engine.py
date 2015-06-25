@@ -1010,6 +1010,64 @@ def get_keyevent_items_statistics(args, return_sql=False):
     return ((run_sql(items_sql, tuple(param))[0][0], ), (run_sql(new_items_sql, tuple(param + [lower, upper]))[0][0], ))
 
 
+def get_keyevent_items_collection_statistics(args, return_sql=False):
+    """
+    Data:
+      - The total number of items
+      - Total number of new items added in last year
+    Filter by
+      - in a specified time span
+      - by collection
+
+    @param args['t_start']: Date and time of start point
+    @type args['t_start']: str
+
+    @param args['t_end']: Date and time of end point
+    @type args['t_end']: str
+
+    @param args['collection']: Collection to count.
+    @type args['collection']: str
+
+    @param args['t_format']: Date and time formatting string
+    @type args['t_format']: str
+    """
+    lower = _to_datetime(args['t_start'], args['t_format']).isoformat()
+    upper = _to_datetime(args['t_end'], args['t_format']).isoformat()
+
+    sql_from = "FROM crcITEM i "
+    sql_where = "WHERE "
+
+    param = []
+
+    count_total = 0
+    count_timespan = 0
+
+    if args['collection'] == 'All' or args['collection'] == "" or not 'collection' in args:
+        # return (("test", ), ("test2", ))
+        items_sql = "SELECT COUNT(i.id_bibrec) %s" % (sql_from)
+        sql_where += "creation_date > %s AND creation_date < %s "
+        new_items_sql = "SELECT COUNT(i.id_bibrec) %s %s" % (sql_from, sql_where)
+        return ((run_sql(items_sql, tuple(param))[0][0], ), (run_sql(new_items_sql, tuple(param + [lower, upper]))[0][0], ))
+
+    if 'collection' in args and args['collection'] != '':
+        for rec in get_collection_reclist(args['collection']):
+            sql_from = "FROM crcITEM i "
+            sql_where = "WHERE id_bibrec = %s" % (rec, )
+
+            param = []
+
+            # Number of items:
+            items_sql = "SELECT COUNT(i.id_bibrec) %s %s" % (sql_from, sql_where)
+
+            # Number of new items:
+            sql_where += " AND creation_date > %s AND creation_date < %s "
+            new_items_sql = "SELECT COUNT(i.id_bibrec) %s %s" % (sql_from, sql_where)
+
+            count_total += run_sql(items_sql, tuple(param))[0][0]
+            count_timespan = run_sql(new_items_sql, tuple(param + [lower, upper]))[0][0] 
+        return ((count_total, ), (count_timespan, ))
+    # return []
+
 def get_keyevent_items_lists(args, return_sql=False, limit=50):
     """
     Lists:

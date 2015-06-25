@@ -8379,12 +8379,17 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
           <tr>
             <td class="bibcirccontent" align="right" width="100">
               <input type=button onClick="location.href='%s/admin2/bibcirculation/get_borrower_loans_details?ln=%s&borrower_id=%s&renewal=true'"
+              value='%s' class='bibcircbutton'onmouseover="this.className='bibcircbuttonover'" onmouseout="this.className='bibcircbutton'">
+              <input type=button onClick="location.href='%s/admin2/bibcirculation/get_borrower_loans_details?ln=%s&borrower_id=%s&renewal=1yr'"
               value='%s' class='bibcircbutton'onmouseover="this.className='bibcircbuttonover'" onmouseout="this.className='bibcircbutton'"></td>
           </tr>
         </table>
         """ % (CFG_SITE_URL, ln,
                borrower_id,
-               _("Renew all loans"))
+               _("Renew all loans"),
+               CFG_SITE_URL, ln,
+               borrower_id,
+               _("Renew all 1 year"))
 
         out += """
         <table class="bibcirctable">

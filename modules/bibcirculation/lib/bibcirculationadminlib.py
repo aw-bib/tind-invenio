@@ -84,6 +84,7 @@ from invenio.bibcirculation_config import \
 from invenio.bibcirculation_utils import book_title_from_MARC, \
       update_status_if_expired, \
       renew_loan_for_X_days, \
+      generate_new_due_date, \
       print_pending_hold_requests_information, \
       print_new_loan_information, \
       validate_date_format, \
@@ -3574,34 +3575,78 @@ def get_borrower_loans_details(req, recid, barcode, borrower_id,
         update_status_if_expired(loan_id)
         infos.append(_("Loan renewed with success."))
 
+    elif borrower_id and force == 'all':
+        list_of_loans = db.get_recid_borrower_loans(borrower_id)
+        for (loan_id, recid, barcode) in list_of_loans:
+            if renewal == '1yr':
+                new_due_date = generate_new_due_date(365)
+            else:
+                new_due_date = renew_loan_for_X_days(barcode)
+
+            db.renew_loan(loan_id, new_due_date)
+            update_status_if_expired(loan_id)
+
+        infos.append(_("All loans renewed with success."))
+
     elif borrower_id and renewal=='true':
         list_of_loans = db.get_recid_borrower_loans(borrower_id)
+        message_items = ""
+        force_renewall_link = create_html_link(CFG_SITE_SECURE_URL +
+                '/admin2/bibcirculation/get_borrower_loans_details',
+                {'borrower_id': borrower_id, 'renewal': renewal,
+                'force': 'all', 'ln': ln}, (_("Yes")))
+
         for (loan_id, recid, barcode) in list_of_loans:
             item_description = db.get_item_description(barcode)
             queue = db.get_queue_request(recid, item_description)
             new_due_date = renew_loan_for_X_days(barcode)
 
-            force_renewall_link = create_html_link(CFG_SITE_SECURE_URL +
-                            '/admin2/bibcirculation/get_borrower_loans_details',
-                            {'barcode': barcode, 'borrower_id': borrower_id,
-                            'loan_id': loan_id, 'force': 'true', 'ln': ln},
-                            (_("Yes")))
-
             if len(queue) != 0:
                 title = book_title_from_MARC(recid)
-                message = _("Another user is waiting for this book %(x_strong_tag_open)s%(x_title)s%(x_strong_tag_close)s.") % {'x_title': title, 'x_strong_tag_open': '<strong>', 'x_strong_tag_close': '</strong>'}
-                message += '\n\n'
-                message += _("Do you want renew this loan anyway?")
-                message += '\n\n'
-                message += "[%s] [%s]" % (force_renewall_link, no_renew_link)
-                infos.append(message)
-
+                message_items += "- <strong>%(x_title)s</strong>\n" % {'x_title': title, }
             else:
                 db.renew_loan(loan_id, new_due_date)
                 update_status_if_expired(loan_id)
 
+        if message_items:
+            message = "Other users are waiting for the following books:\n"
+            message += message_items
+            message += "Do you want to renew these loans as well?\n\n"
+            message += "[%s] [%s]" % (force_renewall_link, no_renew_link)
+            infos.append(message)
+
         if infos == []:
             infos.append(_("All loans renewed with success."))
+
+    elif borrower_id and renewal == '1yr':
+        list_of_loans = db.get_recid_borrower_loans(borrower_id)
+        message_items = ""
+        force_renewall_link = create_html_link(CFG_SITE_SECURE_URL +
+                '/admin2/bibcirculation/get_borrower_loans_details',
+                {'borrower_id': borrower_id, 'renewal': renewal,
+                'force': 'all', 'ln': ln}, (_("Yes")))
+
+        for (loan_id, recid, barcode) in list_of_loans:
+            item_description = db.get_item_description(barcode)
+            queue = db.get_queue_request(recid, item_description)
+            new_due_date = generate_new_due_date(365)
+
+            if len(queue) != 0:
+                title = book_title_from_MARC(recid)
+                message_items += "- <strong>%(x_title)s</strong>\n" % {'x_title': title, }
+            else:
+                db.renew_loan(loan_id, new_due_date)
+                update_status_if_expired(loan_id)
+
+        if message_items:
+            message = "Other users are waiting for the following books:\n"
+            message += message_items
+            message += "Do you want to renew these loans as well?\n\n"
+            message += "[%s] [%s]" % (force_renewall_link, no_renew_link)
+            infos.append(message)
+
+        if infos == []:
+            infos.append(_("All loans renewed successfully by 1 year."))
 
     borrower_loans = db.get_borrower_loan_details(borrower_id)
 

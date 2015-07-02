@@ -26,8 +26,8 @@ from invenio.bibauthority_config import \
     CFG_BIBAUTHORITY_RECORD_CONTROL_NUMBER_FIELD, \
     CFG_BIBAUTHORITY_AUTHORITY_SUBFIELDS_TO_INDEX, \
     CFG_BIBAUTHORITY_PREFIX_SEP, \
-    CFG_BIBAUTHORITY_AUTHORITY_COLLECTION_IDENTIFIER,\
-    CFG_BIBAUTHORITY_AUTOSUGGEST_CONFIG,\
+    CFG_BIBAUTHORITY_AUTHORITY_COLLECTION_IDENTIFIER, \
+    CFG_BIBAUTHORITY_AUTOSUGGEST_CONFIG, \
     CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS, \
     CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS_REVERSED, \
     CFG_AUTHORITY_COPY_NATIVE_FIELD
@@ -53,7 +53,7 @@ def is_authority_record(recID):
     return recID in search_pattern(p='980__a:AUTHORITY')
 
 
-def get_all_authority_record_for_field(field):
+def get_all_authority_record_for_field(field, value):
     """
     Return all the authority record for a specific field.
 
@@ -67,14 +67,20 @@ def get_all_authority_record_for_field(field):
     """
     if field in CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS_REVERSED:
         authority_type = CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS_REVERSED[field]
+        list_index_fields = CFG_BIBAUTHORITY_AUTHORITY_SUBFIELDS_TO_INDEX[
+            CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS_REVERSED[field]]
 
-        authority_records_matching = run_sql("""SELECT id_bibrec FROM bibrec_bib98x
-                                                JOIN bib98x on id_bibxxx = id
-                                                WHERE tag = '980__a' AND value = '{0}'
-                                                AND id_bibrec NOT IN (SELECT id_bibrec FROM bibrec_bib98x
-                                                                     JOIN bib98x on id_bibxxx = id
-                                                                     WHERE tag = '980__c' AND value='DELETED')
-                                         """.format(authority_type))
+        list_request = []
+
+        for field in list_index_fields:
+            first_two_char = field[:2]
+            list_request.append(
+                'select bibrec_bib{0}x.id_bibrec from bibrec_bib{0}x, bib{0}x where bib{0}x.tag="{2}" and bib{0}x.value like "%{1}%" and bibrec_bib{0}x.id_bibxxx = bib{0}x.id'.format(
+                    first_two_char, value, field))
+
+        sql_request = " UNION ".join(list_request)
+        authority_records_matching = run_sql(sql_request)
+        authority_records_matching = authority_records_matching[:20]
         authority_records = []
         for authority_record in authority_records_matching:
             authority_records.append(get_record(authority_record[0]).record)
@@ -84,49 +90,63 @@ def get_all_authority_record_for_field(field):
 
 
 def process_authority_autosuggest(value, field):
+    """
+    This function will return the list of authority that are
+    matching value in field.
+
+    :param value: the value that we are looking for
+    :param field: the field in which we are looking for
+    :return: None or a list of authority information
+    """
+    import time
+
     if field in CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS_REVERSED:
+        start = time.time()
         final_result = []
         res = find_records(value, field)
-        res_sorted = sorted(res, key=lambda x: res[x]["dist"])
-        res_sorted = res_sorted[:10]
+        res_sorted = res.keys()
         for res_to_process in res_sorted:
             record = res[res_to_process]["record"]
             final_result.append(format_record_for_bibedit(record, field))
+
+        with open("/opt/invenio/time.txt", "a") as myfile:
+            myfile.write("\nfast A, {0} seconds".format(time.time() - start))
         return final_result
     else:
         return None
 
 
 def find_records(value, field):
-    records = get_all_authority_record_for_field(field)
-    values = value.split(",")
+    records = get_all_authority_record_for_field(field, value)
     result = {}
     for record in records:
-        total_diff = 0
-        variants = generate_all_variants(record, field)
-        for value in values:
-            smaller_diff = sys.maxint
-            for variant in variants:
-                distance = Levenshtein.distance(str(variant), str(value))
-                if distance < smaller_diff:
-                    smaller_diff = distance
-
-            total_diff += smaller_diff
-        result[record.get("001")[0].value] = {"dist": total_diff, "record": record}
+        result[record.get("001")[0].value] = {"record": record}
     return result
 
 
 def format_record_for_bibedit(record, field):
+    """
+    Process the record to be manipulated by bibedit
+
+    :param record: The record you want to manipulate.
+    :param field: The field which is interesting you.
+    :return: Dict with the values needed by bibedit to work.
+    """
     final_shape = {}
     field_list = ["035"]
 
     if CFG_AUTHORITY_COPY_NATIVE_FIELD:
-        field_list.append(CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS[CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS_REVERSED[field]][0])
+        field_list.append(CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS[
+            CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS_REVERSED[field]][0])
 
-    if "disambiguation_fields" in CFG_BIBAUTHORITY_AUTOSUGGEST_CONFIG[CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS_REVERSED[field]]:
-        disambiguation_fields = CFG_BIBAUTHORITY_AUTOSUGGEST_CONFIG[CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS_REVERSED[field]]["disambiguation_fields"]
+    if "disambiguation_fields" in CFG_BIBAUTHORITY_AUTOSUGGEST_CONFIG[
+        CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS_REVERSED[field]]:
+        disambiguation_fields = CFG_BIBAUTHORITY_AUTOSUGGEST_CONFIG[
+            CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS_REVERSED[field]][
+            "disambiguation_fields"]
         try:
-            label = record_get_field(record, CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS[CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS_REVERSED[field]][0])[0]
+            label = record_get_field(record, CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS[
+                CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS_REVERSED[field]][0])[0]
         except:
             label = ""
 
@@ -138,7 +158,10 @@ def format_record_for_bibedit(record, field):
 
     else:
         try:
-            final_shape["print"] = record_get_field(record, CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS[CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS_REVERSED[field]][0])[0]
+            final_shape["print"] = record_get_field(record,
+                                                    CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS[
+                                                        CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS_REVERSED[
+                                                            field]][0])[0]
         except:
             final_shape["print"] = ""
         final_shape["fields"] = convert_record_to_dict(record, field_list, field)
@@ -151,7 +174,8 @@ def convert_record_to_dict(record, field_list, field_f):
         if key[:2] == "00" or key not in field_list:
             continue
 
-        if key == CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS[CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS_REVERSED[field_f]][0]:
+        if key == CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS[
+            CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS_REVERSED[field_f]][0]:
             final_key = field_f
         else:
             final_key = key
@@ -168,7 +192,7 @@ def convert_record_to_dict(record, field_list, field_f):
     return final
 
 
-def record_get_field(record,field):
+def record_get_field(record, field):
     values = []
     fa = field[:5].strip("_")
     try:
@@ -270,7 +294,7 @@ def guess_authority_types(recID):
                             '980__a',
                             repetitive_values=False)  # remove possible duplicates !
 
-    #filter out unwanted information
+    # filter out unwanted information
     while CFG_BIBAUTHORITY_AUTHORITY_COLLECTION_IDENTIFIER in types:
         types.remove(CFG_BIBAUTHORITY_AUTHORITY_COLLECTION_IDENTIFIER)
     types = [_type for _type in types if _type.isalpha()]
@@ -292,7 +316,7 @@ def get_low_level_recIDs_from_control_no(control_no):
         (should be only one)
     """
     # values returned
-    #    recIDs = []
+    # recIDs = []
     #check for correct format for control_no
     #    control_no = ""
     #    if CFG_BIBAUTHORITY_PREFIX_SEP in control_no:
@@ -316,7 +340,7 @@ def get_low_level_recIDs_from_control_no(control_no):
     return recIDs
 
 
-#def get_low_level_recIDs_from_control_no(control_no):
+# def get_low_level_recIDs_from_control_no(control_no):
 #    """
 #    Wrapper function for _get_low_level_recIDs_intbitset_from_control_no()
 #    Returns a list of EXISTING record IDs with control_no

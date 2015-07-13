@@ -1256,6 +1256,8 @@ class Template:
             activities.sort(lambda x, y: cmp(x.lower(), y.lower()))
             tmp_out = ''
             for action in activities:
+                if action == "runbibz39":
+                    tmp_out += """<br />&nbsp;&nbsp;&nbsp; <a href="%s/bibz39/">%s</a>""" % (CFG_SITE_URL, _("Z39.50 Search"))
                 if action == "runbibedit":
                     tmp_out += """<br />&nbsp;&nbsp;&nbsp; <a href="%s/%s/edit/">%s</a>""" % (CFG_SITE_URL, CFG_SITE_RECORD, _("Run Record Editor"))
                 if action == "runbibeditmulti":

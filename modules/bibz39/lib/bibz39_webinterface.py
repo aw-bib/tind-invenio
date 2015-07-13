@@ -97,7 +97,9 @@ class WebInterfacebibz39Pages(WebInterfaceDirectory):
                     conn.databaseName = CFG_Z39_SERVER[server]["databasename"]
                     conn.preferredRecordSyntax = CFG_Z39_SERVER[server]["preferredRecordSyntax"]
                     query = zoom.Query('CCL', '{0}={1}'.format(
-                        self._request_type_dict[argd["search_type"]], argd["search"]))
+                        self._request_type_dict[argd["search_type"]],
+                        argd["search"].replace("-", "") if argd["search_type"] == "ISBN" else argd[
+                            "search"]))
                     body_content += ""
                     try:
                         res.extend({"value": x, "provider": server} for x in conn.search(query))
@@ -108,7 +110,7 @@ class WebInterfacebibz39Pages(WebInterfaceDirectory):
                     conn.close()
                 if res:
                     body_content += "<table id='result_area' class='fullwidth  tablesorter'>"
-                    body_content += "<tr><th>Title</th><th>Authors</th><th>Publisher</th><th>Source</th><th><div class='bibz39_button_td'>View XML</div></th><th><div class='bibz39_button_td'>Import</div></th></tr>"
+                    body_content += "<tr><th class='bibz39_titles_th' >Title</th><th class='bibz39_sources_th'>Authors</th><th>Publisher</th><th class='bibz39_sources_th'>Source</th><th><div class='bibz39_button_td'>View XML</div></th><th><div class='bibz39_button_td'>Import</div></th></tr>"
 
                     for identifier, rec in enumerate(res):
                         list_of_record.append(
@@ -142,7 +144,7 @@ class WebInterfacebibz39Pages(WebInterfaceDirectory):
                             for title_constituant in list_of_record[identifier]["245"][0][0]:
                                 title += title_constituant[1] + " "
 
-                        body_content += "<tr><td><div class='bibz39_titles'>{0}<div><td>{4}</td><td>{5}</td</td><td>{2}</td><td><div class='bibz39_button_td'>{3}</div></td><td><div class='bibz39_button_td'>{1}</div></td></tr>".format(
+                        body_content += "<tr><td><div class='bibz39_titles'>{0}<div><td>{4}</td><td>{5}</td</td><td><div>{2}</div></td><td><div class='bibz39_button_td'>{3}</div></td><td><div class='bibz39_button_td'>{1}</div></td></tr>".format(
                             title,
                             '<form method="post" action="/admin2/bibz39/"><input type="hidden"  name="marcxml"  value="{0}"><input type="submit" value="Import" /></form>'.format(
                                 cgi.escape(record_xml_output(list_of_record[identifier])).replace(
@@ -160,7 +162,7 @@ class WebInterfacebibz39Pages(WebInterfaceDirectory):
 
                 else:
                     if not err:
-                        body_content += "No result"
+                        body_content += "<p class='bibz39_button_td spinning_wheel'> No result</p>"
             except Exception as e:
                 if conn:
                     conn.close()

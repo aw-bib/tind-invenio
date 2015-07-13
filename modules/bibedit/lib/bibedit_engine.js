@@ -1680,7 +1680,7 @@ function validMARC(datatype, value){
   return eval('validMARC.re' + datatype + '.test(value)');
 }
 // MARC validation REs
-validMARC.reControlTag = /00[1-9A-Za-z]{1}/;
+validMARC.reControlTag = /00[0-9A-Za-z]{1}/;
 validMARC.reTag = /(0([1-9A-Z][0-9A-Z])|0([1-9a-z][0-9a-z]))|(([1-9A-Z][0-9A-Z]{2})|([1-9a-z][0-9a-z]{2}))/;
 validMARC.reIndicator1 = /[\da-zA-Z]{1}/;
 validMARC.reIndicator2 = /[\da-zA-Z]{1}/;
@@ -6619,7 +6619,6 @@ function onSubfieldCodeChange(value, cell) {
  */
 function onContentChange(value, cell) {
   logAction("onContentChange " + value);
-
   function redrawTags() {
     redrawFieldPosition(cell.tag, cell.fieldPosition);
     reColorFields();
@@ -6633,6 +6632,13 @@ function onContentChange(value, cell) {
   /* Get field instance to be updated from global variable gRecord */
   var field_instance = gRecord[cell.tag][cell.fieldPosition];
   var subfield_instance = field_instance[0][cell.subfieldIndex];
+  if (subfield_instance == undefined) {
+    subfield_instance = ['','',''];
+  }
+
+  if (cell.subfieldIndex == undefined) {
+    cell.subfieldIndex = null;
+  }
 
   /* Nothing has changed, return */
   if (subfield_instance[1] === value) {

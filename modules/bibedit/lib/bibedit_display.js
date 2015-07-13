@@ -328,10 +328,15 @@ function createControlField(tag, field, fieldPosition) {
      */
     var fieldID = tag + '_' + fieldPosition;
     var cellContentClass = 'class="bibEditCellContentProtected" ';
-    if (!fieldIsProtected(tag)) cellContentClass = '';
+    if (!fieldIsProtected(tag)) {
+        cellContentClass = '';
+    }
+    console.log(gProtectedControlfield.indexOf(tag) )
     if (gProtectedControlfield.indexOf(tag) == -1) {
 
+        console.log("Up")
         if (gAdvancedGuiCf.indexOf(tag) > -1) {
+            console.log(tag)
             EditCode =' onclick="createPopUp($(\'#content_' + tag + '_0\')[0].innerHTML, this.id)" ';
         } else {
             EditCode =' onclick="onContentClick(event, this)" ';
@@ -345,31 +350,15 @@ function createControlField(tag, field, fieldPosition) {
         boxSubfield = ''
     }
 
-    if (gProtectedControlfield.indexOf(tag) == -1) {
-
-        if (gAdvancedGuiCf.indexOf(tag) > -1) {
-            EditCode =' onclick="createPopUp($(\'#content_' + tag + '_0\')[0].innerHTML, this.id)" ';
-        } else {
-            EditCode =' onclick="onContentClick(event, this)" ';
-        }
-        boxSubfield = input('checkbox', 'boxField_' + fieldID, 'bibEditBoxField', {
-            onclick: 'onFieldBoxClick(event, this)',
-            tabindex: -1
-        });
-    } else {
-        EditCode = ''
-        boxSubfield = ''
-    }
-
-    return '<tbody id="rowGroup_' + fieldID + '">' +
+       return '<tbody id="rowGroup_' + fieldID + '">' +
         '<tr id="row_' + fieldID + '" >' +
-            '<td class="bibEditCellField">' +
+            '<td class="bibEditCellField">' + boxSubfield +
             '</td>' +
             '<td id="fieldTag_' + fieldID +
                 '" class="bibEditCellFieldTag">' + getFieldTag(tag) + '</td>' +
             '<td></td>' + '<td></td>' +
             '<td id="content_' + fieldID + '" ' + cellContentClass +
-                'colspan="2" tabindex="0">' + escapeHTML(field[3]) +
+                'colspan="2" tabindex="0" '+ EditCode+'>' + escapeHTML(field[3]) +
             '</td>' +
         '</tr>' +
         '</tbody>';
@@ -1309,6 +1298,8 @@ function displayNewRecordScreen() {
   var msg = '<div style="margin-top:25px">Create a new record selecting one of the options below:</div>';
   msg += '<ul><li style="padding-bottom: 20px;">' +
     '<a href="#" id="lnkNewEmptyRecord"><b>Empty record</b></a></li>' +
+    '<li style="padding-bottom: 20px;">' +
+    '<a href="/admin2/bibz39" id=""><b>Import from Z39</b></a></li>' +
     '<li style="padding-bottom: 10px;">Use record template:' +
     '<table>';
   var templatesCount = gRECORD_TEMPLATES.length;

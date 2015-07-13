@@ -64,17 +64,17 @@ def get_css():
             float:left;
            }
 
-            td {
+           #result_area td {
                 padding: 5px;
                 margin:5px;
                 border-bottom: 1px solid #B9B9B9;
-            }
+           }
 
-            th {
+           #result_area th {
              padding: 5px;
              border-collapse: collapse;
              border-bottom: 1px solid #B9B9B9;
-            }
+           }
            .coloredrow {
             background-color: #F8F8F8;
            }
@@ -117,6 +117,12 @@ def get_css():
            pagebodystripemiddle {
             width:100%;
            }
+           .bibz39_sources_th {
+            width: 15%;
+           }
+           .bibz39_titles_th {
+            width: 33%;
+           }
            </style>
            """
 
@@ -147,7 +153,7 @@ def get_javascript():
 
                         function spinning() {
                             $("#middle_area > table").remove();
-                            $("#middle_area").append("<p class='spinning_wheel'><i class='fa fa-spinner fa-pulse  fa-5x'></i><p><p class='bibz39_button_td'>Searching...</p>");
+                            $("#middle_area").append("<p class='spinning_wheel'><i class='fa fa-spinner fa-pulse  fa-5x'></i></p><p class='bibz39_button_td'>Searching...</p>");
                         }
                     </script>
                  """ % {'site_url': CFG_SITE_URL}

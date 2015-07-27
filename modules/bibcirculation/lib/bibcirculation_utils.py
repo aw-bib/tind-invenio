@@ -297,7 +297,7 @@ def get_next_day(date_string):
 
     return next_day
 
-def generate_new_due_date(days, hours=False, minutes=False):
+def generate_new_due_date(value, hours=False, minutes=False, absolute=False):
     """
     Generate a new due date (today + X days = new due date).
 
@@ -311,9 +311,21 @@ def generate_new_due_date(days, hours=False, minutes=False):
     hours_now = int(today.strftime("%H"))
     minutes_now = int(today.strftime("%M"))
 
-    more_X_days = datetime.timedelta(days=days)
+    if hours or minutes:
+        loan_delta = datetime.timedelta(hours=value)
+    elif absolute:
+        loan_delta = datetime.timedelta(days=value-1)
+    else:
+        loan_delta = datetime.timedelta(days=value)
 
-    due_date = today + more_X_days
+    if absolute:
+        year = int(today.strftime("%Y"))
+        due_date = datetime.datetime(year, 1, 1) + loan_delta
+        if due_date <= today:
+            year += 1
+            due_date = datetime.datetime(year, 1, 1) + loan_delta
+    else:
+        due_date = today + loan_delta
 
     week_day = due_date.strftime('%A')
     due_date_string = due_date.strftime('%Y-%m-%d')
@@ -332,14 +344,15 @@ def generate_new_due_date(days, hours=False, minutes=False):
 
     if hours and not minutes:
         if minutes_now > 0:
-             hours_now += 1
-        due_date_string = datetime.datetime.combine(due_date.date(), datetime.time(hours_now)).strftime('%Y-%m-%d %H:%M')
+             due_date += datetime.timedelta(hours=1)
+        due_date_string = due_date.strftime('%Y-%m-%d %H:00')
     elif hours and minutes:
-        due_date_string = datetime.datetime.combine(due_date.date(), datetime.time(hours_now, minutes_now)).strftime('%Y-%m-%d %H:%M')
+        due_date_string = due_date.strftime('%Y-%m-%d %H:%M')
 
     return due_date_string
 
-def renew_loan_for_X_days(barcode):
+
+def renew_loan_for_X_days(user_id, barcode):
     """
     Renew a loan based on its loan period
 
@@ -349,12 +362,18 @@ def renew_loan_for_X_days(barcode):
     @return new due date
     """
 
-    loan_period = db.get_loan_period(barcode)
+    loan_period = db.get_loan_period_from_loanrules(user_id, barcode)
 
-    if loan_period == '4 weeks':
-        due_date = generate_new_due_date(30)
-    else:
-        due_date = generate_new_due_date(7)
+    if loan_period['code'] in (CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_OVERNIGHT,
+                               CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS):
+        due_date = generate_new_due_date(loan_period['value'], hours=True)
+
+    elif loan_period['code'] in (CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_MINUTE_OVERNIGHT,
+                                 CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_MINUTE):
+        due_date = generate_new_due_date(loan_period['value'], hours=True, minutes=True)
+
+    elif loan_period['code'] == CFG_BIBCIRCULATION_LOAN_RULE_CODE_ABSOLUTE:
+        due_date = generate_new_due_date(loan_period['value'], absolute=True)
 
     return due_date
 

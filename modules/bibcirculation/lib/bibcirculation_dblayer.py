@@ -64,7 +64,14 @@ from invenio.bibcirculation_config import \
     CFG_BIBCIRCULATION_LIBRARY_TYPE_INTERNAL, \
     CFG_BIBCIRCULATION_LIBRARY_TYPE_EXTERNAL, \
     CFG_BIBCIRCULATION_LIBRARY_TYPE_MAIN, \
-    CFG_BIBCIRCULATION_LIBRARY_TYPE_HIDDEN
+    CFG_BIBCIRCULATION_LIBRARY_TYPE_HIDDEN, \
+    CFG_BIBCIRCULATION_LOAN_RULE_CODE_ABSOLUTE, \
+    CFG_BIBCIRCULATION_LOAN_RULE_CODE_REGULAR, \
+    CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_OVERNIGHT, \
+    CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS, \
+    CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_MINUTE_OVERNIGHT, \
+    CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_MINUTE, \
+    CFG_BIBCIRCULATION_LOAN_RULE_CODE_NON_CIRC
 
 
 
@@ -3113,5 +3120,31 @@ def get_matching_loan_rule(user_id, barcode):
     else:
         return None
 
-def calculate_due_date_from_loan_rules(user_id, barcode):
+def get_loan_period_from_loan_rule(user_id, barcode):
+
+    res = run_sql("""
+        SELECT * FROM crcLOANRULES_MATCH_VIEW
+        WHERE user_id = %(user_id)s
+        AND barcode = %(barcode)s
+    """ % {
+        'user_id': user_id,
+        'barcode': barcode
+    })
+
+    returndict = {
+        'type': '',
+        'value': 0
+    }
+
+    if res[0][3].upper() in (CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_OVERNIGHT,
+                             CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS,
+                             CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_MINUTE_OVERNIGHT,
+                             CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_MINUTE):
+        returndict['type'] = 'hours'
+    else:
+        returndict['type'] = 'days'
+
+    returndict['value'] = res[0][4]
+
+    return returndict
 

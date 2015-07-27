@@ -77,7 +77,14 @@ from invenio.config import \
     CFG_BIBCIRCULATION_ACQ_STATUS_RECEIVED, \
     CFG_BIBCIRCULATION_PROPOSAL_STATUS_ON_ORDER, \
     CFG_BIBCIRCULATION_PROPOSAL_STATUS_PUT_ASIDE, \
-    CFG_BIBCIRCULATION_PROPOSAL_STATUS_RECEIVED
+    CFG_BIBCIRCULATION_PROPOSAL_STATUS_RECEIVED, \
+    CFG_BIBCIRCULATION_LOAN_RULE_CODE_ABSOLUTE, \
+    CFG_BIBCIRCULATION_LOAN_RULE_CODE_REGULAR, \
+    CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_OVERNIGHT, \
+    CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS, \
+    CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_MINUTE_OVERNIGHT, \
+    CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_MINUTE, \
+    CFG_BIBCIRCULATION_LOAN_RULE_CODE_NON_CIRC
 
 # Bibcirculation imports
 from invenio.bibcirculation_config import \
@@ -354,6 +361,7 @@ def loan_on_desk_step3(req, user_id, list_of_barcodes, ln=CFG_SITE_LANG):
         recid = db.get_id_bibrec(value)
         loan_id = db.is_item_on_loan(value)
         item_description = db.get_item_description(value)
+        loan_rule = db.get_matching_loan_rule(user_id, value)
 
         if recid is None:
             infos.append(_('%(x_strong_tag_open)s%(x_barcode)s%(x_strong_tag_close)s Unknown barcode.') % {'x_barcode': value, 'x_strong_tag_open': '<strong>', 'x_strong_tag_close': '</strong>'} + ' ' + _('Please, try again.'))
@@ -372,8 +380,12 @@ def loan_on_desk_step3(req, user_id, list_of_barcodes, ln=CFG_SITE_LANG):
                                                         string='',
                                                         infos=infos,
                                                         ln=ln)
+        elif not loan_rule:
+            infos.append(_('This patron does not have permission to loan this item.'))
+            body = bc_templates.tmpl_loan_on_desk_step2(user_id=user_id,
+                                                        infos=infos,
+                                                        ln=ln)
         else:
-
             queue = db.get_queue_request(recid, item_description)
             (library_id, location) = db.get_lib_location(value)
             tup = (recid, value, library_id, location)
@@ -396,6 +408,20 @@ def loan_on_desk_step3(req, user_id, list_of_barcodes, ln=CFG_SITE_LANG):
             if len(queue) != 0  and  queue[0][0] != user_id:
                 message = _("Another user is waiting for the book: %(x_strong_tag_open)s%(x_title)s%(x_strong_tag_close)s. \n\n If you want continue with this loan choose %(x_strong_tag_open)s[Continue]%(x_strong_tag_close)s.") % {'x_title': book_title_from_MARC(recid), 'x_strong_tag_open': '<strong>', 'x_strong_tag_close': '</strong>'}
                 infos.append(message)
+
+            # Loan rule checks
+            if loan_rule[3] == CFG_BIBCIRCULATION_LOAN_RULE_CODE_NON_CIRC:
+                message = _("This item is marked as non circulating. To override, choose %(x_strong_tag_open)s[Continue]%(x_strong_tag_close)s." % {'x_strong_tag_open': '<strong>', 'x_strong_tag_close': '</strong>'})
+                infos.append(message)
+
+            elif loan_rule[3] in (CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS, CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_MINUTE):
+                message = _("%(x_strong_tag_open)sNote:%(x_strong_tag_close)s This loan is not overnight." %  {'x_strong_tag_open': '<strong>', 'x_strong_tag_close': '</strong>'})
+                infos.append(message)
+
+            # FIXME add checks for bookable and holdable
+            if loan_rule[5].upper() == "N":
+                pass
+
 
             body = bc_templates.tmpl_loan_on_desk_step3(user_id=user_id,
                                                     list_of_books=list_of_books,

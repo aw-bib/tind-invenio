@@ -290,7 +290,7 @@ def get_next_day(date_string):
 
     return next_day
 
-def generate_new_due_date(days):
+def generate_new_due_date(days, hours=False, minutes=False):
     """
     Generate a new due date (today + X days = new due date).
 
@@ -300,28 +300,37 @@ def generate_new_due_date(days):
     @return new due date
     """
 
-    today = datetime.date.today()
+    today = datetime.datetime.today()
+    hours_now = int(today.strftime("%H"))
+    minutes_now = int(today.strftime("%M"))
 
     more_X_days = datetime.timedelta(days=days)
 
-    tmp_date = today + more_X_days
+    due_date = today + more_X_days
 
-    week_day = tmp_date.strftime('%A')
-    due_date = tmp_date.strftime('%Y-%m-%d')
+    week_day = due_date.strftime('%A')
+    due_date_string = due_date.strftime('%Y-%m-%d')
 
     due_date_validated = False
 
     while not due_date_validated:
         if week_day in CFG_BIBCIRCULATION_WORKING_DAYS \
-           and due_date not in CFG_BIBCIRCULATION_HOLIDAYS:
+           and due_date_string not in CFG_BIBCIRCULATION_HOLIDAYS:
             due_date_validated = True
 
         else:
-            next_day = get_next_day(due_date)
-            due_date = next_day.strftime('%Y-%m-%d')
-            week_day = next_day.strftime('%A')
+            due_date = get_next_day(due_date_string)
+            due_date_string = due_date.strftime('%Y-%m-%d')
+            week_day = due_date.strftime('%A')
 
-    return due_date
+    if hours and not minutes:
+        if minutes_now > 0:
+             hours_now += 1
+        due_date_string = datetime.datetime.combine(due_date.date(), datetime.time(hours_now)).strftime('%Y-%m-%d %H:%M')
+    elif hours and minutes:
+        due_date_string = datetime.datetime.combine(due_date.date(), datetime.time(hours_now, minutes_now)).strftime('%Y-%m-%d %H:%M')
+
+    return due_date_string
 
 def renew_loan_for_X_days(barcode):
     """

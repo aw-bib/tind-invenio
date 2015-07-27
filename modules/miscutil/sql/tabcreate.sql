@@ -5157,6 +5157,80 @@ CREATE TABLE IF NOT EXISTS `aulAUTHOR_IDENTIFIERS` (
   INDEX(`paper_id`)
 ) ENGINE=MyISAM;
 
+-- tables for Loan Rules update
+
+-- (Change crcITEM and crcBORROWER to InnoDB to support foreign keys)
+ALTER TABLE crcITEM ENGINE = InnoDB;
+ALTER TABLE crcBORROWER ENGINE = InnoDB;
+
+
+CREATE TABLE `crcITEMTYPES` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(32) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `crcITEMTYPE_ITEM` (
+  `barcode` varchar(30) NOT NULL DEFAULT '',
+  `itemtype_id` int(11) unsigned NOT NULL,
+  KEY `barcode_fk` (`barcode`),
+  KEY `itemtype_fk` (`itemtype_id`),
+  CONSTRAINT `itemtype_fk` FOREIGN KEY (`itemtype_id`) REFERENCES `crcITEMTYPES` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `barcode_fk` FOREIGN KEY (`barcode`) REFERENCES `crcITEM` (`barcode`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `crcPATRONTYPES` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(32) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `crcPATRONTYPE_BORROWER` (
+  `borrower_id` int(15) unsigned NOT NULL,
+  `patrontype_id` int(11) unsigned DEFAULT NULL,
+  KEY `borrower_fk` (`borrower_id`),
+  KEY `patrontype_fk` (`patrontype_id`),
+  CONSTRAINT `borrower_fk` FOREIGN KEY (`borrower_id`) REFERENCES `crcBORROWER` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `patrontype_fk` FOREIGN KEY (`patrontype_id`) REFERENCES `crcPATRONTYPES` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `crcLOANRULES` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(20) DEFAULT NULL,
+  `code` varchar(1) DEFAULT NULL,
+  `loan_period` smallint(6) DEFAULT NULL,
+  `holdable` varchar(1) DEFAULT NULL,
+  `bookable` varchar(1) DEFAULT NULL,
+  `homepickup` varchar(1) DEFAULT NULL,
+  `shippable` varchar(1) DEFAULT NULL,
+  `ship_time` smallint(6) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `crcRULES_SELECTION` (
+  `rule_id` int(11) unsigned NOT NULL,
+  `active` varchar(1) NOT NULL DEFAULT '',
+  `itemtype_id` int(11) unsigned NOT NULL,
+  `patrontype_id` int(11) unsigned NOT NULL,
+  `location` varchar(20) NOT NULL DEFAULT '',
+  PRIMARY KEY (`itemtype_id`,`patrontype_id`,`location`),
+  KEY `rule_fk` (`rule_id`),
+  CONSTRAINT `rule_fk` FOREIGN KEY (`rule_id`) REFERENCES `crcLOANRULES` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE VIEW crcLOANRULES_MATCH_VIEW AS
+SELECT b.id AS user_id, it_i.barcode, lr.name, lr.code, lr.loan_period, lr.holdable, lr.bookable, lr.homepickup, lr.shippable, lr.ship_time FROM crcBORROWER AS b
+JOIN crcPATRONTYPE_BORROWER AS p_b ON b.id = p_b.borrower_id
+JOIN crcPATRONTYPES AS pt ON p_b.patrontype_id = pt.id
+JOIN crcRULES_SELECTION AS r_s ON pt.id = r_s.patrontype_id
+JOIN crcITEMTYPES AS it ON r_s.itemtype_id = it.id
+JOIN crcITEMTYPE_ITEM AS it_i ON it_i.itemtype_id = it.id
+JOIN crcITEM AS i ON it_i.barcode = i.barcode
+JOIN crcLIBRARY AS l ON i.id_crcLIBRARY = l.id
+JOIN crcLOANRULES AS lr ON r_s.rule_id = lr.id
+WHERE l.name LIKE r_s.location
+AND UCASE(r_s.active) = "Y";
+
 -- tables for invenio_upgrader
 CREATE TABLE IF NOT EXISTS upgrade (
   upgrade varchar(255) NOT NULL,

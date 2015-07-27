@@ -3133,7 +3133,8 @@ def get_loan_period_from_loan_rule(user_id, barcode):
 
     returndict = {
         'type': '',
-        'value': 0
+        'value': 0,
+        'code': res[0][3].upper()
     }
 
     if res[0][3].upper() in (CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_OVERNIGHT,

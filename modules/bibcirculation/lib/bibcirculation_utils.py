@@ -336,7 +336,6 @@ def generate_new_due_date(value, hours=False, minutes=False, absolute=False):
         if week_day in CFG_BIBCIRCULATION_WORKING_DAYS \
            and due_date_string not in CFG_BIBCIRCULATION_HOLIDAYS:
             due_date_validated = True
-
         else:
             due_date = get_next_day(due_date_string)
             due_date_string = due_date.strftime('%Y-%m-%d')
@@ -352,7 +351,7 @@ def generate_new_due_date(value, hours=False, minutes=False, absolute=False):
     return due_date_string
 
 
-def renew_loan_for_X_days(user_id, barcode):
+def renew_loan_for_X_days(barcode):
     """
     Renew a loan based on its loan period
 
@@ -361,8 +360,8 @@ def renew_loan_for_X_days(user_id, barcode):
 
     @return new due date
     """
-
-    loan_period = db.get_loan_period_from_loanrules(user_id, barcode)
+    borrower_id = db.get_borrower_id(barcode)
+    loan_period = db.get_loan_period_from_loanrules(borrower_id, barcode)
 
     if loan_period['code'] in (CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_OVERNIGHT,
                                CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS):

@@ -34,6 +34,8 @@
 
 __revision__ = "$Id$"
 
+from MySQLdb import DatabaseError
+
 from invenio.dbquery import run_sql
 from invenio.bibcirculation_config import \
     CFG_BIBCIRCULATION_ITEM_STATUS_ON_LOAN, \
@@ -3091,3 +3093,25 @@ def delete_brief_format_cache(recid):
     run_sql("""DELETE FROM bibfmt
                 WHERE format='HB'
                   AND id_bibrec=%s""", (recid,))
+
+def get_matching_loan_rule(user_id, barcode):
+
+    res = run_sql("""
+        SELECT * FROM crcLOANRULES_MATCH_VIEW
+        WHERE user_id = %(user_id)s
+        AND barcode = %(barcode)s
+    """ % {
+        'user_id': user_id,
+        'barcode': barcode
+    })
+
+    if len(res) > 1:
+        raise DatabaseError("More than one matching loan rule. Check item->itemtype and borrower->patrontype tables")
+
+    if res:
+        return res[0]
+    else:
+        return None
+
+def calculate_due_date_from_loan_rules(user_id, barcode):
+

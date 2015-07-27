@@ -46,7 +46,14 @@ from invenio.bibcirculation_config import \
                                 CFG_BIBCIRCULATION_REQUEST_STATUS_WAITING, \
                                 CFG_BIBCIRCULATION_LOAN_STATUS_ON_LOAN, \
                                 CFG_BIBCIRCULATION_LOAN_STATUS_EXPIRED, \
-                                CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED
+                                CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED, \
+                                CFG_BIBCIRCULATION_LOAN_RULE_CODE_ABSOLUTE, \
+                                CFG_BIBCIRCULATION_LOAN_RULE_CODE_REGULAR, \
+                                CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_OVERNIGHT, \
+                                CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS, \
+                                CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_MINUTE_OVERNIGHT, \
+                                CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_MINUTE, \
+                                CFG_BIBCIRCULATION_LOAN_RULE_CODE_NON_CIRC
 
 DICC_REGEXP = re.compile("^\{('[^']*': ?('[^']*'|\"[^\"]+\"|[0-9]*|None)(, ?'[^']*': ?('[^']*'|\"[^\"]+\"|[0-9]*|None))*)?\}$")
 BIBCIRCULATION_OPENER = make_invenio_opener('BibCirculation')

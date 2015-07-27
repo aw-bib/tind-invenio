@@ -592,13 +592,18 @@ CFG_BIBCIRCULATION_ACQ_STATUS = [CFG_BIBCIRCULATION_ACQ_STATUS_NEW,
                                  CFG_BIBCIRCULATION_ACQ_STATUS_RECEIVED,
                                  CFG_BIBCIRCULATION_ACQ_STATUS_CANCELLED]
 
-CFG_BIBCIRCULATION_COLLECTION_SEARCH = ["UNLV General Collection",
-                                        "OOSA Collection",
-                                        "ATTS",
-                                        "EPLS",
-                                        "Human Trafficking Coll.",
-                                        "Spanish Translation Collection",
-                                        "Staff Development",
-                                        "UNLV Journals Collection",
-                                        "UNCITRAL Law Library",
-                                        "CTBTO Library"]
+CFG_BIBCIRCULATION_LOAN_RULE_CODE_ABSOLUTE = 'A'
+CFG_BIBCIRCULATION_LOAN_RULE_CODE_REGULAR = 'R'
+CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_OVERNIGHT = 'H'
+CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS = 'I'
+CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_MINUTE_OVERNIGHT = 'J'
+CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_MINUTE = 'K'
+CFG_BIBCIRCULATION_LOAN_RULE_CODE_NON_CIRC = 'N'
+
+CFG_BIBCIRCULATION_LOAN_RULE_CODES = [CFG_BIBCIRCULATION_LOAN_RULE_CODE_ABSOLUTE,
+                                      CFG_BIBCIRCULATION_LOAN_RULE_CODE_REGULAR,
+                                      CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_OVERNIGHT,
+                                      CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS,
+                                      CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_MINUTE_OVERNIGHT,
+                                      CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_MINUTE,
+                                      CFG_BIBCIRCULATION_LOAN_RULE_CODE_NON_CIRC]

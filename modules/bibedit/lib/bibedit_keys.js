@@ -66,7 +66,6 @@ function initInputHotkeys(inputElement, original) {
     });
   }
 
-
   element.bind('keydown', 'a', function (event) {
     akey = true
     if(tabkey) {
@@ -76,32 +75,27 @@ function initInputHotkeys(inputElement, original) {
         onAutosuggest(event);
         akey = false
     }
-    console.log("a down");
   });
 
   element.bind('keyup', 'a', function(even) { 
     akey = false;
-    console.log("a up");
   });
 
 
   element.bind('keydown', 'tab', function (event) {
      event.preventDefault();
      tabkey = true;
-     console.log("tab down")
 
      if(akey) {
 
         event.preventDefault();
-        event.stopPropagation();console.log("victory");
+        event.stopPropagation();
         onAutosuggest(event);
         tabkey = false;
         autosuggesting = true;
-
      }
-
-
   });
+
   element.bind('keyup', 'tab', function (event) {
     tabkey = false;
     console.log("tab up");

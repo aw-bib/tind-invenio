@@ -45,7 +45,6 @@ def get_css():
            #result_area {
             margin-top: 20px;
             border-collapse: collapse;
-            overflow: hidden;
             padding: 1px;
             border-bottom: 1px solid #B9B9B9;
             font-size:12px;
@@ -123,6 +122,20 @@ def get_css():
            .bibz39_titles_th {
             width: 33%;
            }
+           .bibz39_titles {
+            cursor: pointer;
+            cursor: hand;
+           }
+
+           input[type="submit"] {
+            cursor: pointer;
+            cursor: hand;
+           }
+
+           button {
+            cursor: pointer;
+            cursor: hand;
+           }
            </style>
            """
 
@@ -134,8 +147,6 @@ def get_javascript():
     js_scripts = """
                     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
                     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-                    <script type="text/javascript" src="%(site_url)s/js/jquery.min.js">
-                    </script>
                     <script type="text/javascript" src="%(site_url)s/js/jquery-ui.min.js">
                     </script>
                     <script type="text/javascript" src="%(site_url)s/js/bibz39.js">
@@ -150,10 +161,9 @@ def get_javascript():
                               modal: true,
                             });
                         }
-
                         function spinning() {
                             $("#middle_area > table").remove();
-                            $("#middle_area").append("<p class='spinning_wheel'><i class='fa fa-spinner fa-pulse  fa-5x'></i></p><p class='bibz39_button_td'>Searching...</p>");
+                            $("#middle_area").append("<p class='spinning_wheel'><i class='fa fa fa-spinner fa-pulse fa-5x'></i></p><p class='bibz39_button_td'>Searching...</p>");
                         }
                     </script>
                  """ % {'site_url': CFG_SITE_URL}

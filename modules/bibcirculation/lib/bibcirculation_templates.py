@@ -4778,7 +4778,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
 
         return out
 
-    def tmpl_all_expired_loans(self, result, infos, ln=CFG_SITE_LANG):
+    def tmpl_all_expired_loans(self, result, infos, ln=CFG_SITE_LANG, libraries=()):
         """
         @param ln: language of the page
         """
@@ -4791,24 +4791,79 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
 
         out += """
             <style type="text/css"> @import url("/js/tablesorter/themes/blue/style.css"); </style>
-            <style type="text/css"> @import url("/js/tablesorter/addons/pager/jquery.tablesorter.pager.css"); </style>
-            <script src="/js/tablesorter/jquery.tablesorter.js" type="text/javascript"></script>
-            <script src="/js/tablesorter/addons/pager/jquery.tablesorter.pager.js" type="text/javascript"></script>
+            <script src="/js/jquery.dataTables.min.js" type="text/javascript"></script>
             <script type="text/javascript">
+            function changepage(type) {
+                    var oTable = $('#table_all_loans').dataTable();
+                    var Table = $('#table_all_loans').DataTable();
+                    oTable.fnPageChange(type);
+                    pg_info = Table.page.info();
+                    $('.pagedisplay')[0].value = (pg_info.page + 1) + "/" + pg_info.pages
+            }
+
+            function changelength() {
+                    var oTable = $('#table_all_loans').dataTable();
+                    oTable._fnLengthChange(parseInt($('.pagesize').val()));
+                    oTable.fnDraw();
+            }
+
+
             $(document).ready(function(){
-                $("#table_all_loans")
-                    .tablesorter({sortList: [[3,1], [0,0]],widthFixed: true, widgets: ['zebra']})
-                    .bind("sortStart",function(){$("#overlay").show();})
-                    .bind("sortEnd",function(){$("#overlay").hide()})
-                    .tablesorterPager({container: $("#pager"), positionFixed: false});
-            });
+                 $("#table_all_loans").DataTable({
+                  "processing": true,
+                  "serverSide": true,
+                  "searching": false,
+                  "bInfo" : false,
+                  "dom": 'rt<"bottom"iflp<"clear">>',
+                  "ajax": {
+                    url: "%s/admin2/bibcirculation/all_expired_loans",
+                    data: function ( d ) {
+                        return $.extend( {}, d, {
+                        "library" :$("input:checkbox:checked").map(function(){
+                                      return $(this).val();
+                                    }).get()
+                        })
+                  },
+
+        }});
+
+
+                $("input[type='checkbox']").on("change", function() {
+                    $("#table_all_loans").DataTable().ajax.reload();
+                });
+                $('.dataTables_paginate').hide();
+                $('#table_all_loans_length').hide();
+                $(".dataTables_processing").remove();
+
+
+
+                 $("#table_all_loans").on( 'draw.dt', function () {
+                    var Table = $('#table_all_loans').DataTable();
+                    pg_info = Table.page.info();
+                    $('.pagedisplay')[0].value = (pg_info.page + 1) + "/" + pg_info.pages
+                } );
+                 $('.pagedisplay')[0].onkeypress = function(e){
+                    if (!e) e = window.event;
+                    var keyCode = e.keyCode || e.which;
+                    if (keyCode == '13'){
+                      changepage(parseInt($('.pagedisplay')[0].value.split("/")[0] ) - 1 );
+                      e.preventDefault();
+
+                      return false;
+                    }
+                  }
+                  $('.pagesize').on('change', function() {
+                    changelength();
+                  });
+
+                });
+
             </script>
 
             <br />
 
             <div class="bibcircbottom">
-            """
-
+            """ % (CFG_SITE_URL,)
         if len(result) == 0:
             out += """
               <br />
@@ -4833,7 +4888,17 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                        _("Back"))
 
         else:
+            if len(libraries) > 1:
+            #out += "<select id='select_library' multiple>"
+            #for library in libraries:
+            #    out += '<option value="{0}">{0}</option>'.format(library[1])
+            #out += "</select>"
+                out += "<form id='search_form'><p>"
+                for library in libraries:
+                   out += '<label class="checkboxes_exp_loan"><input type="checkbox" name="libraries" value="{0}">{0}</label> '.format(library[1])
+                out += "</p></form>"
             out += """
+
             <form name="borrower_form"
                   action="%s/admin2/bibcirculation/all_loans"
                   method="get" >
@@ -4842,15 +4907,15 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                     border="0" cellpadding="0" cellspacing="1">
                <thead>
                     <tr>
-                       <th>%s</th>
-                       <th>%s</th>
-                       <th>%s</th>
-                       <th>%s</th>
-                       <th>%s</th>
-                       <th>%s</th>
-                       <th>%s</th>
-                       <th>%s</th>
-                       <th></th>
+                       <th class="header">%s</th>
+                       <th class="header">%s</th>
+                       <th class="header">%s</th>
+                       <th class="header">%s</th>
+                       <th class="header">%s</th>
+                       <th class="header">%s</th>
+                       <th class="header">%s</th>
+                       <th class="header">%s</th>
+                       <th class="header">%s</th>
                     </tr>
                </thead>
               <tbody>
@@ -4862,74 +4927,25 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                           _("Due date"),
                           _("Renewals"),
                           _("Overdue letters"),
-                          _("Loan Notes"))
-
-            for (borrower_id, borrower_name, recid, barcode,
-                 loaned_on, due_date, nb_renewal, nb_overdue,
-                 date_overdue, notes, loan_id) in result:
-
-                borrower_link = create_html_link(CFG_SITE_URL +
-                                '/admin2/bibcirculation/get_borrower_details',
-                                {'borrower_id': borrower_id, 'ln': ln},
-                                (borrower_name))
-
-                see_notes_link = create_html_link(CFG_SITE_URL +
-                                '/admin2/bibcirculation/get_loans_notes',
-                                {'loan_id': loan_id, 'ln': ln},
-                                (_("see notes")))
-
-                no_notes_link = create_html_link(CFG_SITE_URL +
-                                '/admin2/bibcirculation/get_loans_notes',
-                                {'loan_id': loan_id, 'ln': ln},
-                                 (_("no notes")))
-
-
-                if notes == "" or str(notes) == '{}':
-                    check_notes = no_notes_link
-                else:
-                    check_notes = see_notes_link
-
-                title_link = create_html_link(CFG_SITE_URL +
-                                    '/admin2/bibcirculation/get_item_details',
-                                    {'recid': recid, 'ln': ln},
-                                    (book_title_from_MARC(recid)))
-
-                out += """
-                    <tr>
-                        <td>%s</td>
-                        <td>%s</td>
-                        <td>%s</td>
-                        <td>%s</td>
-                        <td>%s</td>
-                        <td>%s</td>
-                        <td>%s - %s</td>
-                        <td>%s</td>
-                        <td align="center">
-                        <input type=button onClick="location.href='%s/admin2/bibcirculation/claim_book_return?borrower_id=%s&recid=%s&loan_id=%s&template=claim_return'" onmouseover="this.className='bibcircbuttonover'" onmouseout="this.className='bibcircbutton'"
-                             value='%s' class='bibcircbutton'></td>
-                    </tr>
-
-                    """ % (borrower_link, title_link, barcode,
-                           loaned_on, due_date,
-                           nb_renewal, nb_overdue, date_overdue,
-                           check_notes, CFG_SITE_URL,
-                           borrower_id, recid, loan_id, _("Send recall"))
+                          _("Library"),
+                          _("Location"))
 
 
             out += """
                     </tbody>
                     </table>
                     </form>
-
+                    """
+            out += """
                     <div id="pager" class="pager">
                         <form>
                             <br />
-                            <img src="/img/sb.gif" class="first" />
-                            <img src="/img/sp.gif" class="prev" />
+                            <img src="/img/sb.gif"  onclick='changepage("first")' class="paginate_button first" />
+                            <img src="/img/sp.gif" onclick='changepage("previous")' class="paginate_button previous" />
                             <input type="text" class="pagedisplay" />
-                            <img src="/img/sn.gif" class="next" />
-                            <img src="/img/se.gif" class="last" />
-                            <select class="pagesize">
+                            <img src="/img/sn.gif" onclick='changepage("next")' class="paginate_button next" />
+                            <img src="/img/se.gif" onclick='changepage("last")' class="paginate_button last" />
+                            <select class="pagesize" >
                                 <option value="10" selected="selected">10</option>
                                 <option value="20">20</option>
                                 <option value="30">30</option>
@@ -4937,8 +4953,6 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                             </select>
                         </form>
                     </div>
-                    """
-            out += """
                     <div class="back" style="position: relative; top: 5px;">
                         <br />
                         <table class="bibcirctable">
@@ -4953,6 +4967,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                     <br />
                     </form>
                     </div>
+
                     </div>
                     """ % (_("Back"))
 

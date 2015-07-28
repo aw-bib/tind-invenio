@@ -3009,9 +3009,11 @@ function addFieldAddSubfieldEditor(jQRowGroupID, fieldTmpNo, defaultCode, defaul
   var subfieldTmpNo = $(jQRowGroupID).data('freeSubfieldTmpNo');
   $(jQRowGroupID).data('freeSubfieldTmpNo', subfieldTmpNo+1);
 
-  var addFieldRows = $(jQRowGroupID + ' tr');
-
-  $(addFieldRows).eq(addFieldRows.length-1).before(createAddFieldRow(
+  var addFieldRows = $(jQRowGroupID + '>tr');
+  console.log(jQRowGroupID + '>tr');
+  console.log(addFieldRows);
+  console.log(addFieldRows.length-1);
+  $(addFieldRows).eq(addFieldRows.length-1).after(createAddFieldRow(
     fieldTmpNo, subfieldTmpNo, defaultCode, defaultValue));
   $('#txtAddFieldSubfieldCode_' + fieldTmpNo + '_' + subfieldTmpNo).bind(
     'keyup', onAddFieldChange);
@@ -3145,13 +3147,13 @@ function createAddFieldInterface(initialContent, initialTemplateNo){
   });
 
   $('#txtAddFieldTag_' + fieldTmpNo).bind('keyup', onAddFieldChange);
-  initInputHotkeys('#txtAddFieldTag_' + fieldTmpNo);
+
   $('#txtAddFieldInd1_' + fieldTmpNo).bind('keyup', onAddFieldChange);
-  initInputHotkeys('#txtAddFieldInd1_' + fieldTmpNo);
+
   $('#txtAddFieldInd2_' + fieldTmpNo).bind('keyup', onAddFieldChange);
-  initInputHotkeys('#txtAddFieldInd2_' + fieldTmpNo);
+
   $('#txtAddFieldSubfieldCode_' + fieldTmpNo + '_0').bind('keyup', onAddFieldChange);
-  initInputHotkeys('#txtAddFieldSubfieldCode_' + fieldTmpNo + '_0');
+
   $('#content_' + fieldTmpNo + '_0').bind('keyup', function (e){
     onAddFieldValueKeyPressed(e, jQRowGroupID, fieldTmpNo, 0);
   });
@@ -4229,8 +4231,6 @@ function onAutosuggest(event) {
              //add a stylish close link in case the user does not find
             //the value among the suggestions
 
-
-
             if(mysel_count > 0) { 
               final_shape += mysel;
             }
@@ -4315,7 +4315,6 @@ function onAutosuggestSelect(i, val_to_modify) {
                 }
               }
             }
-              content.focus();
           }
             ,1000);
 
@@ -4342,10 +4341,10 @@ function onAutosuggestSelect(i, val_to_modify) {
               }
 
             }
-          $("#"+content_id).trigger("click");
             }
             , 1000);
         }
+        content.focus();
       }
   }
   /*remove autosuggest box*/

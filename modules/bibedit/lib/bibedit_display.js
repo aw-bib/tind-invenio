@@ -257,7 +257,7 @@ function define_008 () {
 
 }
 
-function createPopUp(current_value, id) {
+function createPopUp(current_value, id, checkdate) {
 
     var tags_list = {"000":[["Record length",5],["Record status",1],["Type of record",1],["Bibliographic level",1],["Type of control",1],["Character coding scheme",1],["Indicator count",1],
     ["Subfield code count",1],["Base address of data",5],["Encoding level",1],["Descriptive cataloging form",1],["Multipart resource record level",1], ["Entry map",4]],
@@ -267,20 +267,22 @@ function createPopUp(current_value, id) {
 
     var regex = /^[0-9]{6}/;
     date_field = current_value.substring(0, 6);
-    if (!regex.test(date_field))
-    {
-        console.log(date_field);
-        console.log(parseInt(date_field));
-        console.log(parseInt(date_field).toString().length);
-        createReq({recID: gRecID, requestType: 'getRecordCreationDate'},function(json) {
-            current_value = json["creation_date"] +  current_value.slice(6);
+    if(checkdate) {
+        if (!regex.test(date_field))
+        {
+            console.log(date_field);
+            console.log(parseInt(date_field));
+            console.log(parseInt(date_field).toString().length);
+            createReq({recID: gRecID, requestType: 'getRecordCreationDate'},function(json) {
+                current_value = json["creation_date"] +  current_value.slice(6);
+                advGenControlFieldGUI(array_form, current_value, id);
+            });
+        } else {
             advGenControlFieldGUI(array_form, current_value, id);
-        });
-    }
-    else {
+        }
+    } else {
         advGenControlFieldGUI(array_form, current_value, id);
     }
-
 }
 
 function advGenControlFieldGUI(array_form, current_value, id) {
@@ -336,8 +338,11 @@ function createControlField(tag, field, fieldPosition) {
 
         console.log("Up")
         if (gAdvancedGuiCf.indexOf(tag) > -1) {
-            console.log(tag)
-            EditCode =' onclick="createPopUp($(\'#content_' + tag + '_0\')[0].innerHTML, this.id)" ';
+            if(tag!="008") {
+                EditCode =' onclick="createPopUp($(\'#content_' + tag + '_0\')[0].innerHTML, this.id, false)" ';
+            } else {
+                EditCode =' onclick="createPopUp($(\'#content_' + tag + '_0\')[0].innerHTML, this.id, true)" ';
+            }
         } else {
             EditCode =' onclick="onContentClick(event, this)" ';
         }

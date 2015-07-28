@@ -461,7 +461,10 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         argd = wash_urlargd(form, {'ln': (str, "en")})
         ln = argd['ln']
 
-        return bal.all_expired_loans(req, ln)
+        if "draw" in req.args:
+            return bal.all_expired_loans_data(req, ln)
+        else:
+            return bal.all_expired_loans(req, ln)
 
     def get_pending_requests(self, req, form):
         """http://cds.cern.ch/admin2/bibcirculation/get_pending_requests"""

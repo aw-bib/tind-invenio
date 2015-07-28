@@ -144,14 +144,14 @@ class WebInterfacebibz39Pages(WebInterfaceDirectory):
                             for title_constituant in list_of_record[identifier]["245"][0][0]:
                                 title += title_constituant[1] + " "
 
-                        body_content += "<tr><td><div class='bibz39_titles'>{0}<div><td>{4}</td><td>{5}</td</td><td><div>{2}</div></td><td><div class='bibz39_button_td'>{3}</div></td><td><div class='bibz39_button_td'>{1}</div></td></tr>".format(
+                        body_content += "<tr><td><div class='bibz39_titles' onclick='showxml({6})'>{0}<div><td>{4}</td><td>{5}</td</td><td><div>{2}</div></td><td><div class='bibz39_button_td'>{3}</div></td><td><div class='bibz39_button_td'>{1}</div></td></tr>".format(
                             title,
                             '<form method="post" action="/admin2/bibz39/"><input type="hidden"  name="marcxml"  value="{0}"><input type="submit" value="Import" /></form>'.format(
                                 cgi.escape(record_xml_output(list_of_record[identifier])).replace(
                                     "\"", "&quot;").replace("\'", "&quot;")),
                             rec["provider"],
                             '<button onclick="showxml({0})">View</button>'.format(identifier),
-                            authors, publishers)
+                            authors, publishers, identifier)
                     body_content += "</table>"
                     body_content += '<script type="text/javascript">'
                     body_content += "var gAllMarcXml= {"
@@ -206,25 +206,24 @@ class WebInterfacebibz39Pages(WebInterfaceDirectory):
             else:
                 html += "<div><input form='main_form' type='checkbox' name='server' value='{0}'>{0}</div>".format(
                     server)
-
         html += """</div></div><div id='middle_area'>
-
         <form id="main_form" method="post" action="/admin2/bibz39/">
         <div id='search_form'>
         <div id='radiobuttons'>"""
 
-        for req_type in self._request_type_dict:
-            html += """<input type="radio" name="search_type" value="{0}"{1}> {0}""".format(
-                req_type, "checked" if req_type == argd["search_type"] else "")
+        if argd["search_type"]:
+            for req_type in self._request_type_dict:
+                html += """<input type="radio" name="search_type" value="{0}"{1}> {0}""".format(
+                    req_type, "checked" if req_type == argd["search_type"] else "")
+        else:
+            for req_type in self._request_type_dict:
+                html += """<input type="radio" name="search_type" value="{0}"{1}> {0}""".format(
+                    req_type, "checked" if req_type == "ISBN" else "")
 
         html += """</div>
         <input type="text" name="search" id="search" value="{0}" />
-
         <input type="submit" onclick="spinning()" value="search" />
         </div>
-
-
-
         </form>""".format(argd["search"])
 
         return html

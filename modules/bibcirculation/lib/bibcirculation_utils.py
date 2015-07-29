@@ -308,7 +308,6 @@ def generate_new_due_date(value, hours=False, minutes=False, absolute=False):
     """
 
     today = datetime.datetime.today()
-    hours_now = int(today.strftime("%H"))
     minutes_now = int(today.strftime("%M"))
 
     if hours or minutes:
@@ -677,12 +676,12 @@ def compare_dates(date):
     Compare given date with today
 
     @param date: given date
-    @type date: string
+    @type date: datetime
 
     @return boolean
     """
 
-    if date < time.strftime("%Y-%m-%d"):
+    if date < datetime.datetime.today():
         return False
     else:
         return True
@@ -696,14 +695,19 @@ def validate_date_format(date):
 
     @return boolean
     """
+    tmp_date = None
 
     try:
-        if time.strptime(date, "%Y-%m-%d"):
-            if compare_dates(date):
-                return True
-        else:
-            return False
+        tmp_date =  datetime.datetime.strptime(date, "%Y-%m-%d")
     except ValueError:
+        try:
+            tmp_date = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M")
+        except ValueError:
+            pass
+
+    if tmp_date and compare_dates(tmp_date):
+        return True
+    else:
         return False
 
 def create_ill_record(book_info):

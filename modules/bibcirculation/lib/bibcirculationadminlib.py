@@ -382,7 +382,9 @@ def loan_on_desk_step3(req, user_id, list_of_barcodes, ln=CFG_SITE_LANG):
                                                         ln=ln)
         elif not loan_rule:
             infos.append(_('This patron does not have permission to loan this item.'))
-            body = bc_templates.tmpl_loan_on_desk_step2(user_id=user_id,
+            body = bc_templates.tmpl_loan_on_desk_step1(result=None,
+                                                        key='',
+                                                        string='',
                                                         infos=infos,
                                                         ln=ln)
         else:

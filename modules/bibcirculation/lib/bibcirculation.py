@@ -46,7 +46,7 @@ from invenio.bibcirculation_utils import book_title_from_MARC, \
      create_ill_record, \
      tag_all_requests_as_done, \
      generate_tmp_barcode, \
-     generate_new_due_date, \
+     renew_loan_for_X_days, \
      update_requests_statuses, \
      search_user
 from invenio.bibcirculation_cern_ldap import get_user_info_from_ldap
@@ -87,7 +87,7 @@ def perform_borrower_loans(uid, barcode, borrower_id,
 
     borrower_id = db.get_borrower_id_by_email(db.get_invenio_user_email(uid))
 
-    new_due_date = generate_new_due_date(30)
+    new_due_date = renew_loan_for_X_days(barcode)
 
     #renew loan
     if action == 'renew':

@@ -5228,7 +5228,7 @@ JOIN crcITEMTYPE_ITEM AS it_i ON it_i.itemtype_id = it.id
 JOIN crcITEM AS i ON it_i.barcode = i.barcode
 JOIN crcLIBRARY AS l ON i.id_crcLIBRARY = l.id
 JOIN crcLOANRULES AS lr ON r_s.rule_id = lr.id
-WHERE l.name LIKE r_s.location
+WHERE (l.name LIKE r_s.location OR r_s.location = '')
 AND UCASE(r_s.active) = "Y";
 
 -- tables for invenio_upgrader

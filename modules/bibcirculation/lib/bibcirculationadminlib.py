@@ -439,7 +439,7 @@ def loan_on_desk_step3(req, user_id, list_of_barcodes, ln=CFG_SITE_LANG):
         # shortcut to simplify loan process
         due_dates = []
         for bc in list_of_barcodes:
-            due_dates.append(renew_loan_for_X_days(bc))
+            due_dates.append(renew_loan_for_X_days(bc, user_id))
 
         return loan_on_desk_step4(req, list_of_barcodes, user_id,
                        due_dates, None, ln)
@@ -696,7 +696,7 @@ def register_new_loan(req, barcode, borrower_id,
         else:
             recid = db.get_id_bibrec(barcode)
             #loaned_on = datetime.date.today()
-            due_date = renew_loan_for_X_days(barcode)
+            due_date = renew_loan_for_X_days(barcode, borrower_id)
 
             if new_note:
                 note_format = '[' + time.ctime() + '] ' + new_note + '\n'
@@ -811,7 +811,7 @@ def make_new_loan_from_request(req, check_id, barcode, ln=CFG_SITE_LANG):
     borrower_id = db.get_request_borrower_id(check_id)
     borrower_info = db.get_borrower_details(borrower_id)
 
-    due_date = renew_loan_for_X_days(barcode)
+    due_date = renew_loan_for_X_days(barcode, borrower_id)
     if db.is_item_on_loan(barcode):
         infos.append('The item with the barcode %(x_strong_tag_open)s%(x_barcode)s%(x_strong_tag_close)s is on loan.' % {'x_barcode': barcode, 'x_strong_tag_open': '<strong>', 'x_strong_tag_close': '</strong>'})
         return redirect_to_url(req,
@@ -1862,7 +1862,7 @@ def create_new_loan_step2(req, borrower_id, barcode, notes, ln=CFG_SITE_LANG):
 
     else:
         #loaned_on = datetime.date.today()
-        due_date = renew_loan_for_X_days(barcode)
+        due_date = renew_loan_for_X_days(barcode, borrower_id)
         db.new_loan(borrower_id, has_recid, barcode,
                     due_date, CFG_BIBCIRCULATION_LOAN_STATUS_ON_LOAN,
                     'normal', notes_format)

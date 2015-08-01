@@ -2458,7 +2458,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
 
         for (recid, barcode, library_id, location) in list_of_books:
 
-            due_date = renew_loan_for_X_days(barcode)
+            due_date = renew_loan_for_X_days(barcode, borrower_id)
 
             library_name = db.get_library_name(library_id)
 
@@ -4105,7 +4105,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
     """ % (CFG_SITE_URL,
         _("Loan information"),
         _("Loan date"), datetime.date.today().strftime('%Y-%m-%d'),
-        _("Due date"), CFG_SITE_URL, renew_loan_for_X_days(barcode),
+        _("Due date"), CFG_SITE_URL, renew_loan_for_X_days(barcode, _borrower_id),
         _("Write notes"),
         _("This note will be associated to this new loan, not to the borrower."),
         _("Back"), _("Continue"))

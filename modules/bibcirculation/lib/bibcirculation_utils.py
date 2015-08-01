@@ -350,7 +350,7 @@ def generate_new_due_date(value, hours=False, minutes=False, absolute=False):
     return due_date_string
 
 
-def renew_loan_for_X_days(barcode):
+def renew_loan_for_X_days(barcode, borrower_id=None):
     """
     Renew a loan based on its loan period
 
@@ -359,7 +359,9 @@ def renew_loan_for_X_days(barcode):
 
     @return new due date
     """
-    borrower_id = db.get_borrower_id(barcode)
+    if borrower_id == None:
+        borrower_id = db.get_borrower_id(barcode)
+
     loan_period = db.get_loan_period_from_loan_rule(borrower_id, barcode)
 
     if loan_period['code'] in (CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_OVERNIGHT,

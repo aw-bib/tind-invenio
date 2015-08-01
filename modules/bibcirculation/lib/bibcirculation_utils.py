@@ -375,6 +375,9 @@ def renew_loan_for_X_days(barcode, borrower_id=None):
     elif loan_period['code'] == CFG_BIBCIRCULATION_LOAN_RULE_CODE_ABSOLUTE:
         due_date = generate_new_due_date(loan_period['value'], absolute=True)
 
+    else:
+        due_date = generate_new_due_date(loan_period['value'])
+
     return due_date
 
 def make_copy_available(request_id):

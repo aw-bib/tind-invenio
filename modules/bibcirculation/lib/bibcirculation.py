@@ -87,12 +87,12 @@ def perform_borrower_loans(uid, barcode, borrower_id,
 
     borrower_id = db.get_borrower_id_by_email(db.get_invenio_user_email(uid))
 
-    new_due_date = renew_loan_for_X_days(barcode)
 
     #renew loan
     if action == 'renew':
         recid = db.get_id_bibrec(barcode)
         item_description = db.get_item_description(barcode)
+        new_due_date = renew_loan_for_X_days(barcode)
         queue = db.get_queue_request(recid, item_description)
 
         if len(queue) != 0 and queue[0][0] != borrower_id:
@@ -119,6 +119,7 @@ def perform_borrower_loans(uid, barcode, borrower_id,
         for bc in list_of_barcodes:
             bc_recid = db.get_id_bibrec(bc)
             item_description = db.get_item_description(bc)
+            new_due_date = renew_loan_for_X_days(bc)
             queue = db.get_queue_request(bc_recid, item_description)
 
             #check if there are requests

@@ -540,7 +540,10 @@ template function generated it.
 
           - HTML code of the page headers
         """
-
+        try:
+            from invenio.config import CFG_PIWIK
+        except:
+            CFG_PIWIK = ""
         # load the right message language
         _ = gettext_set_language(ln)
 
@@ -570,6 +573,7 @@ template function generated it.
  <div class="pagefooterstriperight">
   %(languagebox)s
  </div>
+  %(tracking_code)s
 <!-- replaced page footer -->
 </div>
 </body>
@@ -596,6 +600,7 @@ template function generated it.
           'version': CFG_VERSION,
 
           'pagefooteradd': pagefooteradd,
+          'tracking_code': CFG_PIWIK,
         }
         return out
 

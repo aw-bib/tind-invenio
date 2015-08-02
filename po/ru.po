@@ -15743,7 +15743,7 @@ msgstr "Если вы столкнулись с проблемой, пожалу
 #~ msgstr "Забыть решение!"
 
 #~ msgid "Forget decision."
-#~ msgstr "Забыть решение.
+#~ msgstr "Забыть решение."
 
 #~ msgid "Your papers"
 #~ msgstr "Ваши работы"

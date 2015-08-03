@@ -544,7 +544,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         except:
             patrontype = None
 
-        return bal.get_item_details(req, recid, ln, patrontype)
+        return bal.get_item_details(req, recid, patrontype, ln)
 
     def get_item_requests_details(self, req, form):
         """http://cds.cern.ch/admin2/bibcirculation/borrowers_search"""

@@ -2404,7 +2404,7 @@ def get_item_loans_notes(req, loan_id, add_notes, new_note, ln=CFG_SITE_LANG):
 
 
 
-def get_item_details(req, recid, ln=CFG_SITE_LANG, patrontype):
+def get_item_details(req, recid, patrontype, ln=CFG_SITE_LANG):
     """
     Display the details of an item.
 

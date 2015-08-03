@@ -3222,7 +3222,7 @@ def item_search(req, infos=[], ln=CFG_SITE_LANG):
                 navtrail=navtrail_previous_links,
                 lastupdated=__lastupdated__)
 
-def item_search_result(req, p, f, patrontype=None, ln=CFG_SITE_LANG):
+def item_search_result(req, p, f, patrontype, ln=CFG_SITE_LANG):
     """
     Search an item and return a list with all the possible results. To retrieve
     the information desired, we use the method 'perform_request_search' (from

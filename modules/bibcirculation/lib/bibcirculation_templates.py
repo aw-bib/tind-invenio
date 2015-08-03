@@ -5121,11 +5121,25 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
            <br />
            <table class="bibcirctable">
                 <tr>
-                     <td class="bibcirctableheader">%s</td>
+                     <td class="bibcirctableheader">%s
+                         <form action="%s/admin2/bibcirculation/item_search_result" method="GET">
+                            <input type="hidden" name="f" value="recid">
+                            <input type="hidden" name="p" value="%s">
+                            <select name="patrontype" onchange="this.form.submit();">
+                                <option>Select patron type</option>
+           """ % (_("Additional details"), CFG_SITE_URL, recid)
+        for id, name in db.get_patron_types():
+            out += """
+                                <option value="%s">%s</option>
+                   """ % (id, name)
+        out += """
+                            </select>
+                        </form>
+                     </td>
                 </tr>
            </table>
-           """ % (_("Additional details"))
-
+           """
+        
         out += """
             <style type="text/css">
                 @import url("/img/tablesorter.css");

@@ -4998,7 +4998,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
 
 
     def tmpl_get_item_details(self, recid, copies, requests, loans, purchases, req_hist_overview,
-                              loans_hist_overview, purchases_hist_overview, infos, ln=CFG_SITE_LANG):
+                              loans_hist_overview, purchases_hist_overview, infos, ln=CFG_SITE_LANG, patrontype=None):
         """
         @param ln: language of the page
         """
@@ -5199,7 +5199,11 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
            """ % (_("Loan period"))
         for id, name in db.get_patron_types():
             out += """
-                                <option value="item_search_result?f=recid&p=%s&patrontype=%s">%s</option>
+                                <option """
+            if patrontype and patrontype == id:
+                out += "selected "
+
+            out += """value="item_search_result?f=recid&p=%s&patrontype=%s">%s</option>
                    """ % (recid, id, name)
         out += """
                             </select>

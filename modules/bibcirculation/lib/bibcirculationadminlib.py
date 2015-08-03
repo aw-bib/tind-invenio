@@ -2451,7 +2451,8 @@ def get_item_details(req, recid, patrontype, ln=CFG_SITE_LANG):
                                         loans_hist_overview=loans_hist_overview,
                                         purchases_hist_overview=purchases_hist_overview,
                                         infos=infos,
-                                        ln=ln)
+                                        ln=ln,
+                                        patrontype=patrontype)
 
     return page(title=_("Item details"),
                 uid=id_user,

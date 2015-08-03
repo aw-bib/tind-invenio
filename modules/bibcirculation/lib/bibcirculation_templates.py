@@ -5121,9 +5121,9 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
            <table class="bibcirctable">
                 <tr>
                      <td class="bibcirctableheader">%s
-                            <select name="patrontype" onchange="location = this.options[this.selectedIndex].value;">
+                            <select onchange="location = this.options[this.selectedIndex].value;">
                                 <option>Select patron type</option>
-           """ % (_("Additional details"), CFG_SITE_URL, recid)
+           """ % (_("Additional details"))
         for id, name in db.get_patron_types():
             out += """
                                 <option value="item_search_result?f=%s&patrontype=%s">%s</option>

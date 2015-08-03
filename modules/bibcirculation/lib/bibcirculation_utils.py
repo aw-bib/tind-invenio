@@ -306,6 +306,10 @@ def generate_new_due_date(value, hours=False, minutes=False, absolute=False):
 
     @return new due date
     """
+    try:
+        value = int(value)
+    except ValueError:
+        raise ValueError("Due date value must be an integer")
 
     today = datetime.datetime.today()
     minutes_now = int(today.strftime("%M"))

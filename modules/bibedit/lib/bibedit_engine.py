@@ -47,12 +47,13 @@ from invenio.bibedit_config import CFG_BIBEDIT_AJAX_RESULT_CODES, \
     CFG_BIBEDIT_JS_STATUS_ERROR_TIME, CFG_BIBEDIT_JS_STATUS_INFO_TIME, \
     CFG_BIBEDIT_JS_TICKET_REFRESH_DELAY, CFG_BIBEDIT_MAX_SEARCH_RESULTS, \
     CFG_BIBEDIT_TAG_FORMAT, CFG_BIBEDIT_AJAX_RESULT_CODES_REV, \
-    CFG_BIBEDIT_AUTOSUGGEST_TAGS, CFG_BIBEDIT_AUTOCOMPLETE_TAGS_KBS,\
+    CFG_BIBEDIT_AUTOSUGGEST_TAGS, CFG_BIBEDIT_AUTOCOMPLETE_TAGS_KBS, \
     CFG_BIBEDIT_KEYWORD_TAXONOMY, CFG_BIBEDIT_KEYWORD_TAG, \
     CFG_BIBEDIT_KEYWORD_RDFLABEL, CFG_BIBEDIT_REQUESTS_UNTIL_SAVE, \
     CFG_BIBEDIT_DOI_LOOKUP_FIELD, CFG_DOI_USER_AGENT, \
     CFG_BIBEDIT_DISPLAY_REFERENCE_TAGS, CFG_BIBEDIT_DISPLAY_AUTHOR_TAGS, \
-    CFG_BIBEDIT_EXCLUDE_CURATOR_TAGS, CFG_BIBEDIT_AUTHOR_DISPLAY_THRESHOLD
+    CFG_BIBEDIT_EXCLUDE_CURATOR_TAGS, CFG_BIBEDIT_AUTHOR_DISPLAY_THRESHOLD, \
+    CFG_BIBEDIT_PROTECTED_CONTROLFIELD, CFG_BIBEDIT_ADVANCED_GUI_CF
 
 from invenio.dbquery import run_sql
 
@@ -107,7 +108,7 @@ from invenio.webpage import page
 from invenio.htmlutils import get_mathjax_header
 from invenio.textutils import wash_for_xml, show_diff
 from invenio.bibknowledge import get_kbd_values_for_bibedit, get_kbr_values, \
-     get_kbt_items_for_bibedit, kb_exists
+    get_kbt_items_for_bibedit, kb_exists
 
 from invenio.batchuploader_engine import perform_upload_check
 
@@ -115,13 +116,14 @@ from invenio.bibcirculation_dblayer import get_number_copies, has_copies
 from invenio.bibcirculation_utils import create_item_details_url
 
 from invenio.refextract_api import FullTextNotAvailable, \
-                                   get_pdf_doc, \
-                                   record_has_fulltext
+    get_pdf_doc, \
+    record_has_fulltext
 
 from invenio import xmlmarc2textmarc as xmlmarc2textmarc
 from invenio.crossrefutils import get_marcxml_for_doi, CrossrefError
 
 import invenio.template
+
 bibedit_templates = invenio.template.load('bibedit')
 
 try:
@@ -148,19 +150,20 @@ def get_empty_fields_templates():
                 "name": "Empty field",
                 "description": "The data field not containing any " +
                                "information filled in",
-                "tag" : "",
-                "ind1" : "",
-                "ind2" : "",
-                "subfields" : [("", "")],
-                "isControlfield" : False
+                "tag": "",
+                "ind1": "",
+                "ind2": "",
+                "subfields": [("", "")],
+                "isControlfield": False
             }, {
-                "name" : "Empty control field",
-                "description" : "The controlfield not containing any " +
-                                "data or tag description",
-                "isControlfield" : True,
-                "tag" : "",
-                "value" : ""
+                "name": "Empty control field",
+                "description": "The controlfield not containing any " +
+                               "data or tag description",
+                "isControlfield": True,
+                "tag": "",
+                "value": ""
             }]
+
 
 def get_available_fields_templates():
     """
@@ -176,29 +179,30 @@ def get_available_fields_templates():
         field = template[3][tplTag][0]
 
         if (field[0] == []):
-        # if the field is a controlField, add different structure
+            # if the field is a controlField, add different structure
             result.append({
-                    "name" : template[1],
-                    "description" : template[2],
-                    "isControlfield" : True,
-                    "tag" : tplTag,
-                    "value" : field[3]
-                })
+                "name": template[1],
+                "description": template[2],
+                "isControlfield": True,
+                "tag": tplTag,
+                "value": field[3]
+            })
         else:
             result.append({
-                    "name": template[1],
-                    "description": template[2],
-                    "tag" : tplTag,
-                    "ind1" : field[1],
-                    "ind2" : field[2],
-                    "subfields" : field[0],
-                    "isControlfield" : False
-                    })
+                "name": template[1],
+                "description": template[2],
+                "tag": tplTag,
+                "ind1": field[1],
+                "ind2": field[2],
+                "subfields": field[0],
+                "isControlfield": False
+            })
     return result
+
 
 def perform_request_init(uid, ln, req, lastupdated):
     """Handle the initial request by adding menu and JavaScript to the page."""
-    errors   = []
+    errors = []
     warnings = []
     body = ''
 
@@ -215,20 +219,20 @@ def perform_request_init(uid, ln, req, lastupdated):
         body = '''Sorry, the record editor cannot operate when the
                 `simplejson' module is not installed.  Please see the INSTALL
                 file.'''
-        return page(title       = title,
-                    body        = body,
-                    errors      = [],
-                    warnings    = [],
-                    uid         = uid,
-                    language    = ln,
-                    navtrail    = "",
-                    lastupdated = lastupdated,
-                    req         = req)
-
+        return page(title=title,
+                    body=body,
+                    errors=[],
+                    warnings=[],
+                    uid=uid,
+                    language=ln,
+                    navtrail="",
+                    lastupdated=lastupdated,
+                    req=req)
 
     body += '<link rel="stylesheet" type="text/css" href="/img/jquery-ui.css" />'
     body += '<link rel="stylesheet" type="text/css" href="%s/%s" />' % (CFG_SITE_URL,
-            auto_version_url("img/" + 'bibedit.css'))
+                                                                        auto_version_url(
+                                                                            "img/" + 'bibedit.css'))
 
     if CFG_CERN_SITE:
         cern_site = 'true'
@@ -259,10 +263,10 @@ def perform_request_init(uid, ln, req, lastupdated):
                 CFG_BIBEDIT_JS_NEW_CONTENT_HIGHLIGHT_DELAY,
             'gTICKET_REFRESH_DELAY': CFG_BIBEDIT_JS_TICKET_REFRESH_DELAY,
             'gRESULT_CODES': CFG_BIBEDIT_AJAX_RESULT_CODES,
-            'gAUTOSUGGEST_TAGS' : CFG_BIBEDIT_AUTOSUGGEST_TAGS,
-            'gAUTOCOMPLETE_TAGS' : CFG_BIBEDIT_AUTOCOMPLETE_TAGS_KBS.keys(),
-            'gKEYWORD_TAG' : '"' + CFG_BIBEDIT_KEYWORD_TAG  + '"',
-            'gREQUESTS_UNTIL_SAVE' : CFG_BIBEDIT_REQUESTS_UNTIL_SAVE,
+            'gAUTOSUGGEST_TAGS': CFG_BIBEDIT_AUTOSUGGEST_TAGS,
+            'gAUTOCOMPLETE_TAGS': CFG_BIBEDIT_AUTOCOMPLETE_TAGS_KBS.keys(),
+            'gKEYWORD_TAG': '"' + CFG_BIBEDIT_KEYWORD_TAG + '"',
+            'gREQUESTS_UNTIL_SAVE': CFG_BIBEDIT_REQUESTS_UNTIL_SAVE,
             'gAVAILABLE_KBS': get_available_kbs(),
             'gDOILookupField': '"' + CFG_BIBEDIT_DOI_LOOKUP_FIELD + '"',
             'gDisplayReferenceTags': CFG_BIBEDIT_DISPLAY_REFERENCE_TAGS,
@@ -270,7 +274,9 @@ def perform_request_init(uid, ln, req, lastupdated):
             'gExcludeCuratorTags': CFG_BIBEDIT_EXCLUDE_CURATOR_TAGS,
             'gSHOW_HP_REMOVED_FIELDS': CFG_BIBEDIT_SHOW_HOLDING_PEN_REMOVED_FIELDS,
             'gBIBCATALOG_SYSTEM_RT_URL': repr(CFG_BIBCATALOG_SYSTEM_RT_URL),
-            'gAutoComplete': json.dumps(CFG_BIBEDIT_AUTOCOMPLETE)
+            'gAutoComplete': json.dumps(CFG_BIBEDIT_AUTOCOMPLETE),
+            'gProtectedControlfield': json.dumps(CFG_BIBEDIT_PROTECTED_CONTROLFIELD),
+            'gAdvancedGuiCf': json.dumps(CFG_BIBEDIT_ADVANCED_GUI_CF)
             }
     body += '<script type="text/javascript">\n'
     for key in data:
@@ -283,21 +289,22 @@ def perform_request_init(uid, ln, req, lastupdated):
             "   var fieldTemplates = %s\n" % (json.dumps(fieldTemplates), ) + \
             "</script>\n"
     # Add scripts (the ordering is NOT irrelevant).
-    scripts = ['jquery-ui.min.js',  'jquery.jeditable.mini.js', 'jquery.hotkeys.js',
-               'json2.js', 'bibedit_refextract.js', 'bibedit_display.js', 'bibedit_engine.js', 'bibedit_keys.js',
+    scripts = ['jquery-ui.min.js', 'jquery.jeditable.mini.js', 'jquery.hotkeys.js',
+               'json2.js', 'bibedit_refextract.js', 'bibedit_display.js', 'bibedit_engine.js',
+               'bibedit_keys.js',
                'bibedit_menu.js', 'bibedit_holdingpen.js', 'marcxml.js',
                'bibedit_clipboard.js']
 
     for script in scripts:
         body += '    <script type="text/javascript" src="%s/%s">' \
-            '</script>\n' % (CFG_SITE_URL, auto_version_url("js/" + script))
+                '</script>\n' % (CFG_SITE_URL, auto_version_url("js/" + script))
 
     # Init BibEdit
     body += '<script>$(init_bibedit);</script>'
 
     # Build page structure and menu.
     # rec = create_record(format_record(235, "xm"))[0]
-    #oaiId = record_extract_oai_id(rec)
+    # oaiId = record_extract_oai_id(rec)
 
     body += bibedit_templates.menu()
     body += bibedit_templates.focuson()
@@ -351,7 +358,7 @@ def perform_request_compare(ln, recid, rev1, rev2):
     person2 = ""
 
     if (not record_revision_exists(recid, rev1)) or \
-       (not record_revision_exists(recid, rev2)):
+            (not record_revision_exists(recid, rev2)):
         body = "The requested record revision does not exist !"
     else:
         xml1 = get_marcxml_of_revision_id(recid, rev1)
@@ -376,8 +383,9 @@ def perform_request_compare(ln, recid, rev1, rev2):
         if info2:
             person2 = info2[0][1]
         body += bibedit_templates.history_comparebox(ln, job_date1, job_date2,
-                                                person1, person2, comparison)
+                                                     person1, person2, comparison)
     return body, errors, warnings
+
 
 def perform_request_newticket(recid, uid):
     """create a new ticket with this record's number
@@ -391,7 +399,7 @@ def perform_request_newticket(recid, uid):
     if CFG_BIBCATALOG_SYSTEM is not None:
         t_id = BIBCATALOG_SYSTEM.ticket_submit(uid, "", recid, "")
         if t_id:
-            #get the ticket's URL
+            # get the ticket's URL
             t_url = BIBCATALOG_SYSTEM.ticket_get_attribute(uid, t_id, 'url_modify')
         else:
             errmsg = "ticket_submit failed"
@@ -403,7 +411,7 @@ def perform_request_newticket(recid, uid):
 def perform_request_ajax(req, recid, uid, data, isBulk=False):
     try:
         return _perform_request_ajax(req, recid, uid, data, isBulk)
-    except:   # pylint: disable=W0702
+    except:  # pylint: disable=W0702
         # Custom error exception for bibedit
         # We have an action log that we want to display in full
         bibedit_register_exception(data)
@@ -425,8 +433,8 @@ def _perform_request_ajax(req, recid, uid, data, isBulk=False):
         # User related requests.
         response.update(perform_request_user(req, request_type, recid, data))
     elif request_type in ('getRecord', 'submit', 'cancel', 'newRecord',
-        'deleteRecord', 'deleteRecordCache', 'prepareRecordMerge', 'revert',
-        'updateCacheRef', 'submittextmarc'):
+                          'deleteRecord', 'deleteRecordCache', 'prepareRecordMerge', 'revert',
+                          'updateCacheRef', 'submittextmarc'):
         # 'Major' record related requests.
         response.update(perform_request_record(req, request_type, recid, uid,
                                                data))
@@ -452,7 +460,8 @@ def _perform_request_ajax(req, recid, uid, data, isBulk=False):
                                                      data))
     elif request_type in ('checkISBN',):
         response.update(perform_request_isbn(request_type, data))
-    elif request_type in ('getTickets', 'closeTicket', 'openTicket', 'createTicket','getNewTicketRTInfo'):
+    elif request_type in (
+            'getTickets', 'closeTicket', 'openTicket', 'createTicket', 'getNewTicketRTInfo'):
         # BibCatalog requests.
         response.update(perform_request_bibcatalog(request_type, uid, data))
     elif request_type in ('getHoldingPenUpdates', ):
@@ -491,8 +500,22 @@ def _perform_request_ajax(req, recid, uid, data, isBulk=False):
         response.update({"cacheMTime": data['cacheMTime']})
     elif request_type == "guessAffiliations":
         response.update(perform_guess_affiliations(uid, data))
+    elif request_type == "getRecordCreationDate":
+        response.update(perform_get_record_creation_date(recid, uid))
 
     return response
+
+
+def perform_get_record_creation_date(recid, uid):
+    """
+    Get record content from cache, convert it to textmarc and return it
+    """
+    from invenio.search_engine import get_creation_date
+
+    creation_date = get_creation_date(recid, "%y%m%d")
+
+    return {'creation_date': creation_date}
+
 
 def perform_bulk_request_ajax(req, recid, uid, reqsData, undoRedo, cacheMTime):
     """ An AJAX handler used when treating bulk updates """
@@ -539,7 +562,9 @@ def perform_request_isbn(request_type, data):
     response = {}
     response['resultCode'] = 1
 
-    result = run_sql("select id_bibrec from  bib02x, bibrec_bib02x where tag='020__a' and value='{0}' and id_bibxxx = id;".format(data["isbn"]))
+    result = run_sql(
+        "select id_bibrec from  bib02x, bibrec_bib02x where tag='020__a' and value='{0}' and id_bibxxx = id;".format(
+            data["isbn"]))
     if result:
         response['resultSet'] = result
     else:
@@ -576,7 +601,7 @@ def perform_request_holdingpen(request_type, recId, changeId=None):
     elif request_type == 'getHoldingPenUpdateDetails':
         # returning the list of changes related to the holding pen update
         # the format based on what the record difference xtool returns
-        assert(changeId is not None)
+        assert (changeId is not None)
         hpContent = get_hp_update_xml(changeId)
         holdingPenRecord = create_record(hpContent[0], "xm")[0]
         if not holdingPenRecord:
@@ -593,12 +618,12 @@ def perform_request_holdingpen(request_type, recId, changeId=None):
 
             # order subfields alphabetically
             record_order_subfields(holdingPenRecord)
-    #        databaseRecord = get_record(hpContent[1])
+            # databaseRecord = get_record(hpContent[1])
             response['record'] = holdingPenRecord
             response['changeset_number'] = changeId
 
     elif request_type == 'deleteHoldingPenChangeset':
-        assert(changeId is not None)
+        assert (changeId is not None)
         delete_hp_change(changeId)
     return response
 
@@ -630,6 +655,18 @@ def perform_request_record(req, request_type, recid, uid, data, ln=CFG_SITE_LANG
                 if not record:
                     response['resultCode'] = 109
                 else:
+                    value_008 = record_get_field_values(record, "008")
+                    if value_008:
+                        if len(value_008[0]) > 6:
+
+                            record_modify_controlfield(record, "008",
+                                                   datetime.strftime(datetime.now(), "%y%m%d") + value_008[
+                                                                                                     0][6:],
+                                                   field_position_local=0)
+                        else:
+                            record_modify_controlfield(record, "008",
+                                                   datetime.strftime(datetime.now(), "%y%m%d"),
+                                                   field_position_local=0)
                     record_add_field(record, '001',
                                      controlfield_value=str(new_recid))
                     create_cache(new_recid, uid, record, True)
@@ -678,7 +715,20 @@ def perform_request_record(req, request_type, recid, uid, data, ln=CFG_SITE_LANG
                 record = get_bibrecord(recid)
             record_delete_field(record, '001')
             record_delete_field(record, '005')
+            value_008 = record_get_field_values(record, "008")
+            if value_008:
+                if len(value_008[0]) > 6:
+
+                    record_modify_controlfield(record, "008",
+                                           datetime.strftime(datetime.now(), "%y%m%d") + value_008[
+                                                                                             0][6:],
+                                           field_position_local=0)
+                else:
+                    record_modify_controlfield(record, "008",
+                                           datetime.strftime(datetime.now(), "%y%m%d"),
+                                           field_position_local=0)
             record_add_field(record, '001', controlfield_value=str(new_recid))
+
             create_cache(new_recid, uid, record, True)
             response['resultCode'], response['newRecID'] = 8, new_recid
     elif request_type == 'getRecord':
@@ -743,7 +793,7 @@ def perform_request_record(req, request_type, recid, uid, data, ln=CFG_SITE_LANG
             else:
                 try:
                     cache_dirty, record_revision, record, pending_changes, \
-                        disabled_hp_changes, undo_list, redo_list = \
+                    disabled_hp_changes, undo_list, redo_list = \
                         get_cache_contents(recid, uid)
                 except InvalidCache:
                     # No cache found in the DB
@@ -759,7 +809,7 @@ def perform_request_record(req, request_type, recid, uid, data, ln=CFG_SITE_LANG
                 else:
                     touch_cache(recid, uid)
                     if not latest_record_revision(recid, record_revision) and \
-                            get_record_revisions(recid) != ():
+                                    get_record_revisions(recid) != ():
                         # This sould prevent from using old cache in case of
                         # viewing old version. If there are no revisions,
                         # it means we should skip this step because this
@@ -806,23 +856,24 @@ def perform_request_record(req, request_type, recid, uid, data, ln=CFG_SITE_LANG
             response['record_hide_authors'] = check_hide_authors(record)
 
             response['cacheDirty'], response['record'], \
-                response['cacheMTime'], response['recordRevision'], \
-                response['revisionAuthor'], response['lastRevision'], \
-                response['revisionsHistory'], response['revisionsAuthors'], \
-                response['inReadOnlyMode'], response['pendingHpChanges'], \
-                response['disabledHpChanges'], response['undoList'], \
-                response['redoList'] = cache_dirty, \
-                record, mtime, revision_to_timestamp(record_revision), \
-                revision_author, last_revision_ts, revisions_history, \
-                revisions_authors, read_only_mode, pending_changes, \
-                disabled_hp_changes, undo_list, redo_list
+            response['cacheMTime'], response['recordRevision'], \
+            response['revisionAuthor'], response['lastRevision'], \
+            response['revisionsHistory'], response['revisionsAuthors'], \
+            response['inReadOnlyMode'], response['pendingHpChanges'], \
+            response['disabledHpChanges'], response['undoList'], \
+            response['redoList'] = cache_dirty, \
+                                   record, mtime, revision_to_timestamp(record_revision), \
+                                   revision_author, last_revision_ts, revisions_history, \
+                                   revisions_authors, read_only_mode, pending_changes, \
+                                   disabled_hp_changes, undo_list, redo_list
             response['numberOfCopies'] = number_of_physical_copies
             response['managed_DOIs'] = managed_DOIs
             response['bibCirculationUrl'] = bibcirc_details_URL
             response['canRecordHavePhysicalCopies'] = can_have_copies
             # Set tag format from user's session settings.
             tagformat_settings = session_param_get(req, 'bibedit_tagformat')
-            tagformat = (tagformat_settings is not None) and tagformat_settings.get(recid, CFG_BIBEDIT_TAG_FORMAT) or CFG_BIBEDIT_TAG_FORMAT
+            tagformat = (tagformat_settings is not None) and tagformat_settings.get(recid,
+                                                                                    CFG_BIBEDIT_TAG_FORMAT) or CFG_BIBEDIT_TAG_FORMAT
             response['tagFormat'] = tagformat
             # KB information
             response['KBSubject'] = CFG_BIBEDIT_KB_SUBJECTS
@@ -889,16 +940,16 @@ def perform_request_record(req, request_type, recid, uid, data, ln=CFG_SITE_LANG
             if not existing_cache:
                 create_cache(recid, uid)
                 record_revision, record, pending_changes, \
-                    deactivated_hp_changes, undo_list, redo_list = \
-                        get_cache_contents(recid, uid)[1:]
+                deactivated_hp_changes, undo_list, redo_list = \
+                    get_cache_contents(recid, uid)[1:]
             else:
                 try:
                     dummy_cache_dirty, record_revision, record, \
-                        pending_changes, deactivated_hp_changes, undo_list, \
-                        redo_list = get_cache_contents(recid, uid)
+                    pending_changes, deactivated_hp_changes, undo_list, \
+                    redo_list = get_cache_contents(recid, uid)
                 except InvalidCache:
                     record_revision, record, pending_changes, \
-                        deactivated_hp_changes = create_cache(recid, uid)
+                    deactivated_hp_changes = create_cache(recid, uid)
             record_add_field(record, '980', ' ', ' ', '', [('c', 'DELETED')])
             undo_list = []
             redo_list = []
@@ -906,8 +957,8 @@ def perform_request_record(req, request_type, recid, uid, data, ln=CFG_SITE_LANG
                                   pending_changes, deactivated_hp_changes,
                                   undo_list, redo_list)
             save_xml_record(recid, uid)
-            delete_related_holdingpen_changes(recid) # we don't need any changes
-                                                   # related to a deleted record
+            delete_related_holdingpen_changes(recid)  # we don't need any changes
+            # related to a deleted record
             response['resultCode'] = 10
 
     elif request_type == 'deleteRecordCache':
@@ -915,15 +966,15 @@ def perform_request_record(req, request_type, recid, uid, data, ln=CFG_SITE_LANG
         # modified in another editor.
         if 'cacheMTime' in data:
             if cache_exists(recid, uid) and get_cache_mtime(recid, uid) == \
-                                                            data['cacheMTime']:
+                    data['cacheMTime']:
                 delete_cache(recid, uid)
         response['resultCode'] = 11
     elif request_type == 'updateCacheRef':
         # Update cache with the contents coming from BibEdit JS interface
         # Used when updating references using ref extractor
         record_revision, record, pending_changes, \
-                        deactivated_hp_changes, undo_list, redo_list = \
-                        get_cache_contents(recid, uid)[1:]
+        deactivated_hp_changes, undo_list, redo_list = \
+            get_cache_contents(recid, uid)[1:]
 
         record = create_record(data['recXML'])[0]
 
@@ -971,13 +1022,13 @@ def perform_request_record(req, request_type, recid, uid, data, ln=CFG_SITE_LANG
         errors_upload = perform_upload_check(xml_conversion_status['resultXML'], '--replace')
         if errors_upload:
             response['resultCode'], response['errors'] = 113, \
-                errors_upload
+                                                         errors_upload
             return response
 
         response.update(xml_conversion_status)
         if xml_conversion_status['resultMsg'] == 'textmarc_parsing_success':
             create_cache(recid, uid,
-                create_record(response['resultXML'])[0])
+                         create_record(response['resultXML'])[0])
             save_xml_record(recid, uid)
             response['resultCode'] = CFG_BIBEDIT_AJAX_RESULT_CODES_REV["record_submitted"]
 
@@ -1004,7 +1055,7 @@ def perform_request_update_record(request_type, recid, uid, cacheMTime, data,
         response['resultCode'] = 107
     else:
         record_revision, record, pending_changes, deactivated_hp_changes, \
-            undo_list, redo_list = get_cache_contents(recid, uid)[1:]
+        undo_list, redo_list = get_cache_contents(recid, uid)[1:]
 
         # process all the Holding Pen changes operations ... regardles the
         # request type
@@ -1067,7 +1118,7 @@ def perform_request_update_record(request_type, recid, uid, cacheMTime, data,
             # the changeset has been marked as processed ( user applied it in
             # the editor). Marking as used in the cache file.
             # CAUTION: This function has been implemented here because logically
-            #          it fits with the modifications made to the cache file.
+            # it fits with the modifications made to the cache file.
             #          No changes are made to the Holding Pen physically. The
             #          changesets are related to the cache because we want to
             #          cancel the removal every time the cache disappears for
@@ -1089,14 +1140,14 @@ def perform_request_update_record(request_type, recid, uid, cacheMTime, data,
             subfields = data['subfields']
             for subfield in subfields:
                 record_add_subfield_into(record, data['tag'], subfield[0],
-                    subfield[1], subfield_position=None,
-                    field_position_local=field_position_local)
+                                         subfield[1], subfield_position=None,
+                                         field_position_local=field_position_local)
             if len(subfields) == 1:
                 response['resultCode'] = 22
             else:
                 response['resultCode'] = 23
         elif request_type == 'addFieldsSubfieldsOnPositions':
-            #1) Sorting the fields by their identifiers
+            # 1) Sorting the fields by their identifiers
             fieldsToAdd = data['fieldsToAdd']
             subfieldsToAdd = data['subfieldsToAdd']
             for tag in fieldsToAdd.keys():
@@ -1122,9 +1173,9 @@ def perform_request_update_record(request_type, recid, uid, cacheMTime, data,
             # now adding the subfields
             for tag in subfieldsToAdd.keys():
                 for fieldPosition in subfieldsToAdd[tag].keys():  # now the fields
-                                                                  # order not important !
+                    # order not important !
                     subfieldsPositions = subfieldsToAdd[tag][fieldPosition]. \
-                                           keys()
+                        keys()
                     subfieldsPositions.sort()
                     for subfieldPosition in subfieldsPositions:
                         subfield = subfieldsToAdd[tag][fieldPosition][subfieldPosition]
@@ -1135,43 +1186,43 @@ def perform_request_update_record(request_type, recid, uid, cacheMTime, data,
             response['resultCode'] = \
                 CFG_BIBEDIT_AJAX_RESULT_CODES_REV['added_positioned_subfields']
 
-        elif request_type == 'modifyField': # changing the field structure
+        elif request_type == 'modifyField':  # changing the field structure
             # first remove subfields and then add new... change the indices
-            subfields = data['subFields'] # parse the JSON representation of
-                                          # the subfields here
+            subfields = data['subFields']  # parse the JSON representation of
+            # the subfields here
 
             new_field = create_field(subfields, data['ind1'], data['ind2'])
             record_replace_field(record, data['tag'], new_field,
-                field_position_local=data['fieldPosition'])
+                                 field_position_local=data['fieldPosition'])
             response['resultCode'] = 26
 
         elif request_type == 'modifyContent':
             if data['subfieldIndex'] is not None:
                 record_modify_subfield(record, data['tag'],
-                    data['subfieldCode'], data['value'],
-                    int(data['subfieldIndex']),
-                    field_position_local=field_position_local)
+                                       data['subfieldCode'], data['value'],
+                                       int(data['subfieldIndex']),
+                                       field_position_local=field_position_local)
             else:
                 record_modify_controlfield(record, data['tag'], data["value"],
-                  field_position_local=field_position_local)
+                                           field_position_local=field_position_local)
             response['resultCode'] = 24
 
         elif request_type == 'modifySubfieldTag':
             record_add_subfield_into(record, data['tag'], data['subfieldCode'],
-            data["value"], subfield_position= int(data['subfieldIndex']),
-            field_position_local=field_position_local)
+                                     data["value"], subfield_position=int(data['subfieldIndex']),
+                                     field_position_local=field_position_local)
 
             record_delete_subfield_from(record, data['tag'], int(data['subfieldIndex']) + 1,
-            field_position_local=field_position_local)
+                                        field_position_local=field_position_local)
 
             response['resultCode'] = 24
 
         elif request_type == 'modifyFieldTag':
             subfields = record_get_subfields(record, data['oldTag'],
-            field_position_local=field_position_local)
+                                             field_position_local=field_position_local)
 
             record_add_field(record, data['newTag'], data['ind1'],
-                             data['ind2'] , subfields=subfields)
+                             data['ind2'], subfields=subfields)
 
             record_delete_field(record, data['oldTag'], ind1=data['oldInd1'],
                                 ind2=data['oldInd2'], field_position_local=field_position_local)
@@ -1179,17 +1230,17 @@ def perform_request_update_record(request_type, recid, uid, cacheMTime, data,
 
         elif request_type == 'moveSubfield':
             record_move_subfield(record, data['tag'],
-                int(data['subfieldIndex']), int(data['newSubfieldIndex']),
-                field_position_local=field_position_local)
+                                 int(data['subfieldIndex']), int(data['newSubfieldIndex']),
+                                 field_position_local=field_position_local)
             response['resultCode'] = 25
 
         elif request_type == 'moveField':
             if data['direction'] == 'up':
-                final_position_local = field_position_local-1
-            else: # direction is 'down'
-                final_position_local = field_position_local+1
+                final_position_local = field_position_local - 1
+            else:  # direction is 'down'
+                final_position_local = field_position_local + 1
             record_move_fields(record, data['tag'], [field_position_local],
-                final_position_local)
+                               final_position_local)
             response['resultCode'] = 32
 
         elif request_type == 'deleteFields':
@@ -1197,14 +1248,14 @@ def perform_request_update_record(request_type, recid, uid, cacheMTime, data,
             deleted_fields = 0
             deleted_subfields = 0
             for tag in to_delete:
-                #Sorting the fields in a edcreasing order by the local position!
+                # Sorting the fields in a edcreasing order by the local position!
                 fieldsOrder = to_delete[tag].keys()
                 fieldsOrder.sort(lambda a, b: int(b) - int(a))
                 for field_position_local in fieldsOrder:
                     if not to_delete[tag][field_position_local]:
                         # No subfields specified - delete entire field.
                         record_delete_field(record, tag,
-                            field_position_local=int(field_position_local))
+                                            field_position_local=int(field_position_local))
                         deleted_fields += 1
                     else:
                         for subfield_position in \
@@ -1212,8 +1263,9 @@ def perform_request_update_record(request_type, recid, uid, cacheMTime, data,
                             # Delete subfields in reverse order (to keep the
                             # indexing correct).
                             record_delete_subfield_from(record, tag,
-                                int(subfield_position),
-                                field_position_local=int(field_position_local))
+                                                        int(subfield_position),
+                                                        field_position_local=int(
+                                                            field_position_local))
                             deleted_subfields += 1
             if deleted_fields == 1 and deleted_subfields == 0:
                 response['resultCode'] = 26
@@ -1252,10 +1304,10 @@ def perform_request_autocomplete(request_type, recid, uid, data):
     response = {}
     # get the values based on which one needs to search
     searchby = data['value']
-        # we check if the data is properly defined
+    # we check if the data is properly defined
     fulltag = ''
     if 'maintag' in data and 'subtag1' in data and \
-            'subtag2' in data and 'subfieldcode' in data:
+                    'subtag2' in data and 'subfieldcode' in data:
         maintag = data['maintag']
         subtag1 = data['subtag1']
         subtag2 = data['subtag2']
@@ -1266,7 +1318,7 @@ def perform_request_autocomplete(request_type, recid, uid, data):
         if (not subtag2) or (subtag2 == ' '):
             u_subtag2 = '_'
         subfieldcode = data['subfieldcode']
-        fulltag = maintag+u_subtag1+u_subtag2+subfieldcode
+        fulltag = maintag + u_subtag1 + u_subtag2 + subfieldcode
     if request_type == 'autokeyword':
         # call the keyword-form-ontology function
         if fulltag and searchby:
@@ -1279,7 +1331,7 @@ def perform_request_autocomplete(request_type, recid, uid, data):
         # call knowledge base function to put the suggestions in an array..
         if fulltag and searchby and len(searchby) > 3:
             # add trailing '*' wildcard for 'search_unit_in_bibxxx()' if not already present
-            suggest_values = get_kbd_values_for_bibedit(fulltag, "", searchby+"*")
+            suggest_values = get_kbd_values_for_bibedit(fulltag, "", searchby + "*")
             # remove ..
             new_suggest_vals = []
             for sugg in suggest_values:
@@ -1310,7 +1362,7 @@ def perform_request_autocomplete(request_type, recid, uid, data):
                 kbrvals = get_kbr_values(kbname, item, '', 'e')  # we want an exact match
                 if kbrvals and kbrvals[0]:  # add the found val into vals
                     vals.append(kbrvals[0])
-            #check that the values are not already contained in other
+            # check that the values are not already contained in other
             #instances of this field
             record = get_cache_contents(recid, uid)[2]
             xml_rec = wash_for_xml(print_rec(record))
@@ -1346,11 +1398,13 @@ def perform_request_bibcatalog(request_type, uid, data):
             bibcat_resp = BIBCATALOG_SYSTEM.check_system(uid)
             if bibcat_resp == "":
                 tickets_found = BIBCATALOG_SYSTEM.ticket_search(uid,
-                    status=['new', 'open'], recordid=data['recID'])
+                                                                status=['new', 'open'],
+                                                                recordid=data['recID'])
                 tickets = []
                 for t_id in tickets_found:
                     ticket_info = BIBCATALOG_SYSTEM.ticket_get_info(
-                        uid, t_id, ['url_display', 'url_close', 'subject', 'text', 'queue', 'created'])
+                        uid, t_id,
+                        ['url_display', 'url_close', 'subject', 'text', 'queue', 'created'])
                     t_url = ticket_info['url_display']
                     t_close_url = ticket_info['url_close']
                     t_subject = ticket_info['subject']
@@ -1360,10 +1414,10 @@ def perform_request_bibcatalog(request_type, uid, data):
                     date_splitted = date_string.split(" ")
                     # convert date to readable format
                     try:
-                        t_date = date_splitted[2] + ' ' + date_splitted[1] +\
-                        " " + date_splitted[4] + " " +\
-                        date_splitted[3].split(":")[0] + ":" +\
-                        date_splitted[3].split(":")[1]
+                        t_date = date_splitted[2] + ' ' + date_splitted[1] + \
+                                 " " + date_splitted[4] + " " + \
+                                 date_splitted[3].split(":")[0] + ":" + \
+                                 date_splitted[3].split(":")[1]
                     except IndexError:
                         t_date = date_string
 
@@ -1380,76 +1434,103 @@ def perform_request_bibcatalog(request_type, uid, data):
     elif request_type == 'closeTicket':
         if not CFG_BIBCATALOG_SYSTEM or not CFG_CAN_SEARCH_FOR_TICKET:
             response['ticket_closed_description'] = "<!--No ticket system configured-->"
-            response['ticket_closed_code'] = CFG_BIBEDIT_AJAX_RESULT_CODES_REV['error_ticket_closed']
+            response['ticket_closed_code'] = CFG_BIBEDIT_AJAX_RESULT_CODES_REV[
+                'error_ticket_closed']
         elif uid:
             bibcat_resp = BIBCATALOG_SYSTEM.check_system(uid)
             if bibcat_resp == "":
                 un, pw = get_bibcat_from_prefs(uid)
                 if un and pw:
                     BIBCATALOG_SYSTEM.ticket_steal(uid, data['ticketid'])
-                    ticket_closed = BIBCATALOG_SYSTEM.ticket_set_attribute(uid, data['ticketid'], 'status', 'resolved')
+                    ticket_closed = BIBCATALOG_SYSTEM.ticket_set_attribute(uid, data['ticketid'],
+                                                                           'status', 'resolved')
                     if ticket_closed == 1:
                         response['ticket_closed_description'] = 'Ticket resolved'
-                        response['ticket_closed_code'] = CFG_BIBEDIT_AJAX_RESULT_CODES_REV['ticket_closed']
+                        response['ticket_closed_code'] = CFG_BIBEDIT_AJAX_RESULT_CODES_REV[
+                            'ticket_closed']
                     else:
-                        response['ticket_closed_description'] = 'Ticket could not be resolved.Try again'
-                        response['ticket_closed_code'] = CFG_BIBEDIT_AJAX_RESULT_CODES_REV['error_ticket_closed']
+                        response[
+                            'ticket_closed_description'] = 'Ticket could not be resolved.Try again'
+                        response['ticket_closed_code'] = CFG_BIBEDIT_AJAX_RESULT_CODES_REV[
+                            'error_ticket_closed']
                 else:
                     response['ticket_closed_description'] = 'RT user does not exist'
-                    response['ticket_closed_code'] = CFG_BIBEDIT_AJAX_RESULT_CODES_REV['error_ticket_closed']
+                    response['ticket_closed_code'] = CFG_BIBEDIT_AJAX_RESULT_CODES_REV[
+                        'error_ticket_closed']
             else:
-                #put something in the tickets container, for debug
-                response['ticket_closed_description'] = "Error connecting to RT<!--" + bibcat_resp + "-->"
-                response['ticket_closed_code'] = CFG_BIBEDIT_AJAX_RESULT_CODES_REV['error_rt_connection']
+                # put something in the tickets container, for debug
+                response[
+                    'ticket_closed_description'] = "Error connecting to RT<!--" + bibcat_resp + "-->"
+                response['ticket_closed_code'] = CFG_BIBEDIT_AJAX_RESULT_CODES_REV[
+                    'error_rt_connection']
         response['ticketid'] = data['ticketid']
     elif request_type == 'openTicket':
         if not CFG_BIBCATALOG_SYSTEM or not CFG_CAN_SEARCH_FOR_TICKET:
             response['ticket_opened_description'] = "<!--No ticket system configured-->"
-            response['ticket_opened_code'] = CFG_BIBEDIT_AJAX_RESULT_CODES_REV['error_ticket_opened']
+            response['ticket_opened_code'] = CFG_BIBEDIT_AJAX_RESULT_CODES_REV[
+                'error_ticket_opened']
         elif uid:
             bibcat_resp = BIBCATALOG_SYSTEM.check_system(uid)
             if bibcat_resp == "":
                 un, pw = get_bibcat_from_prefs(uid)
                 if un and pw:
-                    ticket_opened = BIBCATALOG_SYSTEM.ticket_set_attribute(uid, data['ticketid'], 'status', 'open')
+                    ticket_opened = BIBCATALOG_SYSTEM.ticket_set_attribute(uid, data['ticketid'],
+                                                                           'status', 'open')
                     if ticket_opened == 1:
                         response['ticket_opened_description'] = 'Ticket opened'
-                        response['ticket_opened_code'] = CFG_BIBEDIT_AJAX_RESULT_CODES_REV['ticket_opened']
+                        response['ticket_opened_code'] = CFG_BIBEDIT_AJAX_RESULT_CODES_REV[
+                            'ticket_opened']
                     else:
-                        response['ticket_opened_description'] = 'Ticket could not be opened.Try again'
-                        response['ticket_opened_code'] = CFG_BIBEDIT_AJAX_RESULT_CODES_REV['error_ticket_opened']
+                        response[
+                            'ticket_opened_description'] = 'Ticket could not be opened.Try again'
+                        response['ticket_opened_code'] = CFG_BIBEDIT_AJAX_RESULT_CODES_REV[
+                            'error_ticket_opened']
                 else:
                     response['ticket_opened_description'] = 'RT user does not exist'
-                    response['ticket_opened_code'] = CFG_BIBEDIT_AJAX_RESULT_CODES_REV['error_ticket_opened']
+                    response['ticket_opened_code'] = CFG_BIBEDIT_AJAX_RESULT_CODES_REV[
+                        'error_ticket_opened']
             else:
-                #put something in the tickets container, for debug
-                response['ticket_opened_description'] = "Error connecting to RT<!--" + bibcat_resp + "-->"
-                response['ticket_opened_code'] = CFG_BIBEDIT_AJAX_RESULT_CODES_REV['error_rt_connection']
+                # put something in the tickets container, for debug
+                response[
+                    'ticket_opened_description'] = "Error connecting to RT<!--" + bibcat_resp + "-->"
+                response['ticket_opened_code'] = CFG_BIBEDIT_AJAX_RESULT_CODES_REV[
+                    'error_rt_connection']
         response['ticketid'] = data['ticketid']
     elif request_type == 'createTicket':
         if BIBCATALOG_SYSTEM is None:
             response['ticket_created_description'] = "<!--No ticket system configured-->"
-            response['ticket_created_code'] = CFG_BIBEDIT_AJAX_RESULT_CODES_REV['error_ticket_created']
+            response['ticket_created_code'] = CFG_BIBEDIT_AJAX_RESULT_CODES_REV[
+                'error_ticket_created']
         elif BIBCATALOG_SYSTEM and uid:
             bibcat_resp = BIBCATALOG_SYSTEM.check_system(uid)
             if bibcat_resp == "":
                 un, pw = get_bibcat_from_prefs(uid)
                 if un and pw:
-                    ticket_created = BIBCATALOG_SYSTEM.ticket_submit(uid, data['subject'], data['recID'],
-                                     data['text'], data['queue'], data['priority'], data['owner'], data['requestor'])
+                    ticket_created = BIBCATALOG_SYSTEM.ticket_submit(uid, data['subject'],
+                                                                     data['recID'],
+                                                                     data['text'], data['queue'],
+                                                                     data['priority'],
+                                                                     data['owner'],
+                                                                     data['requestor'])
                     if ticket_created:
                         response['ticket_created_description'] = ticket_created
-                        response['ticket_created_code'] = CFG_BIBEDIT_AJAX_RESULT_CODES_REV['ticket_created']
+                        response['ticket_created_code'] = CFG_BIBEDIT_AJAX_RESULT_CODES_REV[
+                            'ticket_created']
                     else:
-                        response['ticket_created_description'] = 'Ticket could not be created.Try again'
-                        response['ticket_created_code'] = CFG_BIBEDIT_AJAX_RESULT_CODES_REV['error_ticket_created']
+                        response[
+                            'ticket_created_description'] = 'Ticket could not be created.Try again'
+                        response['ticket_created_code'] = CFG_BIBEDIT_AJAX_RESULT_CODES_REV[
+                            'error_ticket_created']
                 else:
                     response['ticket_created_description'] = 'RT user does not exist'
-                    response['ticket_created_code'] = CFG_BIBEDIT_AJAX_RESULT_CODES_REV['error_ticket_created']
+                    response['ticket_created_code'] = CFG_BIBEDIT_AJAX_RESULT_CODES_REV[
+                        'error_ticket_created']
             else:
-                #put something in the tickets container, for debug
-                response['ticket_created_description'] = "Error connecting to RT<!--" + bibcat_resp + "-->"
-                response['ticket_created_code'] = CFG_BIBEDIT_AJAX_RESULT_CODES_REV['error_rt_connection']
+                # put something in the tickets container, for debug
+                response[
+                    'ticket_created_description'] = "Error connecting to RT<!--" + bibcat_resp + "-->"
+                response['ticket_created_code'] = CFG_BIBEDIT_AJAX_RESULT_CODES_REV[
+                    'error_rt_connection']
     elif request_type == 'getNewTicketRTInfo':
         # Insert the tickets data in the response, if possible
         response = get_new_ticket_RT_info(uid, data['recID'])
@@ -1472,8 +1553,8 @@ def _add_curated_references_to_record(recid, uid, bibrec):
                 # Add reference field on top of references, removing first $$o
                 field_instance = ([subfield for subfield in field_instance[0]
                                    if subfield[0] != 'o'], field_instance[1],
-                                   field_instance[2], field_instance[3],
-                                   field_instance[4])
+                                  field_instance[2], field_instance[3],
+                                  field_instance[4])
                 record_add_fields(bibrec, '999', [field_instance],
                                   field_position_local=0)
 
@@ -1495,9 +1576,9 @@ def _xml_to_textmarc_references(bibrec):
 
     # Using deepcopy as function create_marc_record() modifies the record passed
     textmarc_references = [line.strip() for line
-        in xmlmarc2textmarc.create_marc_record(copy.deepcopy(bibrec),
-            sysno, options).split('\n')
-        if '999C5' in line]
+                           in xmlmarc2textmarc.create_marc_record(copy.deepcopy(bibrec),
+                                                                  sysno, options).split('\n')
+                           if '999C5' in line]
 
     return textmarc_references
 
@@ -1538,7 +1619,8 @@ def perform_request_ref_extract_url(recid, uid, url):
 
     textmarc_references = _xml_to_textmarc_references(ref_bibrecord)
 
-    response['ref_textmarc'] = '<div class="refextracted">' + '<br />'.join(textmarc_references) + "</div>"
+    response['ref_textmarc'] = '<div class="refextracted">' + '<br />'.join(
+        textmarc_references) + "</div>"
 
     return response
 
@@ -1600,7 +1682,8 @@ def perform_request_ref_extract(recid, uid, txt=None):
     response['ref_xmlrecord'] = record_xml_output(ref_bibrecord)
 
     textmarc_references = _xml_to_textmarc_references(ref_bibrecord)
-    response['ref_textmarc'] = '<div class="refextracted">' + '<br />'.join(textmarc_references) + "</div>"
+    response['ref_textmarc'] = '<div class="refextracted">' + '<br />'.join(
+        textmarc_references) + "</div>"
 
     return response
 
@@ -1661,7 +1744,7 @@ def perform_request_get_textmarc(recid, uid):
     record_strip_controlfields(bibrecord)
 
     textmarc = xmlmarc2textmarc.create_marc_record(
-            copy.deepcopy(bibrecord), sysno="", options=textmarc_options)
+        copy.deepcopy(bibrecord), sysno="", options=textmarc_options)
 
     return {'textmarc': textmarc}
 
@@ -1681,8 +1764,8 @@ def perform_request_get_tableview(recid, uid, data):
         response['resultCode'] = CFG_BIBEDIT_AJAX_RESULT_CODES_REV['textmarc_parsing_error']
     else:
         create_cache(recid, uid,
-            create_record(xml_conversion_status['resultXML'])[0], data['recordDirty'],
-                            disabled_hp_changes=data['disabled_hp_changes'])
+                     create_record(xml_conversion_status['resultXML'])[0], data['recordDirty'],
+                     disabled_hp_changes=data['disabled_hp_changes'])
         response['resultCode'] = CFG_BIBEDIT_AJAX_RESULT_CODES_REV['tableview_change_success']
         response['cacheMTime'] = get_cache_mtime(recid, uid)
     return response
@@ -1705,8 +1788,8 @@ def _get_formated_record(record, new_window):
                       <script type="text/javascript" src="%(site_url)s/js/jquery.min.js"></script>
                       <link rel="stylesheet" href="%(site_url)s/img/invenio%(cssskin)s.css" type="text/css"></head>
                    """ % {'site_url': CFG_SITE_URL,
-                         'cssskin': CFG_WEBSTYLE_TEMPLATE_SKIN != 'default' and '_' + CFG_WEBSTYLE_TEMPLATE_SKIN or ''
-                         }
+                          'cssskin': CFG_WEBSTYLE_TEMPLATE_SKIN != 'default' and '_' + CFG_WEBSTYLE_TEMPLATE_SKIN or ''
+                          }
         result += get_mathjax_header(True) + '<body>'
         result += "<h2> Brief format preview </h2><br />"
         result += bibformat.format_record(0,
@@ -1717,11 +1800,11 @@ def _get_formated_record(record, new_window):
     result += bibformat.format_record(0,
                                       of="hd",
                                       xml_record=xml_record)
-    #Preview references
+    # Preview references
     result += "<br /><h2> References </h2><br />"
 
     result += bibformat.format_record(0,
-                                     'hdref',
+                                      'hdref',
                                       xml_record=xml_record)
 
     result += """<script>
@@ -1732,8 +1815,8 @@ def _get_formated_record(record, new_window):
     if new_window:
         result += "</body></html>"
 
-
     return result
+
 
 ########### Functions related to templates web interface #############
 
@@ -1763,7 +1846,7 @@ def perform_request_init_template_interface():
 
     for script in scripts:
         body += '    <script type="text/javascript" src="%s/js/%s">' \
-            '</script>\n' % (CFG_SITE_URL, script)
+                '</script>\n' % (CFG_SITE_URL, script)
 
     body += '    <div id="bibEditTemplateList"></div>\n'
     body += '    <div id="bibEditTemplateEdit"></div>\n'
@@ -1818,14 +1901,15 @@ def perform_doi_search(doi):
 
 def check_hide_authors(record):
     """ Check if authors should be hidden by default in the user interface """
-    return sum([len(record.get(tag, [])) for tag in CFG_BIBEDIT_DISPLAY_AUTHOR_TAGS]) > CFG_BIBEDIT_AUTHOR_DISPLAY_THRESHOLD
+    return sum([len(record.get(tag, [])) for tag in
+                CFG_BIBEDIT_DISPLAY_AUTHOR_TAGS]) > CFG_BIBEDIT_AUTHOR_DISPLAY_THRESHOLD
 
 
 def perform_guess_affiliations(uid, data):
     response = {}
     recid = data["recID"]
     record_revision, record, pending_changes, deactivated_hp_changes, \
-        undo_list, redo_list = get_cache_contents(recid, uid)[1:]
+    undo_list, redo_list = get_cache_contents(recid, uid)[1:]
 
     # Let's guess affiliations
     result = {}
@@ -1870,8 +1954,8 @@ def perform_request_submit(recid, uid, data, response):
         response['resultCode'] = 105
     else:
         dummy_cache_dirty, record_revision, record, dummy_pending_changes, \
-            dummy_disabled_hp_changes, dummy_undo_list, dummy_redo_list \
-                                            = get_cache_contents(recid, uid)
+        dummy_disabled_hp_changes, dummy_undo_list, dummy_redo_list \
+            = get_cache_contents(recid, uid)
 
         xml_record = wash_for_xml(print_rec(record))
         record, status_code, list_of_errors = create_record(xml_record)
@@ -1880,11 +1964,11 @@ def perform_request_submit(recid, uid, data, response):
         errors_upload = perform_upload_check(xml_record, '--replace')
         if errors_upload:
             response['resultCode'], response['errors'] = 113, \
-                errors_upload
+                                                         errors_upload
             return response
         elif status_code == 0:
             response['resultCode'], response['errors'] = 110, \
-                list_of_errors
+                                                         list_of_errors
         if not data['force'] and not latest_record_revision(recid, record_revision):
             response['cacheOutdated'] = True
         else:

@@ -814,6 +814,61 @@ def get_all_loans(limit):
 
     return res
 
+def get_expired_loans_with_parameters(sort= None, libraries=(), sort_by=-1, sort_dir="asc"):
+    """
+    Get all expired(overdue) loans.
+    """
+    where_addition = ""
+    order_addition = ""
+    if libraries:
+        if not isinstance(libraries, list):
+            libraries = [libraries]
+        where_addition += " and li.name IN ('"
+        for library in libraries:
+            where_addition += library + "','"
+
+        where_addition += "') "
+    if sort_by > -1:
+        criteria = ["bor.name", "bi.value", "l.barcode",
+                    "l.loaned_on", "l.due_date",
+                    "l.number_of_renewals", "l.overdue_letter_number",
+                    "li.name", "it.location"]
+        order_addition += " ORDER BY {0} {1}".format(criteria[int(sort_by)], sort_dir.capitalize())
+
+
+    query_select = """
+    SELECT bor.id,
+           bor.name,
+           it.id_bibrec,
+           bi.value,
+           l.barcode,
+           DATE_FORMAT(l.loaned_on,'%d-%m-%Y'),
+           DATE_FORMAT(l.due_date,'%d-%m-%Y'),
+           l.number_of_renewals,
+           l.overdue_letter_number,
+           DATE_FORMAT(l.overdue_letter_date,'%d-%m-%Y'),
+           l.notes,
+           l.id,
+           li.name,
+           it.location
+    FROM crcLOAN l, crcBORROWER bor, crcITEM it, crcLIBRARY li, bib24x bi, bibrec_bib24x bibrec
+    WHERE l.id_crcBORROWER = bor.id
+          and l.barcode = it.barcode
+          and ((l.status = "{0}" and l.due_date < CURDATE())
+                  or l.status = "{1}" )
+          and it.id_crcLIBRARY = li.id
+          and bibrec.id_bibrec = it.id_bibrec
+          and bibrec.id_bibxxx = bi.id
+          and bi.tag like '%a'
+          {2}{3}
+    """.format(CFG_BIBCIRCULATION_LOAN_STATUS_ON_LOAN,
+          CFG_BIBCIRCULATION_LOAN_STATUS_EXPIRED,
+          where_addition, order_addition)
+
+    res = run_sql(query_select)
+
+    return res
+
 def get_all_expired_loans():
     """
     Get all expired(overdue) loans.

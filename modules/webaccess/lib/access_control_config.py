@@ -651,6 +651,7 @@ _ = gettext_set_language(CFG_SITE_LANG)
 # Activities (i.e. actions) for which exists an administrative web interface.
 CFG_ACC_ACTIVITIES_URLS = {
     'runbibedit' : (_("Run Record Editor"), "%s/%s/edit/?ln=%%s" % (CFG_SITE_URL, CFG_SITE_RECORD)),
+    'runbibz39' : (_("Z39.50 Search"), "%s/bibz39/?ln=%%s" % (CFG_SITE_URL)),
     'runbibeditmulti' : (_("Run Multi-Record Editor"), "%s/%s/multiedit/?ln=%%s" % (CFG_SITE_URL, CFG_SITE_RECORD)),
     'runbibdocfile' : (_("Run Document File Manager"), "%s/%s/managedocfiles?ln=%%s" % (CFG_SITE_URL, CFG_SITE_RECORD)),
     'runbibmerge' : (_("Run Record Merger"), "%s/%s/merge/?ln=%%s" % (CFG_SITE_URL, CFG_SITE_RECORD)),

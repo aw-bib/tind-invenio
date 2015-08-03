@@ -529,6 +529,48 @@ function onBulkReqError(data) {
           };
 }
 
+function computeRecordLength() {
+    createReq({recID: gRecID, requestType: 'getTextMarc'},function(json) {
+    if($('#content_000_0').length > 0) {
+         var tag_000_value = $('#content_000_0')[0].innerHTML;
+         var truncated_000_value = tag_000_value.substring(5,tag_000_value.length)
+         var length_record = json["textmarc"].length.toString();
+         length_record = new Array(6 - length_record.length).join('0') + length_record;
+         var full_value = length_record + truncated_000_value
+
+         if(full_value != tag_000_value) {
+                 $('#content_000_0')[0].innerHTML = full_value;
+                gRecord["000"][0][3] = full_value;
+            }
+         onContentChange(full_value, {type:"content", tag:"000", fieldPosition:0, subfieldIndex:undefined,tag_ind:"000"});
+         if(full_value!==tag_000_value)
+         {
+            save_changes();
+         }
+         }}
+
+       );
+}
+
+function computeRecordDate() {
+    console.log("computeRecordDate");
+    var regex = /^[0-9]{6}/;
+    if($('#content_008_0').length > 0) {
+        var tag_008_value = $('#content_008_0')[0].innerHTML;
+        var date_field = tag_008_value.substring(0, 6);
+        if (!regex.test(date_field)) {
+            createReq({recID: gRecID, requestType: 'getRecordCreationDate'},function(json) {
+            if($('#content_008_0').length > 0) {
+
+                date_field = json["creation_date"].split("/").join("") +  tag_008_value.slice(6);
+                $('#content_008_0')[0].innerHTML = date_field;
+                gRecord["008"][0][3] = date_field;
+                onContentChange(date_field, {type:"content", tag:"008", fieldPosition:0, subfieldIndex:undefined,tag_ind:"008"});
+            }});
+        }
+    }
+}
+
 
 function createBulkReq(reqsData, onSuccess, optArgs){
   /* optArgs is a disctionary containning the optional arguments
@@ -547,7 +589,9 @@ function createBulkReq(reqsData, onSuccess, optArgs){
 
     var errorCallback = onBulkReqError(data);
 
-    createReq(data, onSuccess, optArgs.asynchronous, undefined, errorCallback);
+
+    createReq(data, onSuccess, optArgs.asynchronous, undefined, errorCallback)
+
 }
 
 
@@ -667,6 +711,11 @@ function save_changes() {
   */
   var optArgs = {};
   var saveChangesPromise = new $.Deferred();
+
+  saveChangesPromise.done(function() {
+    computeRecordLength();
+    computeRecordDate();
+  });
 
   if (gReqQueue.length > 0) {
     updateStatus('saving');
@@ -1631,7 +1680,7 @@ function validMARC(datatype, value){
   return eval('validMARC.re' + datatype + '.test(value)');
 }
 // MARC validation REs
-validMARC.reControlTag = /00[1-9A-Za-z]{1}/;
+validMARC.reControlTag = /00[0-9A-Za-z]{1}/;
 validMARC.reTag = /(0([1-9A-Z][0-9A-Z])|0([1-9a-z][0-9a-z]))|(([1-9A-Z][0-9A-Z]{2})|([1-9a-z][0-9a-z]{2}))/;
 validMARC.reIndicator1 = /[\da-zA-Z]{1}/;
 validMARC.reIndicator2 = /[\da-zA-Z]{1}/;
@@ -2960,9 +3009,11 @@ function addFieldAddSubfieldEditor(jQRowGroupID, fieldTmpNo, defaultCode, defaul
   var subfieldTmpNo = $(jQRowGroupID).data('freeSubfieldTmpNo');
   $(jQRowGroupID).data('freeSubfieldTmpNo', subfieldTmpNo+1);
 
-  var addFieldRows = $(jQRowGroupID + ' tr');
-
-  $(addFieldRows).eq(addFieldRows.length-1).before(createAddFieldRow(
+  var addFieldRows = $(jQRowGroupID + '>tr');
+  console.log(jQRowGroupID + '>tr');
+  console.log(addFieldRows);
+  console.log(addFieldRows.length-1);
+  $(addFieldRows).eq(addFieldRows.length-1).after(createAddFieldRow(
     fieldTmpNo, subfieldTmpNo, defaultCode, defaultValue));
   $('#txtAddFieldSubfieldCode_' + fieldTmpNo + '_' + subfieldTmpNo).bind(
     'keyup', onAddFieldChange);
@@ -3096,13 +3147,13 @@ function createAddFieldInterface(initialContent, initialTemplateNo){
   });
 
   $('#txtAddFieldTag_' + fieldTmpNo).bind('keyup', onAddFieldChange);
-  initInputHotkeys('#txtAddFieldTag_' + fieldTmpNo);
+
   $('#txtAddFieldInd1_' + fieldTmpNo).bind('keyup', onAddFieldChange);
-  initInputHotkeys('#txtAddFieldInd1_' + fieldTmpNo);
+
   $('#txtAddFieldInd2_' + fieldTmpNo).bind('keyup', onAddFieldChange);
-  initInputHotkeys('#txtAddFieldInd2_' + fieldTmpNo);
+
   $('#txtAddFieldSubfieldCode_' + fieldTmpNo + '_0').bind('keyup', onAddFieldChange);
-  initInputHotkeys('#txtAddFieldSubfieldCode_' + fieldTmpNo + '_0');
+
   $('#content_' + fieldTmpNo + '_0').bind('keyup', function (e){
     onAddFieldValueKeyPressed(e, jQRowGroupID, fieldTmpNo, 0);
   });
@@ -3805,6 +3856,9 @@ function convertFieldIntoEditable(cell, shouldSelect){
               addChangeControl(changeNum, true);
           }
         }
+        if (subfieldIndex == undefined) {
+            gRecord[tag][0][3] = data;
+        }
         var autosuggest_id = 'autosuggest_' + tmpArray[1] + '_' + tmpArray[2] + '_' + tmpArray[3];
         var autosugg_in = document.getElementById(autosuggest_id);
         if (autosugg_in != null) {autosugg_in.innerHTML = "";}
@@ -3825,7 +3879,7 @@ function convertFieldIntoEditable(cell, shouldSelect){
         }
         else if (subfieldIndex == undefined){
           // Controlfield
-          tmpResult = field[3];
+         tmpResult = field[3];
         }
         else if (tmpArray[0] == 'subfieldTag'){
             tmpResult = field[0][subfieldIndex][0];
@@ -3880,7 +3934,6 @@ function updateSubfieldValue(tag, fieldPosition, subfieldIndex, subfieldCode,
   if (consumedChange == undefined || consumedChange == null){
     consumedChange = -1;
   }
-
   var data = getUpdateSubfieldValueRequestData(tag,
                                                fieldPosition,
                                                subfieldIndex,
@@ -3905,7 +3958,6 @@ function getBulkUpdateSubfieldContentRequestData(tag, fieldPosition,
      *
      */
     var changesAdd = [];
-
     var data = getUpdateSubfieldValueRequestData(tag,
                                                  fieldPosition,
                                                  subfieldIndex,
@@ -4179,8 +4231,6 @@ function onAutosuggest(event) {
              //add a stylish close link in case the user does not find
             //the value among the suggestions
 
-
-
             if(mysel_count > 0) { 
               final_shape += mysel;
             }
@@ -4265,7 +4315,6 @@ function onAutosuggestSelect(i, val_to_modify) {
                 }
               }
             }
-              content.focus();
           }
             ,1000);
 
@@ -4292,10 +4341,10 @@ function onAutosuggestSelect(i, val_to_modify) {
               }
 
             }
-          $("#"+content_id).trigger("click");
             }
             , 1000);
         }
+        content.focus();
       }
   }
   /*remove autosuggest box*/
@@ -6534,7 +6583,6 @@ function onSubfieldCodeChange(value, cell) {
 
   var field_instance = gRecord[cell.tag][cell.fieldPosition];
   var subfield_instance = field_instance[0][cell.subfieldIndex];
-
   if (subfield_instance[0] == value) {
     return value;
   }
@@ -6570,7 +6618,6 @@ function onSubfieldCodeChange(value, cell) {
  */
 function onContentChange(value, cell) {
   logAction("onContentChange " + value);
-
   function redrawTags() {
     redrawFieldPosition(cell.tag, cell.fieldPosition);
     reColorFields();
@@ -6584,6 +6631,13 @@ function onContentChange(value, cell) {
   /* Get field instance to be updated from global variable gRecord */
   var field_instance = gRecord[cell.tag][cell.fieldPosition];
   var subfield_instance = field_instance[0][cell.subfieldIndex];
+  if (subfield_instance == undefined) {
+    subfield_instance = ['','',''];
+  }
+
+  if (cell.subfieldIndex == undefined) {
+    cell.subfieldIndex = null;
+  }
 
   /* Nothing has changed, return */
   if (subfield_instance[1] === value) {
@@ -6655,7 +6709,6 @@ function onContentChange(value, cell) {
                                                  old_subfield_code,
                                                  operation_type);
     addUndoOperation(urHandler);
-
     updateSubfieldValue(cell.tag, cell.fieldPosition, cell.subfieldIndex, old_subfield_code,
                         value, null, urHandler);
     updateModel();

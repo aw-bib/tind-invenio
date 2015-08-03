@@ -983,17 +983,12 @@ def get_last_loan():
     the last loan who was registered on the crcLOAN table.
     """
 
-res = run_sql("""SELECT id_bibrec,
-                        barcode,
-                        id_crcBORROWER,
-                        DATE_FORMAT(due_date, '%Y-%m-%d %H:%i')
-                 FROM   crcLOAN ORDER BY id DESC LIMIT 1""")
+    res = run_sql("""SELECT id_bibrec,
+                            id_crcBORROWER,
+                            DATE_FORMAT(due_date, '%Y-%m-%d')
+                     FROM   crcLOAN ORDER BY id DESC LIMIT 1""")
 
-if res:
-    # Remove time if 00:00
-    if "00:00" in res[0][3]:
-        res[0][3] = res[0][3].split()[0]
-        returntuple =
+    if res:
         return res[0]
     else:
         return None

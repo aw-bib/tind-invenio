@@ -798,7 +798,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         try:
             patrontype = int(patrontype)
         except:
-            patrontype = Null
+            patrontype = None
 
         return bal.item_search_result(req, p, f, patrontype, ln)
 

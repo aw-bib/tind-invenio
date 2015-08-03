@@ -2404,7 +2404,7 @@ def get_item_loans_notes(req, loan_id, add_notes, new_note, ln=CFG_SITE_LANG):
 
 
 
-def get_item_details(req, recid, ln=CFG_SITE_LANG):
+def get_item_details(req, recid, ln=CFG_SITE_LANG, patrontype):
     """
     Display the details of an item.
 
@@ -2429,7 +2429,7 @@ def get_item_details(req, recid, ln=CFG_SITE_LANG):
     if recid == None:
         infos.append(_("Record id not valid"))
 
-    copies = db.get_item_copies_details(recid)
+    copies = db.get_item_copies_details(recid, patrontype)
     requests = db.get_item_requests(recid)
     loans = db.get_item_loans(recid)
     purchases = db.get_item_purchases(CFG_BIBCIRCULATION_ACQ_STATUS_NEW, recid)

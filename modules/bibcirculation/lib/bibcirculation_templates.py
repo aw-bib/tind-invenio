@@ -5112,7 +5112,6 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
         </table>
         <br />
         <br />
-        <form>
         </td>
         """ % (_("Back"), _("Search"))
 
@@ -5138,8 +5137,9 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                      </td>
                 </tr>
            </table>
+        <form>
            """
-        
+
         out += """
             <style type="text/css">
                 @import url("/img/tablesorter.css");

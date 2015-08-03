@@ -5120,21 +5120,12 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
            <br />
            <table class="bibcirctable">
                 <tr>
-                     <td class="bibcirctableheader">%s
-                            <select onchange="location = this.options[this.selectedIndex].value;">
-                                <option>Select patron type</option>
-           """ % (_("Additional details"))
-        for id, name in db.get_patron_types():
-            out += """
-                                <option value="item_search_result?f=recid&p=%s&patrontype=%s">%s</option>
-                   """ % (recid, id, name)
-        out += """
-                            </select>
-                     </td>
+                     <td class="bibcirctableheader">%s</td>
                 </tr>
            </table>
         <form>
-           """
+        """% (_("Additional details"))
+
 
         out += """
             <style type="text/css">
@@ -5202,7 +5193,17 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                    """ % (_("Location"))
 
         out += """
-                      <th>%s</th>
+                      <th>%s
+                            <select onchange="location = this.options[this.selectedIndex].value;">
+                                <option>Select patron type</option>
+           """
+        for id, name in db.get_patron_types():
+            out += """
+                                <option value="item_search_result?f=recid&p=%s&patrontype=%s">%s</option>
+                   """ % (recid, id, name)
+        out += """
+                            </select>
+                            </th>
                       <th>%s</th>
                 """ % (_("Loan period"),
                        _("No of loans"))

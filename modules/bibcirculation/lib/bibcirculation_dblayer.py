@@ -1397,7 +1397,7 @@ def get_item_copies_details(recid, patrontype=None):
                 SELECT DISTINCT it.barcode, NULL, lib.name,
                                     lib.id, it.location, it.number_of_requests,
                                     it.status, it.collection, it.description,
-                                    DATE_FORMAT(ln.due_date,'%%d-%%m-%%Y'), NULL, NULL
+                                    DATE_FORMAT(ln.due_date,'%%d-%%m-%%Y'), NULL
                             FROM crcITEM it
                                     LEFT JOIN crcLOAN ln
                                     ON it.barcode = ln.barcode AND ln.status != "%(returncode)s"

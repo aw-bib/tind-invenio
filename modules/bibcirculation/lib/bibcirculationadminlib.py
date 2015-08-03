@@ -3222,7 +3222,7 @@ def item_search(req, infos=[], ln=CFG_SITE_LANG):
                 navtrail=navtrail_previous_links,
                 lastupdated=__lastupdated__)
 
-def item_search_result(req, p, f, ln=CFG_SITE_LANG):
+def item_search_result(req, p, f, patrontype=Null, ln=CFG_SITE_LANG):
     """
     Search an item and return a list with all the possible results. To retrieve
     the information desired, we use the method 'perform_request_search' (from
@@ -3258,7 +3258,7 @@ def item_search_result(req, p, f, ln=CFG_SITE_LANG):
             infos.append(_('The barcode %(x_strong_tag_open)s%(x_barcode)s%(x_strong_tag_close)s does not exist on BibCirculation database.') % {'x_barcode': p, 'x_strong_tag_open': '<strong>', 'x_strong_tag_close': '</strong>'})
             body = bc_templates.tmpl_item_search(infos=infos, ln=ln)
         else:
-            return get_item_details(req, recid, ln=ln)
+            return get_item_details(req, recid, patrontype, ln=ln)
 
     elif f == 'recid':
         p = p.strip('\'" \t')
@@ -3268,7 +3268,7 @@ def item_search_result(req, p, f, ln=CFG_SITE_LANG):
             infos.append(_("Requested record does not seem to exist."))
             body = bc_templates.tmpl_item_search(infos=infos, ln=ln)
         else:
-            return get_item_details(req, recid, ln=ln)
+            return get_item_details(req, recid, patrontype, ln=ln)
 
     else:
         result = perform_request_search(c=CFG_BIBCIRCULATION_COLLECTION_SEARCH, sc="1", p=p, f=f)

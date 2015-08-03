@@ -551,8 +551,11 @@ AC_SUBST(FFPROBE)
 AC_SUBST(localstatedir, `eval echo "${localstatedir}"`)
 
 # Define output files:
-AC_CONFIG_FILES([Makefile
+AC_CONFIG_FILES([config.nice
+                 Makefile
+                 po/Makefile.in
                  config/Makefile
+                 config/invenio-autotools.conf
                  modules/Makefile
                  modules/bibauthorid/Makefile
                  modules/bibauthorid/bin/Makefile

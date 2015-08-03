@@ -1378,31 +1378,64 @@ def get_nb_copies_on_loan(recid):
 
     return res[0][0]
 
-def get_item_copies_details(recid):
-    """
-    Get copies details of a given recid.
-
-    @param recid: identify the record. Primary key of bibrec.
-    @type recid: int
-
-    @return list with barcode, loan_period, library_name, library_id,
-                      location, number_of_requests, status, collection,
-                      description and due_date.
-    """
-    res = run_sql("""SELECT it.barcode, it.loan_period, lib.name,
-                            lib.id, it.location, it.number_of_requests,
-                            it.status, it.collection, it.description,
-                            DATE_FORMAT(ln.due_date,'%%Y-%%m-%%d')
-                     FROM crcITEM it
-                            left join crcLOAN ln
-                            on it.barcode = ln.barcode and ln.status != %s
-                            left join crcLIBRARY lib
-                            on lib.id = it.id_crcLIBRARY
-                     WHERE it.id_bibrec=%s
-                     ORDER BY it.creation_date
-                  """, (CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED, recid))
-
-    return res
+def get_item_copies_details(recid, patrontype=None):
+    if type(patrontype) is int:
+        qry = """SELECT DISTINCT it.barcode, GROUP_CONCAT(lrv.loan_period), lib.name,
+                                    lib.id, it.location, it.number_of_requests,
+                                    it.status, it.collection, it.description,
+                                    DATE_FORMAT(ln.due_date,'%%d-%%m-%%Y'), GROUP_CONCAT(lrv.code), GROUP_CONCAT(lrv.patrontype_id)
+                             FROM crcITEM it
+                                    left join crcLOAN ln
+                                    on it.barcode = ln.barcode and ln.status != "%(returncode)s"
+                                    left join crcLIBRARY lib
+                                    on lib.id = it.id_crcLIBRARY
+                                    left join crcLOANRULES_MATCH_VIEW lrv
+                                    on it.barcode = lrv.barcode
+                             WHERE it.id_bibrec=%(recid)s
+                             AND lrv.`patrontype_id` = %(patrontype)s
+                             GROUP BY it.barcode
+                UNION ALL
+                SELECT DISTINCT it.barcode, NULL, lib.name,
+                                    lib.id, it.location, it.number_of_requests,
+                                    it.status, it.collection, it.description,
+                                    DATE_FORMAT(ln.due_date,'%%d-%%m-%%Y'), NULL, NULL
+                            FROM crcITEM it
+                                    LEFT JOIN crcLOAN ln
+                                    ON it.barcode = ln.barcode AND ln.status != "%(returncode)s"
+                                    LEFT JOIN crcLIBRARY lib
+                                    ON lib.id = it.id_crcLIBRARY
+                                    LEFT JOIN crcLOANRULES_MATCH_VIEW lrv
+                                    ON it.barcode = lrv.barcode
+                            WHERE it.id_bibrec=%(recid)s
+                            AND (lrv.`patrontype_id` != %(patrontype)s OR lrv.patrontype_id IS NULL)
+                            GROUP BY it.barcode
+                ORDER BY barcode
+              """ % {
+            'returncode': CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED,
+            'recid': recid,
+            'patrontype': patrontype
+        }
+        print qry
+        return run_sql(qry)
+    else:
+        qry = """
+             SELECT it.barcode, NULL, lib.name,
+                    lib.id, it.location, it.number_of_requests,
+                    it.status, it.collection, it.description,
+                    DATE_FORMAT(ln.due_date,'%%d-%%m-%%Y'), NULL, NULL
+             FROM crcITEM it
+                    left join crcLOAN ln
+                    on it.barcode = ln.barcode and ln.status != "%(returncode)s"
+                    left join crcLIBRARY lib
+                    on lib.id = it.id_crcLIBRARY
+             WHERE it.id_bibrec=%(recid)s
+             ORDER BY barcode
+             """ % {
+            'returncode': CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED,
+            'recid': recid
+        }
+        print qry
+        return run_sql(qry)
 
 def get_copy_details(barcode):
 

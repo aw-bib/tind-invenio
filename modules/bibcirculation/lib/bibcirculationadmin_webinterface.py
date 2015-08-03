@@ -786,7 +786,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
     def item_search_result(self, req, form):
         """http://cds.cern.ch/admin2/bibcirculation/item_search_result"""
         argd = wash_urlargd(form, {'p': (str, ''), 'f': (str, ''),
-                                   'ln': (str, "en"), 'patrontype': (str, Null)})
+                                   'ln': (str, "en"), 'patrontype': (str, None)})
         p  = argd['p']
         f  = argd['f']
         ln = argd['ln']

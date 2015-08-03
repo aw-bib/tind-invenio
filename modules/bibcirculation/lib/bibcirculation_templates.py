@@ -41,7 +41,8 @@ from invenio.bibcirculation_utils import get_book_cover, \
       get_item_info_for_search_result, \
       all_copies_are_missing, \
       is_periodical, \
-      looks_like_dictionary
+      looks_like_dictionary, \
+      generate_new_due_date
 from invenio.bibcirculation_config import \
     CFG_BIBCIRCULATION_ITEM_LOAN_PERIOD, \
     CFG_BIBCIRCULATION_COLLECTION, \
@@ -74,7 +75,14 @@ from invenio.bibcirculation_config import \
     CFG_BIBCIRCULATION_PROPOSAL_STATUS_PUT_ASIDE, \
     CFG_BIBCIRCULATION_PROPOSAL_STATUS_RECEIVED, \
     CFG_BIBCIRCULATION_PROPOSAL_TYPE, \
-    CFG_BIBCIRCULATION_PROPOSAL_STATUS
+    CFG_BIBCIRCULATION_PROPOSAL_STATUS, \
+    CFG_BIBCIRCULATION_LOAN_RULE_CODE_ABSOLUTE, \
+    CFG_BIBCIRCULATION_LOAN_RULE_CODE_REGULAR, \
+    CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_OVERNIGHT, \
+    CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS, \
+    CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_MINUTE_OVERNIGHT, \
+    CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_MINUTE, \
+    CFG_BIBCIRCULATION_LOAN_RULE_CODE_NON_CIRC
 
 def load_menu(ln=CFG_SITE_LANG):
 
@@ -5205,7 +5213,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
 
         for (barcode, loan_period, library_name, library_id,
              location, nb_requests, status, collection,
-             description, due_date) in copies:
+             description, due_date, code) in copies:
 
             number_of_requests = db.get_number_requests_per_copy(barcode)
             if number_of_requests > 0:
@@ -5217,6 +5225,20 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                 expected_arrival_date = db.get_expected_arrival_date(barcode)
                 if expected_arrival_date != '':
                     status = status + ' - ' + expected_arrival_date
+
+            if code == CFG_BIBCIRCULATION_LOAN_RULE_CODE_NON_CIRC:
+                loan_period_text = "Non circulating"
+            elif code == CFG_BIBCIRCULATION_LOAN_RULE_CODE_REGULAR:
+                loan_period_text = loan_period + " days"
+            elif code in (CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_OVERNIGHT,
+                          CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS,
+                          CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_MINUTE_OVERNIGHT,
+                          CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_MINUTE):
+                loan_period_text = loan_period + " hours"
+            elif code == CFG_BIBCIRCULATION_LOAN_RULE_CODE_ABSOLUTE:
+                loan_period_text = generate_new_due_date(loan_period, absolute=True)
+            else:
+                loan_period_text = "No loan rule"
 
             library_link = create_html_link(CFG_SITE_URL +
                                 '/admin2/bibcirculation/get_library_details',
@@ -5241,7 +5263,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
             out += """
                      <td>%s</td>
                      <td>%s</td>
-                     """ % (loan_period, nb_requests)
+                     """ % (loan_period_text, nb_requests)
 
             if not record_is_periodical:
                 out += """

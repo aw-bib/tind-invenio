@@ -1414,7 +1414,6 @@ def get_item_copies_details(recid, patrontype=None):
             'recid': recid,
             'patrontype': patrontype
         }
-        print qry
         return run_sql(qry)
     else:
         qry = """
@@ -1433,7 +1432,6 @@ def get_item_copies_details(recid, patrontype=None):
             'returncode': CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED,
             'recid': recid
         }
-        print qry
         return run_sql(qry)
 
 def get_copy_details(barcode):

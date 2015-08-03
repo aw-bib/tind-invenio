@@ -5195,7 +5195,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
         out += """
                       <th>%s
                             <select onchange="location = this.options[this.selectedIndex].value;">
-                                <option>Select patron type</option>
+                                <option value="item_search_result?f=recid&p=%s">Select patron type</option>
            """ % (_("Loan period"))
         for id, name in db.get_patron_types():
             out += """

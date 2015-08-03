@@ -530,7 +530,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
 
     def get_item_details(self, req, form):
         """http://cds.cern.ch/admin2/bibcirculation/"""
-        argd = wash_urlargd(form, {'recid': (str, None), 'ln': (str, "en")})
+        argd = wash_urlargd(form, {'recid': (str, None), 'ln': (str, "en"), 'patrontype': (str, None)})
         recid = argd['recid']
         ln = argd['ln']
 
@@ -539,7 +539,12 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         except:
             recid = None
 
-        return bal.get_item_details(req, recid, ln)
+        try:
+            patrontype = int(patrontype)
+        except:
+            patrontype = None
+
+        return bal.get_item_details(req, recid, ln, patrontype)
 
     def get_item_requests_details(self, req, form):
         """http://cds.cern.ch/admin2/bibcirculation/borrowers_search"""

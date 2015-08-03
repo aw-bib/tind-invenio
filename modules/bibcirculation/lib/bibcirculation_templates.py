@@ -5126,7 +5126,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
            """ % (_("Additional details"))
         for id, name in db.get_patron_types():
             out += """
-                                <option value="item_search_result?f=%s&patrontype=%s">%s</option>
+                                <option value="item_search_result?f=recid&p=%s&patrontype=%s">%s</option>
                    """ % (recid, id, name)
         out += """
                             </select>

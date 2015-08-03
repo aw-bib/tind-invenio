@@ -533,6 +533,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         argd = wash_urlargd(form, {'recid': (str, None), 'ln': (str, "en"), 'patrontype': (str, None)})
         recid = argd['recid']
         ln = argd['ln']
+        patrontype = argd['patrontype']
 
         try:
             recid = int(recid)

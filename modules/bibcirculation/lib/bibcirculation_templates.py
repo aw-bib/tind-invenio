@@ -82,7 +82,7 @@ from invenio.bibcirculation_config import \
     CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS, \
     CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_MINUTE_OVERNIGHT, \
     CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_MINUTE, \
-    CFG_BIBCIRCULATION_LOAN_RULE_CODE_NON_CIRC,
+    CFG_BIBCIRCULATION_LOAN_RULE_CODE_NON_CIRC, \
     CFG_BIBCIRCULATION_LOAN_RULE_CODES
 
 def load_menu(ln=CFG_SITE_LANG):
@@ -15881,6 +15881,12 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                     .tablesorterPager({container: $("#pager"), positionFixed: false});
             });
             </script>
+            <style>
+                table#new_rule input {
+                    padding: 2px;
+                    font-size: 1.2em;
+                }
+            </style>
 
             <br />
 

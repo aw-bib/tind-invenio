@@ -15934,7 +15934,7 @@ def tmpl_loan_rules(self, results, ln=CFG_SITE_LANG):
                           _("Holdable"),
                           _("Home pickup"),
                           _("Shippable"),
-                          _("Ship time (days)")
+                          _("Ship time (days)"))
 
             for (name, code, loan_period, holdable,
                  home_pickup, shippable, ship_time) in result:

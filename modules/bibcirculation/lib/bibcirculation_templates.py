@@ -15850,7 +15850,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
         return out
 
 
-    def tmpl_loan_rules(self, results, ln=CFG_SITE_LANG):
+    def tmpl_loan_rules(self, results, infos, ln=CFG_SITE_LANG):
         """
         @param results: all current loan rules
         @type results: tuple

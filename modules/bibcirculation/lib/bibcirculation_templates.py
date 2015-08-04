@@ -15968,7 +15968,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                       CFG_SITE_URL,
                       _("Name"))
 
-        for code in CFG_BIBCIRCULATION_LOAN_RULE_CODES::
+        for code in CFG_BIBCIRCULATION_LOAN_RULE_CODES:
             out += """
                                     <option>%s</option>
                    """ % code

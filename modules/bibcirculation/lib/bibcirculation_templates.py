@@ -15886,8 +15886,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
             <div class="bibcircbottom">
             """
 
-        else:
-            out += """
+        out += """
             <form name="rule_table_form" action="%s/admin2/bibcirculation/all_loans" method="post" >
             <br />
             <table id="table_all_loans" class="tablesorter"
@@ -15914,10 +15913,10 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                           _("Shippable"),
                           _("Ship time (days)"))
 
-            for (name, code, loan_period, holdable,
+        for (name, code, loan_period, holdable,
                  home_pickup, shippable, ship_time) in result:
 
-                out += """
+            out += """
                     <tr>
                         <td>%s</td>
                         <td>%s</td>
@@ -15933,7 +15932,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                            home_pickup, shippable, ship_time,
                           _("Delete"))
 
-            out += """
+        out += """
                     </tbody>
                     </table>
                     </form>
@@ -15956,7 +15955,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                     </div>
                     """
 
-            out += """
+        out += """
                     <h5>%s</h5>
                     <form name="add_rule" action="%s/admin2/bibcirculation/loan_rules" method="post">
                     <table id="new_rule">

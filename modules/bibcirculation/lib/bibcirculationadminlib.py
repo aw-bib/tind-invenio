@@ -6470,10 +6470,10 @@ def loan_rules(req, formdata, ln=CFG_SITE_LANG):
 
     _ = gettext_set_language(ln)
 
-    results = db.get_loan_rules()
+    result = db.get_loan_rules()
 
     infos = []
-    body = bc_templates.tmpl_loan_rules(results=results, infos=infos, ln=ln)
+    body = bc_templates.tmpl_loan_rules(result=result, infos=infos, ln=ln)
 
     navtrail_previous_links = '<a class="navtrail" ' \
                               'href="%s/help/admin">Admin Area' \

@@ -15850,7 +15850,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
         return out
 
 
-    def tmpl_loan_rules(self, results, infos, ln=CFG_SITE_LANG):
+    def tmpl_loan_rules(self, result, infos, ln=CFG_SITE_LANG):
         """
         @param results: all current loan rules
         @type results: tuple
@@ -15885,28 +15885,6 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
             <div class="bibcircbottom">
             """
-
-        if len(result) == 0:
-            out += """
-              <br />
-              <table class="bibcirctable">
-                <tr>
-                    <td class="bibcirccontent">%s</td>
-                </tr>
-                </table>
-                <br />
-                <table class="bibcirctable">
-                <tr>
-                  <td>
-                    <input type=button value='%s' onClick="history.go(-1)" class="formbutton">
-                  </td>
-                </tr>
-                </table>
-                <br />
-                <br />
-                </div>
-                """ % (_("No result for your search."),
-                       _("Back"))
 
         else:
             out += """

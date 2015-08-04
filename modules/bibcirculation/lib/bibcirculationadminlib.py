@@ -6458,3 +6458,30 @@ def search_vendor_step2(req, column, string, ln=CFG_SITE_LANG):
                 body=body, language=ln,
                 navtrail=navtrail_previous_links,
                 lastupdated=__lastupdated__)
+
+def loan_rules(req, formdata, ln=CFG_SITE_LANG):
+    """
+    Lists all existing loan rules, and displays form for adding new rule
+    """
+    id_user = getUid(req)
+    (auth_code, auth_message) = is_adminuser(req)
+    if auth_code != 0:
+        return mustloginpage(req, auth_message)
+
+    _ = gettext_set_language(ln)
+
+    results = db.get_loan_rules()
+
+    body = bc_templates.tmpl_loan_rules(results=results)
+
+    navtrail_previous_links = '<a class="navtrail" ' \
+                              'href="%s/help/admin">Admin Area' \
+                              '</a>' % (CFG_SITE_SECURE_URL,)
+
+    return page(title=_("Loan rules"),
+                uid=id_user,
+                req=req,
+                body=body, language=ln,
+                navtrail=navtrail_previous_links,
+                lastupdated=__lastupdated__)
+

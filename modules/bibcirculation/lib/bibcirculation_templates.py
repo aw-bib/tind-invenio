@@ -15848,3 +15848,161 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                _("Back"))
 
         return out
+
+
+def tmpl_loan_rules(self, results, ln=CFG_SITE_LANG):
+        """
+        @param results: all current loan rules
+        @type results: tuple
+
+        @param ln: language of the page
+
+        """
+
+
+        _ = gettext_set_language(ln)
+
+        out = self.tmpl_infobox(infos, ln)
+
+        out += load_menu(ln)
+
+        out += """
+            <style type="text/css"> @import url("/js/tablesorter/themes/blue/style.css"); </style>
+            <style type="text/css"> @import url("/js/tablesorter/addons/pager/jquery.tablesorter.pager.css"); </style>
+            <script src="/js/tablesorter/jquery.tablesorter.js" type="text/javascript"></script>
+            <script src="/js/tablesorter/addons/pager/jquery.tablesorter.pager.js" type="text/javascript"></script>
+            <script type="text/javascript">
+            $(document).ready(function(){
+                $("#table_all_rules")
+                    .tablesorter({sortList: [[3,1], [0,0]],widthFixed: true, widgets: ['zebra']})
+                    .bind("sortStart",function(){$("#overlay").show();})
+                    .bind("sortEnd",function(){$("#overlay").hide()})
+                    .tablesorterPager({container: $("#pager"), positionFixed: false});
+            });
+            </script>
+
+            <br />
+
+            <div class="bibcircbottom">
+            """
+
+        if len(result) == 0:
+            out += """
+              <br />
+              <table class="bibcirctable">
+                <tr>
+                    <td class="bibcirccontent">%s</td>
+                </tr>
+                </table>
+                <br />
+                <table class="bibcirctable">
+                <tr>
+                  <td>
+                    <input type=button value='%s' onClick="history.go(-1)" class="formbutton">
+                  </td>
+                </tr>
+                </table>
+                <br />
+                <br />
+                </div>
+                """ % (_("No result for your search."),
+                       _("Back"))
+
+        else:
+            out += """
+            <form name="rule_table_form" action="%s/admin2/bibcirculation/all_loans" method="post" >
+            <br />
+            <table id="table_all_loans" class="tablesorter"
+                   border="0" cellpadding="0" cellspacing="1">
+               <thead>
+                    <tr>
+                       <th>%s</th>
+                       <th>%s</th>
+                       <th>%s</th>
+                       <th>%s</th>
+                       <th>%s</th>
+                       <th>%s</th>
+                       <th>%s</th>
+                       <th></th>
+                    </tr>
+               </thead>
+              <tbody>
+                       """% (CFG_SITE_URL,
+                          _("Name"),
+                          _("Code"),
+                          _("Loan period"),
+                          _("Holdable"),
+                          _("Home pickup"),
+                          _("Shippable"),
+                          _("Ship time (days)")
+
+            for (name, code, loan_period, holdable,
+                 home_pickup, shippable, ship_time) in result:
+
+                out += """
+                    <tr>
+                        <td>%s</td>
+                        <td>%s</td>
+                        <td>%s</td>
+                        <td>%s</td>
+                        <td>%s</td>
+                        <td>%s</td>
+                        <td>%s</td>
+                        <td><input type="button" value="%s"></td>
+                    </tr>
+
+                    """ % (name, code, loan_period, holdable,
+                           home_pickup, shippable, ship_time,
+                          _("Delete"))
+
+            out += """
+                    </tbody>
+                    </table>
+                    </form>
+
+                    <div id="pager" class="pager">
+                        <form>
+                            <br />
+                            <img src="/img/sb.gif" class="first" />
+                            <img src="/img/sp.gif" class="prev" />
+                            <input type="text" class="pagedisplay" />
+                            <img src="/img/sn.gif" class="next" />
+                            <img src="/img/se.gif" class="last" />
+                            <select class="pagesize">
+                                <option value="30" selected="selected">30</option>
+                                <option value="60">60</option>
+                                <option value="100">100</option>
+                                <option value="200">200</option>
+                            </select>
+                        </form>
+                    </div>
+                    """
+
+            out += """
+                    <h5>%s</h5>
+                    <form name="add_rule" action="%s/admin2/bibcirculation/loan_rules" method="post">
+                    <table id="new_rule">
+
+                      <tbody>
+                            <tr role="row">
+                                <td><input type="text" placeholder="%s" name="name"></td>
+                                <td><select name="code"><option>I</option><option>J</option></select></td>
+                                <td><input type="text" placeholder="%s" name="loan_period"></td>
+                                <td><select name="holdable"><option>Y</option><option>N</option></select></td>
+                                <td><select name="homepickup"><option>Y</option><option>N</option></select></td>
+                                <td><select name="shippable"><option>Y</option><option>N</option></select></td>
+                                <td><input type="text" placeholder="%s" name="ship_time"></td>
+                                <td><input type="submit" value="%s"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    </form>
+
+                   """ % (_("Add new rule"),
+                          CFG_SITE_URL,
+                          _("Name"),
+                          _("Loan period"),
+                          _("Ship time"),
+                          _("Add rule"))
+
+        return out

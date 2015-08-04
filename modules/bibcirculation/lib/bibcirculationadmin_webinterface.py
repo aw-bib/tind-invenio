@@ -100,7 +100,10 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
                 'get_vendor_details', 'add_new_vendor_step1', 'add_new_vendor_step2',
                 'add_new_vendor_step3', 'update_vendor_info_step1', 'update_vendor_info_step2',
                 'update_vendor_info_step3', 'update_vendor_info_step4', 'update_vendor_info_step5',
-                'get_vendor_notes', 'search_vendor_step1', 'search_vendor_step2'
+                'get_vendor_notes', 'search_vendor_step1', 'search_vendor_step2',
+
+                # Loan rules related pages
+                'loan_rules'
                 ]
 
 
@@ -1995,6 +1998,16 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
             string = string.strip()
 
         return bal.search_vendor_step2(req, column, string, ln)
+
+
+    def loan_rules(self, req, form):
+        """http://cds.cern.ch/admin2/bibcirculation/loan_rules"""
+        argd = wash_urlargd(form, {'name': (str, None), 'code': (str, None), 'loan_period': (str, None),
+                                   'holdable': (str, None), 'homepickup': (str, None), 'shippable': (str, None),
+                                   'ship_time': (str, None), 'ln': (str, "en")})
+        ln = argd['ln']
+
+        return bal.loan_rules(req, formdata=argd, ln=ln)
 
 
     def __call__(self, req, form):

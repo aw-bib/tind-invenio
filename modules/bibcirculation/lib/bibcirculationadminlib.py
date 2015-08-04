@@ -40,6 +40,8 @@ import datetime, time, types
 from urlparse import parse_qs
 import simplejson
 
+from MySQLdb import IntegrityError
+
 # Other Invenio imports
 from invenio.config import \
     CFG_SITE_LANG, \

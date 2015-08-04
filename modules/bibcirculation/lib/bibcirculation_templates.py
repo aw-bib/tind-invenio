@@ -15873,7 +15873,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
             <script src="/js/tablesorter/addons/pager/jquery.tablesorter.pager.js" type="text/javascript"></script>
             <script type="text/javascript">
             $(document).ready(function(){
-                $("#table_all_rules")
+                $("#table_loan_rules")
                     .tablesorter({sortList: [[3,1], [0,0]],widthFixed: true, widgets: ['zebra']})
                     .bind("sortStart",function(){$("#overlay").show();})
                     .bind("sortEnd",function(){$("#overlay").hide()})
@@ -15889,7 +15889,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
         out += """
             <form name="rule_table_form" action="%s/admin2/bibcirculation/all_loans" method="post" >
             <br />
-            <table id="table_all_loans" class="tablesorter"
+            <table id="table_loan_rules" class="tablesorter"
                    border="0" cellpadding="0" cellspacing="1">
                <thead>
                     <tr>
@@ -15946,10 +15946,10 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                             <img src="/img/sn.gif" class="next" />
                             <img src="/img/se.gif" class="last" />
                             <select class="pagesize">
-                                <option value="30" selected="selected">30</option>
-                                <option value="60">60</option>
-                                <option value="100">100</option>
-                                <option value="200">200</option>
+                                <option value="10" selected="selected">10</option>
+                                <option value="20">20</option>
+                                <option value="30">30</option>
+                                <option value="40">40</option>
                             </select>
                         </form>
                     </div>
@@ -15963,22 +15963,29 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                       <tbody>
                             <tr role="row">
                                 <td><input type="text" placeholder="%s" name="name"></td>
-                                <td><select name="code"><option>I</option><option>J</option></select></td>
-                                <td><input type="text" placeholder="%s" name="loan_period"></td>
-                                <td><select name="holdable"><option>Y</option><option>N</option></select></td>
-                                <td><select name="homepickup"><option>Y</option><option>N</option></select></td>
-                                <td><select name="shippable"><option>Y</option><option>N</option></select></td>
-                                <td><input type="text" placeholder="%s" name="ship_time"></td>
-                                <td><input type="submit" value="%s"></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    </form>
+                                <td><select name="code">
+               """ % (_("Add new rule"),
+                      CFG_SITE_URL,
+                      _("Name"))
 
-                   """ % (_("Add new rule"),
-                          CFG_SITE_URL,
-                          _("Name"),
-                          _("Loan period"),
+        for code in CFG_BIBCIRCULATION_LOAN_RULE_CODES::
+            out += """
+                                    <option>%s</option>
+                   """ % code
+
+        out += """
+                                 </select></td>
+                                 <td><input type="text" placeholder="%s" name="loan_period"></td>
+                                 <td><select name="holdable"><option>Y</option><option>N</option></select></td>
+                                 <td><select name="homepickup"><option>Y</option><option>N</option></select></td>
+                                 <td><select name="shippable"><option>Y</option><option>N</option></select></td>
+                                 <td><input type="text" placeholder="%s" name="ship_time"></td>
+                                 <td><input type="submit" value="%s"></td>
+                             </tr>
+                         </tbody>
+                     </table>
+                     </form>
+                   """ % (_("Loan period"),
                           _("Ship time"),
                           _("Add rule"))
 

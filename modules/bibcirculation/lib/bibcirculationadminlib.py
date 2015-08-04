@@ -6459,7 +6459,7 @@ def search_vendor_step2(req, column, string, ln=CFG_SITE_LANG):
                 navtrail=navtrail_previous_links,
                 lastupdated=__lastupdated__)
 
-def loan_rules(req, formdata, ln=CFG_SITE_LANG):
+def loan_rules(req, name, code, loan_period, holdable, homepickup, shippable, ship_time, ln=CFG_SITE_LANG):
     """
     Lists all existing loan rules, and displays form for adding new rule
     """
@@ -6469,10 +6469,18 @@ def loan_rules(req, formdata, ln=CFG_SITE_LANG):
         return mustloginpage(req, auth_message)
 
     _ = gettext_set_language(ln)
+    infos = []
+
+    if name and code and loan_period and  holdable and homepickup and shippable and ship_time:
+        db.add_loan_rule(name, code, loan_period, holdable, homepickup, shippable, ship_time)
+        infos.append(_("Loan rule %(x_strong_tag_open)s%(loan_rule_name)s%(x_strong_tag_close)s added successfully."
+                       % {'x_strong_tag_open': '<strong>',
+                          'x_strong_tag_close': '</strong>',
+                          'loan_rule_name': name
+                          }))
+
 
     result = db.get_loan_rules()
-
-    infos = []
     body = bc_templates.tmpl_loan_rules(result=result, infos=infos, ln=ln)
 
     navtrail_previous_links = '<a class="navtrail" ' \

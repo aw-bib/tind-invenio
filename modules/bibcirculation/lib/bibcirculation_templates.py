@@ -15964,7 +15964,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
         out += """
                     <h5>%s</h5>
-                    <form name="add_rule" action="%s/admin2/bibcirculation/loan_rules" method="post">
+                    <form name="add_rule" action="%s/admin2/bibcirculation/loan_rules" method="get">
                     <table id="new_rule">
 
                       <tbody>

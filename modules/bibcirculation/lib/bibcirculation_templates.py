@@ -15884,7 +15884,6 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
             <style>
                 table#new_rule input {
                     padding: 2px;
-                    font-size: 1.2em;
                 }
             </style>
 
@@ -15920,7 +15919,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                           _("Shippable"),
                           _("Ship time (days)"))
 
-        for (name, code, loan_period, holdable,
+        for (id, name, code, loan_period, holdable,
                  home_pickup, shippable, ship_time) in result:
 
             out += """
@@ -15932,12 +15931,12 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                         <td>%s</td>
                         <td>%s</td>
                         <td>%s</td>
-                        <td><input type="button" value="%s"></td>
+                        <td><input type="button" value="%s" class="bibcircbutton" onClick="location=loan_rules?delete=%s"></td>
                     </tr>
 
                     """ % (name, code, loan_period, holdable,
                            home_pickup, shippable, ship_time,
-                          _("Delete"))
+                          _("Delete"), id)
 
         out += """
                     </tbody>
@@ -15966,6 +15965,27 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                     <h5>%s</h5>
                     <form name="add_rule" action="%s/admin2/bibcirculation/loan_rules" method="get">
                     <table id="new_rule">
+                       <thead>
+                            <tr>
+                               <th>%s</th>
+                               <th>%s</th>
+                               <th>%s</th>
+                               <th>%s</th>
+                               <th>%s</th>
+                               <th>%s</th>
+                               <th>%s</th>
+                               <th></th>
+                            </tr>
+                       </thead>
+              """ % (_("Name"),
+                     _("Code"),
+                     _("Loan period"),
+                     _("Holdable"),
+                     _("Home pickup"),
+                     _("Shippable"),
+                     _("Ship time (days)"))
+
+        out += """
 
                       <tbody>
                             <tr role="row">
@@ -15982,18 +16002,16 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
         out += """
                                  </select></td>
-                                 <td><input type="text" placeholder="%s" name="loan_period"></td>
+                                 <td><input type="text" name="loan_period"></td>
                                  <td><select name="holdable"><option>Y</option><option>N</option></select></td>
                                  <td><select name="homepickup"><option>Y</option><option>N</option></select></td>
                                  <td><select name="shippable"><option>Y</option><option>N</option></select></td>
-                                 <td><input type="text" placeholder="%s" name="ship_time"></td>
+                                 <td><input type="text"name="ship_time"></td>
                                  <td><input type="submit" value="%s"></td>
                              </tr>
                          </tbody>
                      </table>
                      </form>
-                   """ % (_("Loan period"),
-                          _("Ship time"),
-                          _("Add rule"))
+                   """ % _("Add rule")
 
         return out

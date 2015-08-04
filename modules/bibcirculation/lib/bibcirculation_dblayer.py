@@ -35,6 +35,7 @@
 __revision__ = "$Id$"
 
 from MySQLdb import DatabaseError
+from MySQLdb import IntegrityError
 
 from invenio.dbquery import run_sql
 from invenio.bibcirculation_config import \
@@ -3186,7 +3187,7 @@ def get_patron_types():
 def get_loan_rules():
 
     res = run_sql("""
-            SELECT name, code, loan_period, holdable, homepickup, shippable, ship_time
+            SELECT id, name, code, loan_period, holdable, homepickup, shippable, ship_time
             FROM crcLOANRULES
             """)
     return res
@@ -3196,3 +3197,10 @@ def add_loan_rule(name, code, loan_period, holdable, homepickup, shippable, ship
             INSERT INTO crcLOANRULES(name, code, loan_period, holdable, homepickup, shippable, ship_time)
             VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s')
     """ % (name, code, loan_period, holdable, homepickup, shippable, ship_time))
+
+def delete_loan_rule(id):
+    res = run_sql("SELECT COUNT(*) FROM crcRULES_SELECTION WHERE rule_id = %s" % id)
+    if res[0][0] == 0:
+        run_sql("DELETE FROM crcLOANRULES WHERE id = %s" % id)
+    else:
+        raise IntegrityError("Loan rule in use")

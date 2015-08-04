@@ -6459,7 +6459,7 @@ def search_vendor_step2(req, column, string, ln=CFG_SITE_LANG):
                 navtrail=navtrail_previous_links,
                 lastupdated=__lastupdated__)
 
-def loan_rules(req, name, code, loan_period, holdable, homepickup, shippable, ship_time, ln=CFG_SITE_LANG):
+def loan_rules(req, name, code, loan_period, holdable, homepickup, shippable, ship_time, delete, ln=CFG_SITE_LANG):
     """
     Lists all existing loan rules, and displays form for adding new rule
     """
@@ -6470,8 +6470,22 @@ def loan_rules(req, name, code, loan_period, holdable, homepickup, shippable, sh
 
     _ = gettext_set_language(ln)
     infos = []
+    try:
+        delete = int(delete)
+    except ValueError:
+        delete = None
 
-    if name and code and loan_period and  holdable and homepickup and shippable and ship_time:
+    if delete:
+        try:
+            db.delete_loan_rule(delete)
+            infos.append(_("Loan rule deleted."))
+        except IntegrityError:
+            infos.append(_("%(x_strong_tag_open)sError:%(x_strong_tag_close)s Loan rule in use."
+                           % {'x_strong_tag_open': '<strong>',
+                              'x_strong_tag_close': '</strong>'
+                              }))
+
+    elif name and code and loan_period and  holdable and homepickup and shippable and ship_time:
         db.add_loan_rule(name, code, loan_period, holdable, homepickup, shippable, ship_time)
         infos.append(_("Loan rule %(x_strong_tag_open)s%(loan_rule_name)s%(x_strong_tag_close)s added successfully."
                        % {'x_strong_tag_open': '<strong>',

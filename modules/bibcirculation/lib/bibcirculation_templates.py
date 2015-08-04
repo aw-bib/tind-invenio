@@ -15977,23 +15977,19 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                                <th></th>
                             </tr>
                        </thead>
-              """ % (_("Name"),
+                       <tbody>
+                            <tr role="row">
+                                <td><input type="text" name="name"></td>
+                                <td><select name="code">
+              """ % (_("Add new rule"),
+                      CFG_SITE_URL,
+                     _("Name"),
                      _("Code"),
                      _("Loan period"),
                      _("Holdable"),
                      _("Home pickup"),
                      _("Shippable"),
                      _("Ship time (days)"))
-
-        out += """
-
-                      <tbody>
-                            <tr role="row">
-                                <td><input type="text" placeholder="%s" name="name"></td>
-                                <td><select name="code">
-               """ % (_("Add new rule"),
-                      CFG_SITE_URL,
-                      _("Name"))
 
         for code in CFG_BIBCIRCULATION_LOAN_RULE_CODES:
             out += """

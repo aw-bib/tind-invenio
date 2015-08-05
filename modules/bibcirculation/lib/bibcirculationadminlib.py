@@ -6525,7 +6525,7 @@ def loan_rules(req, name, code, loan_period, holdable, homepickup, shippable, sh
 
 def patron_types(req, name, delete, ln=CFG_SITE_LANG):
     """
-    Lists all existing loan rules, and displays form for adding new rule
+    Lists all existing patron types, and displays form for adding new rule
     """
     id_user = getUid(req)
     (auth_code, auth_message) = is_adminuser(req)
@@ -6556,11 +6556,11 @@ def patron_types(req, name, delete, ln=CFG_SITE_LANG):
 
     elif name:
         try:
-            db.add_loan_rule(name)
-            infos.append(_("Patron type %(x_strong_tag_open)s%(loan_rule_name)s%(x_strong_tag_close)s added successfully."
+            db.add_patron_type(name)
+            infos.append(_("Patron type %(x_strong_tag_open)s%(patron_type_name)s%(x_strong_tag_close)s added successfully."
                            % {'x_strong_tag_open': '<strong>',
                               'x_strong_tag_close': '</strong>',
-                              'loan_rule_name': name
+                              'patron_type_name': name
                               }))
         except IntegrityError:
             infos.append(_("%(x_strong_tag_open)sError:%(x_strong_tag_close)s Patron type name already exists."

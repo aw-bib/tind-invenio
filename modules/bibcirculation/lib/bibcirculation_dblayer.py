@@ -3189,7 +3189,7 @@ def add_patron_type(name):
             INSERT INTO crcPATRONTYPES(name) VALUES('%s')
     """ % name)
 
-def delete_patron_type(id)
+def delete_patron_type(id):
     res = run_sql("SELECT COUNT(*) FROM crcPATRONTYPE_BORROWER WHERE patrontype_id = %s" % id)
     if res[0][0] == 0:
         res = run_sql("DELETE FROM crcPATRONTYPES WHERE id = %s" % id)

@@ -6487,18 +6487,25 @@ def loan_rules(req, name, code, loan_period, holdable, homepickup, shippable, sh
                               'x_strong_tag_close': '</strong>'
                               }))
         except DatabaseError:
-            infos.append(_("%(x_strong_tag_open)sError:%(x_strong_tag_close)s No such loan rule."
+            infos.append(_("%(x_strong_tag_open)sError:%(x_strong_tag_close)s The rule ID you are trying to delete does not exist."
                            % {'x_strong_tag_open': '<strong>',
                               'x_strong_tag_close': '</strong>'
                               }))
 
     elif name and code and loan_period and  holdable and homepickup and shippable and ship_time:
-        db.add_loan_rule(name, code, loan_period, holdable, homepickup, shippable, ship_time)
-        infos.append(_("Loan rule %(x_strong_tag_open)s%(loan_rule_name)s%(x_strong_tag_close)s added successfully."
-                       % {'x_strong_tag_open': '<strong>',
-                          'x_strong_tag_close': '</strong>',
-                          'loan_rule_name': name
-                          }))
+        try:
+            db.add_loan_rule(name, code, loan_period, holdable, homepickup, shippable, ship_time)
+            infos.append(_("Loan rule %(x_strong_tag_open)s%(loan_rule_name)s%(x_strong_tag_close)s added successfully."
+                           % {'x_strong_tag_open': '<strong>',
+                              'x_strong_tag_close': '</strong>',
+                              'loan_rule_name': name
+                              }))
+        except IntegrityError:
+            infos.append(_("%(x_strong_tag_open)sError:%(x_strong_tag_close)s Loan rule name already exists."
+                           % {'x_strong_tag_open': '<strong>',
+                              'x_strong_tag_close': '</strong>'
+                              }))
+
 
 
     result = db.get_loan_rules()

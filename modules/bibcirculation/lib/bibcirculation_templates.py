@@ -16046,6 +16046,8 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
         out += load_menu(ln)
 
         out += """
+
+            <style type="text/css"> @import url("/js/tablesorter/themes/blue/style.css"); </style>
             <style>
                 table#new_type input[type="text"] {
                     padding: 2px;

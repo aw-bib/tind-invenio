@@ -6474,7 +6474,7 @@ def loan_rules(req, name, code, loan_period, holdable, homepickup, shippable, sh
     infos = []
     try:
         delete = int(delete)
-    except ValueError:
+    except (ValueError, TypeError):
         delete = None
 
     if delete:

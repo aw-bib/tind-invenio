@@ -3201,6 +3201,8 @@ def add_loan_rule(name, code, loan_period, holdable, homepickup, shippable, ship
 def delete_loan_rule(id):
     res = run_sql("SELECT COUNT(*) FROM crcRULES_SELECTION WHERE rule_id = %s" % id)
     if res[0][0] == 0:
-        run_sql("DELETE FROM crcLOANRULES WHERE id = %s" % id)
+        res = run_sql("DELETE FROM crcLOANRULES WHERE id = %s" % id)
+        if res == 0:
+            raise DatabaseError("No such id")
     else:
         raise IntegrityError("Loan rule in use")

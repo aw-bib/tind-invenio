@@ -6486,6 +6486,11 @@ def loan_rules(req, name, code, loan_period, holdable, homepickup, shippable, sh
                            % {'x_strong_tag_open': '<strong>',
                               'x_strong_tag_close': '</strong>'
                               }))
+        except DatabaseError:
+            infos.append(_("%(x_strong_tag_open)sError:%(x_strong_tag_close)s No such loan rule."
+                           % {'x_strong_tag_open': '<strong>',
+                              'x_strong_tag_close': '</strong>'
+                              }))
 
     elif name and code and loan_period and  holdable and homepickup and shippable and ship_time:
         db.add_loan_rule(name, code, loan_period, holdable, homepickup, shippable, ship_time)

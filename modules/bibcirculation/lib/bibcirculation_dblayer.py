@@ -3184,6 +3184,20 @@ def get_patron_types():
 
     return run_sql("SELECT id, name FROM crcPATRONTYPES")
 
+def add_patron_type(name):
+    run_sql("""
+            INSERT INTO crcPATRONTYPES(name) VALUES('%s')
+    """ % name)
+
+def delete_patron_type(id)
+    res = run_sql("SELECT COUNT(*) FROM crcPATRONTYPE_BORROWER WHERE patrontype_id = %s" % id)
+    if res[0][0] == 0:
+        res = run_sql("DELETE FROM crcPATRONTYPES WHERE id = %s" % id)
+        if res == 0:
+            raise DatabaseError("No such id")
+    else:
+        raise IntegrityError("Patron type in use")
+
 def get_loan_rules():
 
     res = run_sql("""

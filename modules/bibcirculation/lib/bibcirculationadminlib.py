@@ -6522,3 +6522,64 @@ def loan_rules(req, name, code, loan_period, holdable, homepickup, shippable, sh
                 navtrail=navtrail_previous_links,
                 lastupdated=__lastupdated__)
 
+
+def patron_types(req, name, delete, ln=CFG_SITE_LANG):
+    """
+    Lists all existing loan rules, and displays form for adding new rule
+    """
+    id_user = getUid(req)
+    (auth_code, auth_message) = is_adminuser(req)
+    if auth_code != 0:
+        return mustloginpage(req, auth_message)
+
+    _ = gettext_set_language(ln)
+    infos = []
+    try:
+        delete = int(delete)
+    except (ValueError, TypeError):
+        delete = None
+
+    if delete:
+        try:
+            db.delete_patron_type(delete)
+            infos.append(_("Patron type deleted."))
+        except IntegrityError:
+            infos.append(_("%(x_strong_tag_open)sError:%(x_strong_tag_close)s Patron type in use."
+                           % {'x_strong_tag_open': '<strong>',
+                              'x_strong_tag_close': '</strong>'
+                              }))
+        except DatabaseError:
+            infos.append(_("%(x_strong_tag_open)sError:%(x_strong_tag_close)s The patron type ID you are trying to delete does not exist."
+                           % {'x_strong_tag_open': '<strong>',
+                              'x_strong_tag_close': '</strong>'
+                              }))
+
+    elif name:
+        try:
+            db.add_loan_rule(name)
+            infos.append(_("Patron type %(x_strong_tag_open)s%(loan_rule_name)s%(x_strong_tag_close)s added successfully."
+                           % {'x_strong_tag_open': '<strong>',
+                              'x_strong_tag_close': '</strong>',
+                              'loan_rule_name': name
+                              }))
+        except IntegrityError:
+            infos.append(_("%(x_strong_tag_open)sError:%(x_strong_tag_close)s Patron type name already exists."
+                           % {'x_strong_tag_open': '<strong>',
+                              'x_strong_tag_close': '</strong>'
+                              }))
+
+
+    result = db.get_patron_types()
+    body = bc_templates.tmpl_patron_types(result=result, infos=infos, ln=ln)
+
+    navtrail_previous_links = '<a class="navtrail" ' \
+                              'href="%s/help/admin">Admin Area' \
+                              '</a>' % (CFG_SITE_SECURE_URL,)
+
+    return page(title=_("Patron types"),
+                uid=id_user,
+                req=req,
+                body=body, language=ln,
+                navtrail=navtrail_previous_links,
+                lastupdated=__lastupdated__)
+

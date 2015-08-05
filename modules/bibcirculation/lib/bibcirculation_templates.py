@@ -16094,7 +16094,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
         out += """
                     </tbody>
                     </table>
-                    </td><td style="padding-left:50px;>
+                    </td><td style="padding-left:50px;vertical-align:top;">
                     """
 
         out += """
@@ -16187,7 +16187,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
         out += """
                     </tbody>
                     </table>
-                    </td><td style="padding-left:50px;>
+                    </td><td style="padding-left:50px;vertical-align:top;">
                     """
 
         out += """

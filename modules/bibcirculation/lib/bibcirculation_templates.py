@@ -16016,10 +16016,10 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                                  </select></td>
                                  <td><input type="text" name="loan_period" style="width:100px"></td>
                                  <td><select name="holdable"><option>Y</option><option>N</option></select></td>
-                                 <td><select name="homepickup"><option>Y</option><option>N</option></select></td>
+                                 <td><select name="homepickup"><option>Y</option><option selected="selected">N</option></select></td>
                                  <td><select name="shippable"><option>Y</option><option>N</option></select></td>
                                  <td><input type="text"name="ship_time" style="width:133px"></td>
-                                 <td><input type="submit" value="%s"></td>
+                                 <td><input type="submit" value="%s" class="bibcircbutton"></td>
                              </tr>
                          </tbody>
                      </table>

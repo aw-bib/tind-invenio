@@ -16065,7 +16065,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
             """
 
         out += """
-            <table style="width:800px"><tr><td style="width:50%">
+            <table style="width:800px"><tr><td style="width:50%%">
             <table id="table_patron_types" class="tablesorter"
                    border="0" cellpadding="0" cellspacing="1">
                <thead>

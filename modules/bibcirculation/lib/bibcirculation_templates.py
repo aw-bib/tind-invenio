@@ -190,9 +190,10 @@ def load_menu(ln=CFG_SITE_LANG):
     </li>
 
     <li class="hassubmenu">
-        <a href="#">%(Loan_rules)s</a>
+        <a href="#">%(Rule_management)s</a>
         <ul class="submenu">
-            <li><a href="%(url)s/admin2/bibcirculation/loan_rules">%(All_loan_rules)s</a></li>
+            <li><a href="%(url)s/admin2/bibcirculation/loan_rules">%(Loan_rules)s</a></li>
+            <li><a href="%(url)s/admin2/bibcirculation/patron_types">%(Patron_types)s</a></li>
         </ul>
     </li>
 
@@ -224,8 +225,9 @@ def load_menu(ln=CFG_SITE_LANG):
            'proposal-new':  _(CFG_BIBCIRCULATION_PROPOSAL_STATUS_NEW),
            'proposal-put_aside': _(CFG_BIBCIRCULATION_PROPOSAL_STATUS_PUT_ASIDE),
            'requests-putaside': "requests-putaside",
+           'Rule_management': _("Rule management"),
            'Loan_rules': _("Loan rules"),
-           'All_loan_rules': _("All loan rules"),
+           'Patron_types': _("Patron types"),
            'Help': _("Help"),
            'Admin_guide': _("Admin guide"),
            'Contact_Support': _("Contact Support"),

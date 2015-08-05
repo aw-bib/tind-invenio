@@ -3220,3 +3220,21 @@ def delete_loan_rule(id):
             raise DatabaseError("No such id")
     else:
         raise IntegrityError("Loan rule in use")
+
+def get_item_types():
+
+    return run_sql("SELECT id, name FROM crcITEMTYPES")
+
+def add_item_type(name):
+    run_sql("""
+            INSERT INTO crcITEMTYPES(name) VALUES('%s')
+    """ % name)
+
+def delete_item_type(id):
+    res = run_sql("SELECT COUNT(*) FROM crcITEMTYPE_ITEM WHERE itemtype_id = %s" % id)
+    if res[0][0] == 0:
+        res = run_sql("DELETE FROM crcITEMTYPES WHERE id = %s" % id)
+        if res == 0:
+            raise DatabaseError("No such id")
+    else:
+        raise IntegrityError("Item type in use")

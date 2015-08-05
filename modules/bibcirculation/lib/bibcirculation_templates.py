@@ -16122,3 +16122,96 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                           _("Add rule"))
 
         return out
+
+
+    def tmpl_item_types(self, result, infos, ln=CFG_SITE_LANG):
+        """
+        @param results: all current item types
+        @type results: tuple
+
+        @param ln: language of the page
+
+        """
+
+
+        _ = gettext_set_language(ln)
+
+        out = self.tmpl_infobox(infos, ln)
+
+        out += load_menu(ln)
+
+        out += """
+
+            <style type="text/css"> @import url("/js/tablesorter/themes/blue/style.css"); </style>
+            <style>
+                table#new_type input[type="text"] {
+                    padding: 2px;
+                }
+                table#new_type td {
+                    border: none;
+                    padding-top: 0px !important;
+                }
+                table#new_type th {
+
+                }
+            </style>
+
+            <br />
+
+            <div class="bibcircbottom">
+            """
+
+        out += """
+            <table style="width:800px"><tr><td style="width:50%%">
+            <table id="table_item_types" class="tablesorter"
+                   border="0" cellpadding="0" cellspacing="1">
+               <thead>
+                    <tr>
+                       <th>%s</th>
+                       <th></th>
+                    </tr>
+               </thead>
+              <tbody>
+              """ % (_("Name"))
+
+        for (id, name) in result:
+
+            out += """
+                    <tr>
+                        <td>%s</td>
+                        <td><input type="button" value="%s" class="bibcircbutton" onClick="window.location='item_types?delete=%s'"></td>
+                    </tr>
+
+                    """ % (name, _("Delete"), id)
+
+        out += """
+                    </tbody>
+                    </table>
+                    </td><td style="padding-left:50px;>
+                    """
+
+        out += """
+                    <h3 style="margin-bottom: 5px">%s</h3>
+                    <form name="add_rule" action="%s/admin2/bibcirculation/item_types" method="get">
+                    <table id="new_type" class="tablesorter">
+                       <thead>
+                            <tr>
+                               <th>%s</th>
+                               <th></th>
+                            </tr>
+                       </thead>
+                       <tbody>
+                            <tr>
+                                <td><input type="text" name="name"></td>
+                                <td><input type="submit" value="%s" class="bibcircbutton"></td>
+                             </tr>
+                         </tbody>
+                     </table>
+                     </form>
+                     </td></tr></table>
+                   """ % (_("Add new item type"),
+                          CFG_SITE_URL,
+                          _("Name"),
+                          _("Add rule"))
+
+        return out

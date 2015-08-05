@@ -103,7 +103,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
                 'get_vendor_notes', 'search_vendor_step1', 'search_vendor_step2',
 
                 # Loan rules related pages
-                'loan_rules', 'patron_types'
+                'loan_rules', 'patron_types', 'item_types'
                 ]
 
 
@@ -2027,6 +2027,16 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         delete = argd['delete']
 
         return bal.patron_types(req, name=name, delete=delete, ln=ln)
+
+    def item_types(self, req, form):
+        """http://cds.cern.ch/admin2/bibcirculation/item_types"""
+        argd = wash_urlargd(form, {'name': (str, None), 'delete': (str, None), 'ln': (str, "en")})
+
+        ln = argd['ln']
+        name = argd['name']
+        delete = argd['delete']
+
+        return bal.item_types(req, name=name, delete=delete, ln=ln)
 
 
     def __call__(self, req, form):

@@ -40,7 +40,7 @@ import datetime, time, types
 from urlparse import parse_qs
 import simplejson
 
-from MySQLdb import IntegrityError
+from MySQLdb import IntegrityError, DatabaseError
 
 # Other Invenio imports
 from invenio.config import \

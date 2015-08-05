@@ -16046,19 +16046,6 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
         out += load_menu(ln)
 
         out += """
-            <style type="text/css"> @import url("/js/tablesorter/themes/blue/style.css"); </style>
-            <style type="text/css"> @import url("/js/tablesorter/addons/pager/jquery.tablesorter.pager.css"); </style>
-            <script src="/js/tablesorter/jquery.tablesorter.js" type="text/javascript"></script>
-            <script src="/js/tablesorter/addons/pager/jquery.tablesorter.pager.js" type="text/javascript"></script>
-            <script type="text/javascript">
-            $(document).ready(function(){
-                $("#table_patron_types")
-                    .tablesorter({sortList: [[3,1], [0,0]],widthFixed: true, widgets: ['zebra']})
-                    .bind("sortStart",function(){$("#overlay").show();})
-                    .bind("sortEnd",function(){$("#overlay").hide()})
-                    .tablesorterPager({container: $("#pager"), positionFixed: false});
-            });
-            </script>
             <style>
                 table#new_type input[type="text"] {
                     padding: 2px;
@@ -16078,7 +16065,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
             """
 
         out += """
-            <table><tr><td>
+            <table style="width:800px"><tr><td style="width:50%">
             <table id="table_patron_types" class="tablesorter"
                    border="0" cellpadding="0" cellspacing="1">
                <thead>
@@ -16103,31 +16090,13 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
         out += """
                     </tbody>
                     </table>
-
-
-                    <div id="pager" class="pager">
-                        <form>
-                            <br />
-                            <img src="/img/sb.gif" class="first" />
-                            <img src="/img/sp.gif" class="prev" />
-                            <input type="text" class="pagedisplay" />
-                            <img src="/img/sn.gif" class="next" />
-                            <img src="/img/se.gif" class="last" />
-                            <select class="pagesize">
-                                <option value="10" selected="selected">10</option>
-                                <option value="20">20</option>
-                                <option value="30">30</option>
-                                <option value="40">40</option>
-                            </select>
-                        </form>
-                    </div>
-                    </td><td>
+                    </td><td style="padding-left:50px;>
                     """
 
         out += """
                     <h3 style="margin-bottom: 5px">%s</h3>
                     <form name="add_rule" action="%s/admin2/bibcirculation/patron_types" method="get">
-                    <table id="new_rule" class="tablesorter">
+                    <table id="new_type" class="tablesorter">
                        <thead>
                             <tr>
                                <th>%s</th>

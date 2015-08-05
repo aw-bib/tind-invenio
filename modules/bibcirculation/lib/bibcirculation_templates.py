@@ -15931,7 +15931,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                         <td>%s</td>
                         <td>%s</td>
                         <td>%s</td>
-                        <td><input type="button" value="%s" class="bibcircbutton" onClick="location=loan_rules?delete=%s"></td>
+                        <td><input type="button" value="%s" class="bibcircbutton" onClick="window.location='loan_rules?delete=%s'"></td>
                     </tr>
 
                     """ % (name, code, loan_period, holdable,

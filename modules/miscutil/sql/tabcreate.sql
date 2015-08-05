@@ -5182,7 +5182,8 @@ CREATE TABLE IF NOT EXISTS  `crcITEMTYPE_ITEM` (
 CREATE TABLE IF NOT EXISTS  `crcPATRONTYPES` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(32) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS  `crcPATRONTYPE_BORROWER` (
@@ -5200,11 +5201,11 @@ CREATE TABLE IF NOT EXISTS  `crcLOANRULES` (
   `code` varchar(1) DEFAULT NULL,
   `loan_period` smallint(6) DEFAULT NULL,
   `holdable` varchar(1) DEFAULT NULL,
-  `bookable` varchar(1) DEFAULT NULL,
   `homepickup` varchar(1) DEFAULT NULL,
   `shippable` varchar(1) DEFAULT NULL,
   `ship_time` smallint(6) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS  `crcRULES_SELECTION` (
@@ -5219,7 +5220,7 @@ CREATE TABLE IF NOT EXISTS  `crcRULES_SELECTION` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE VIEW IF NOT EXISTS crcLOANRULES_MATCH_VIEW AS
-SELECT b.id AS user_id, it_i.barcode, lr.name, lr.code, lr.loan_period, lr.holdable, lr.bookable, lr.homepickup, lr.shippable, lr.ship_time FROM crcBORROWER AS b
+SELECT b.id AS user_id, it_i.barcode, pt.id AS patrontype_id, lr.name, lr.code, lr.loan_period, lr.holdable, lr.bookable, lr.homepickup, lr.shippable, lr.ship_time FROM crcBORROWER AS b
 JOIN crcPATRONTYPE_BORROWER AS p_b ON b.id = p_b.borrower_id
 JOIN crcPATRONTYPES AS pt ON p_b.patrontype_id = pt.id
 JOIN crcRULES_SELECTION AS r_s ON pt.id = r_s.patrontype_id

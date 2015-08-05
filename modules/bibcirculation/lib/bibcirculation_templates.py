@@ -15882,8 +15882,15 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
             });
             </script>
             <style>
-                table#new_rule input {
+                table#new_rule input[type="text"] {
                     padding: 2px;
+                }
+                table#new_rule td {
+                    border: none;
+                    padding-top: 0px !important;
+                }
+                table#new_rule th {
+
                 }
             </style>
 
@@ -15962,9 +15969,9 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                     """
 
         out += """
-                    <h5>%s</h5>
+                    <h3 style="margin-bottom: 5px">%s</h3>
                     <form name="add_rule" action="%s/admin2/bibcirculation/loan_rules" method="get">
-                    <table id="new_rule">
+                    <table id="new_rule" class="tablesorter">
                        <thead>
                             <tr>
                                <th>%s</th>
@@ -15978,7 +15985,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                             </tr>
                        </thead>
                        <tbody>
-                            <tr role="row">
+                            <tr>
                                 <td><input type="text" name="name"></td>
                                 <td><select name="code">
               """ % (_("Add new rule"),
@@ -15998,11 +16005,11 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
         out += """
                                  </select></td>
-                                 <td><input type="text" name="loan_period"></td>
+                                 <td><input type="text" name="loan_period" style="width:100px"></td>
                                  <td><select name="holdable"><option>Y</option><option>N</option></select></td>
                                  <td><select name="homepickup"><option>Y</option><option>N</option></select></td>
                                  <td><select name="shippable"><option>Y</option><option>N</option></select></td>
-                                 <td><input type="text"name="ship_time"></td>
+                                 <td><input type="text"name="ship_time" style="width:133px"></td>
                                  <td><input type="submit" value="%s"></td>
                              </tr>
                          </tbody>

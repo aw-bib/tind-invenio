@@ -6643,3 +6643,65 @@ def item_types(req, name, delete, ln=CFG_SITE_LANG):
                 body=body, language=ln,
                 navtrail=navtrail_previous_links,
                 lastupdated=__lastupdated__)
+
+def rules_selection(req, r_id, i_id, p_id, loc, active, toggle, delete, ln=CFG_SITE_LANG):
+    """
+    Lists all existing loan rules, and displays form for adding new rule
+    """
+    id_user = getUid(req)
+    (auth_code, auth_message) = is_adminuser(req)
+    if auth_code != 0:
+        return mustloginpage(req, auth_message)
+
+    _ = gettext_set_language(ln)
+    infos = []
+
+    if delete:
+        try:
+            db.delete_rules_selection(delete)
+            infos.append(_("Rule selection deleted."))
+        except DatabaseError:
+            infos.append(_("%(x_strong_tag_open)sError:%(x_strong_tag_close)s The rule selection ID you are trying to delete does not exist."
+                           % {'x_strong_tag_open': '<strong>',
+                              'x_strong_tag_close': '</strong>'
+                              }))
+
+    elif toggle:
+        res = db.toggle_rules_selection(toggle)
+        if res == "Y":
+            status = _("activated")
+        else:
+            status = _("deactivated")
+        infos.append(_("Rule selection %(status_msg)." % status))
+
+
+    elif r_id and i_id and p_id and loc and active:
+        try:
+            db.add_rules_selection(r_id, i_id, p_id, loc, active)
+            infos.append(_("Rule selection added successfully."))
+
+        except IntegrityError:
+            infos.append(_("%(x_strong_tag_open)sError:%(x_strong_tag_close)s A rule selection with this combination of item type, patron type and location name already exists."
+                           % {'x_strong_tag_open': '<strong>',
+                              'x_strong_tag_close': '</strong>'
+                              }))
+
+
+
+    rules_selections = db.get_rules_selection()
+    rules = db.get_item_rules()
+    itemtypes = db.get_item_types()
+    patrontypes = db.get_patron_types()
+    body = bc_templates.tmpl_rules_selection(rules_selections=rules_selections, rules=rules, itemtypes=itemtypes,
+                                             patrontypes=patrontypes, infos=infos, ln=ln)
+
+    navtrail_previous_links = '<a class="navtrail" ' \
+                              'href="%s/help/admin">Admin Area' \
+                              '</a>' % (CFG_SITE_SECURE_URL,)
+
+    return page(title=_("Rules selection"),
+                uid=id_user,
+                req=req,
+                body=body, language=ln,
+                navtrail=navtrail_previous_links,
+                lastupdated=__lastupdated__)

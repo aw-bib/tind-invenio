@@ -16215,3 +16215,180 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                           _("Add rule"))
 
         return out
+
+    def tmpl_rules_selection(self, rules_selections, rules, itemtypes, patrontypes, infos, ln=CFG_SITE_LANG):
+        """
+        @param results: all current loan rules
+        @type results: tuple
+
+        @param ln: language of the page
+
+        """
+
+
+        _ = gettext_set_language(ln)
+
+        out = self.tmpl_infobox(infos, ln)
+
+        out += load_menu(ln)
+
+        out += """
+            <style type="text/css"> @import url("/js/tablesorter/themes/blue/style.css"); </style>
+            <style type="text/css"> @import url("/js/tablesorter/addons/pager/jquery.tablesorter.pager.css"); </style>
+            <script src="/js/tablesorter/jquery.tablesorter.js" type="text/javascript"></script>
+            <script src="/js/tablesorter/addons/pager/jquery.tablesorter.pager.js" type="text/javascript"></script>
+            <script type="text/javascript">
+            $(document).ready(function(){
+                $("#table_rules_selection")
+                    .tablesorter({sortList: [[3,1], [0,0]],widthFixed: true, widgets: ['zebra']})
+                    .bind("sortStart",function(){$("#overlay").show();})
+                    .bind("sortEnd",function(){$("#overlay").hide()})
+                    .tablesorterPager({container: $("#pager"), positionFixed: false});
+            });
+            </script>
+            <style>
+                table#new_rule input[type="text"] {
+                    padding: 2px;
+                }
+                table#new_rule td {
+                    border: none;
+                    padding-top: 0px !important;
+                }
+                table#new_rule th {
+
+                }
+            </style>
+
+            <br />
+
+            <div class="bibcircbottom">
+            """
+
+        out += """
+            <br />
+            <table id="table_rules_selection" class="tablesorter"
+                   border="0" cellpadding="0" cellspacing="1">
+               <thead>
+                    <tr>
+                       <th>%s</th>
+                       <th>%s</th>
+                       <th>%s</th>
+                       <th>%s</th>
+                       <th>%s</th>
+                       <th></th>
+                       <th></th>
+                    </tr>
+               </thead>
+              <tbody>
+                       """% (CFG_SITE_URL,
+                          _("Rule"),
+                          _("Item type"),
+                          _("Patron type"),
+                          _("Location"),
+                          _("Active"))
+
+        for (id, rule, itemtype, patrontype, location, active) in rules_selections:
+            if active == "Y":
+                toggletext = _("Deactivate")
+            else:
+                toggletext = _("Activate")
+
+            out += """
+                    <tr>
+                        <td>%s</td>
+                        <td>%s</td>
+                        <td>%s</td>
+                        <td>%s</td>
+                        <td>%s</td>
+                        <td><input type="button" value="%s" class="bibcircbutton" onClick="window.location='rules_selection?toggle=%s'"></td>
+                        <td><input type="button" value="%s" class="bibcircbutton" onClick="window.location='rules_selection?delete=%s'"></td>
+                    </tr>
+
+                    """ % (rule, itemtype, patrontype, location, active,
+                          toggletext, _("Delete"), id, id)
+
+        out += """
+                    </tbody>
+                    </table>
+
+                    <div id="pager" class="pager">
+                        <form>
+                            <br />
+                            <img src="/img/sb.gif" class="first" />
+                            <img src="/img/sp.gif" class="prev" />
+                            <input type="text" class="pagedisplay" />
+                            <img src="/img/sn.gif" class="next" />
+                            <img src="/img/se.gif" class="last" />
+                            <select class="pagesize">
+                                <option value="10" selected="selected">10</option>
+                                <option value="20">20</option>
+                                <option value="30">30</option>
+                                <option value="40">40</option>
+                            </select>
+                        </form>
+                    </div>
+                    """
+
+        out += """
+                    <h3 style="margin-bottom: 5px">%s</h3>
+                    <form name="add_rule" action="%s/admin2/bibcirculation/rules_selection" method="get">
+                    <table id="new_rule" class="tablesorter">
+                       <thead>
+                            <tr>
+                               <th>%s</th>
+                               <th>%s</th>
+                               <th>%s</th>
+                               <th>%s</th>
+                               <th></th>
+                            </tr>
+                       </thead>
+                       <tbody>
+                            <tr>
+                                <td><select name="r_id">
+              """ % (_("Add new rule selection"),
+                      CFG_SITE_URL,
+                     _("Rule"),
+                     _("Item type"),
+                     _("Patron type"),
+                     _("Location"),
+                     _("Active"))
+
+        for id, rule in rules:
+            out += """
+                                    <option value="%s">%s</option>
+                   """ % (id, rule)
+
+        out += """
+                                 </select></td>
+                                 <td><select name="i_id">
+               """
+
+
+        for id, itemtype in itemtypes:
+            out += """
+                                    <option value="%s">%s</option>
+                   """ % (id, itemtype)
+
+        out += """
+                                 </select></td>
+                                 <td><select name="p_id">
+               """
+
+
+        for id, patrontype in patrontypes:
+            out += """
+                                    <option value="%s">%s</option>
+                   """ % (id, patrontype)
+
+        out += """
+                                 </select></td>
+                                 <td><input type="text" name="loc"/></td>
+                                 <td><select name="active"><option>Y</option><option>N</option></select></td>
+                                 <td><input type="submit" value="%s" class="bibcircbutton"></td>
+                             </tr>
+                         </tbody>
+                     </table>
+                     </form>
+                   """ % _("Submit")
+
+        return out

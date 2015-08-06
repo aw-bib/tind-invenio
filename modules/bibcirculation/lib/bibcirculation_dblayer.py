@@ -3222,7 +3222,6 @@ def delete_loan_rule(id):
         raise IntegrityError("Loan rule in use")
 
 def get_item_types():
-
     return run_sql("SELECT id, name FROM crcITEMTYPES")
 
 def add_item_type(name):
@@ -3238,3 +3237,31 @@ def delete_item_type(id):
             raise DatabaseError("No such id")
     else:
         raise IntegrityError("Item type in use")
+
+def get_rules_selections():
+    return run_sql("""
+                    SELECT r.name as rule, i.name as itemtype, p.name as patrontype, location, active FROM crcRULES_SELECTION rs
+                    JOIN crcLOANRULES r on rs.rule_id = r.id
+                    JOIN crcITEMTYPES i on rs.itemtype_id = i.id
+                    JOIN crcPATRONTYPES p on rs.patrontype_id = p.id
+                   """)
+
+def add_rules_selection(r_id, i_id, p_id, loc, active):
+    run_sql("""
+            INSERT INTO crcRULES_SELECTION(rule_id, itemtype_id, patrontype_id, location, active)
+            VALUES ('%s', '%s', '%s', '%s', '%s')
+    """ % (r_id, i_id, p_id, loc, active))
+
+def toggle_rules_selection(id):
+    status = run_sql("SELECT active FROM crcRULES_SELECTION WHERE id = %s" % id)[0][0]
+    if status == 'Y':
+        run_sql("UPDATE crcRULES_SELECTION SET active = 'N' WHERE id = %s" % id)
+        return 'N'
+    else:
+        run_sql("UPDATE crcRULES_SELECTION SET active = 'Y' WHERE id = %s" % id)
+        return 'Y'
+
+def delete_rules_selection(id):
+    res = run_sql("DELETE FROM crcRULES_SELECTION WHERE id = %s" % id)
+    if res == 0:
+        raise DatabaseError("No such id")

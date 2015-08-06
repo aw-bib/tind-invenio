@@ -16280,8 +16280,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                     </tr>
                </thead>
               <tbody>
-                       """% (CFG_SITE_URL,
-                          _("Rule"),
+                       """%(_("Rule"),
                           _("Item type"),
                           _("Patron type"),
                           _("Location"),

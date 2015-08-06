@@ -6488,7 +6488,7 @@ def loan_rules(req, name, code, loan_period, holdable, homepickup, shippable, sh
                               'x_strong_tag_close': '</strong>'
                               }))
 
-    elif name and code and loan_period and  holdable and homepickup and shippable and ship_time:
+    elif name and code and loan_period and  holdable and homepickup and shippable:
         try:
             db.add_loan_rule(name, code, loan_period, holdable, homepickup, shippable, ship_time)
             infos.append(_("Loan rule %(x_strong_tag_open)s%(loan_rule_name)s%(x_strong_tag_close)s added successfully."

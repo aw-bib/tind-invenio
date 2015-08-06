@@ -6688,7 +6688,7 @@ def rules_selection(req, r_id, i_id, p_id, loc, active, toggle, delete, ln=CFG_S
 
 
 
-    rules_selections = db.get_rules_selection()
+    rules_selections = db.get_rules_selections()
     rules = db.get_item_rules()
     itemtypes = db.get_item_types()
     patrontypes = db.get_patron_types()

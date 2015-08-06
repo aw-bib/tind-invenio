@@ -2004,7 +2004,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         """http://cds.cern.ch/admin2/bibcirculation/loan_rules"""
         argd = wash_urlargd(form, {'name': (str, None), 'code': (str, None), 'loan_period': (str, None),
                                    'holdable': (str, None), 'homepickup': (str, None), 'shippable': (str, None),
-                                   'ship_time': (str, '0'), 'delete': (str, None), 'ln': (str, "en")})
+                                   'ship_time': (str, '0'), 'delete': (int, None), 'ln': (str, "en")})
         ln = argd['ln']
         name = argd['name']
         code = argd['code']
@@ -2020,7 +2020,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
 
     def patron_types(self, req, form):
         """http://cds.cern.ch/admin2/bibcirculation/patron_types"""
-        argd = wash_urlargd(form, {'name': (str, None), 'delete': (str, None), 'ln': (str, "en")})
+        argd = wash_urlargd(form, {'name': (str, None), 'delete': (int, None), 'ln': (str, "en")})
 
         ln = argd['ln']
         name = argd['name']
@@ -2030,7 +2030,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
 
     def item_types(self, req, form):
         """http://cds.cern.ch/admin2/bibcirculation/item_types"""
-        argd = wash_urlargd(form, {'name': (str, None), 'delete': (str, None), 'ln': (str, "en")})
+        argd = wash_urlargd(form, {'name': (str, None), 'delete': (int, None), 'ln': (str, "en")})
 
         ln = argd['ln']
         name = argd['name']

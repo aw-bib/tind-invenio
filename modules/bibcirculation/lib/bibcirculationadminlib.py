@@ -6472,12 +6472,8 @@ def loan_rules(req, name, code, loan_period, holdable, homepickup, shippable, sh
 
     _ = gettext_set_language(ln)
     infos = []
-    try:
-        delete = int(delete)
-    except (ValueError, TypeError):
-        delete = None
 
-    if delete:
+    if type(delete) == int:
         try:
             db.delete_loan_rule(delete)
             infos.append(_("Loan rule deleted."))
@@ -6534,12 +6530,8 @@ def patron_types(req, name, delete, ln=CFG_SITE_LANG):
 
     _ = gettext_set_language(ln)
     infos = []
-    try:
-        delete = int(delete)
-    except (ValueError, TypeError):
-        delete = None
 
-    if delete:
+    if type(delete) == int:
         try:
             db.delete_patron_type(delete)
             infos.append(_("Patron type deleted."))
@@ -6595,12 +6587,8 @@ def item_types(req, name, delete, ln=CFG_SITE_LANG):
 
     _ = gettext_set_language(ln)
     infos = []
-    try:
-        delete = int(delete)
-    except (ValueError, TypeError):
-        delete = None
 
-    if delete:
+    if type(delete) == int:
         try:
             db.delete_item_type(delete)
             infos.append(_("Item type deleted."))
@@ -6656,7 +6644,7 @@ def rules_selection(req, r_id, i_id, p_id, loc, active, toggle, delete, ln=CFG_S
     _ = gettext_set_language(ln)
     infos = []
 
-    if delete:
+    if type(delete) == int:
         try:
             db.delete_rules_selection(delete)
             infos.append(_("Rule selection deleted."))
@@ -6666,7 +6654,7 @@ def rules_selection(req, r_id, i_id, p_id, loc, active, toggle, delete, ln=CFG_S
                               'x_strong_tag_close': '</strong>'
                               }))
 
-    elif toggle:
+    elif type(toggle) == int:
         res = db.toggle_rules_selection(toggle)
         if res == "Y":
             status = _("activated")
@@ -6675,7 +6663,7 @@ def rules_selection(req, r_id, i_id, p_id, loc, active, toggle, delete, ln=CFG_S
         infos.append(_("Rule selection %(status_msg)s." % {'status_msg': status}))
 
 
-    elif r_id and i_id and p_id and active:
+    elif type(r_id) == int and type(i_id) == int and type(p_id) == int and active:
         try:
             db.add_rules_selection(r_id, i_id, p_id, loc, active)
             infos.append(_("Rule selection added successfully."))

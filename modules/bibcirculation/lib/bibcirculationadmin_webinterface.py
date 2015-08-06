@@ -2043,6 +2043,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         argd = wash_urlargd(form, {'i_id': (int, None),'r_id': (int, None),'p_id': (int, None), 'loc': (str, None), 'active': (str, None),
                                    'delete': (int, None), 'toggle': (int, None), 'ln': (str, "en")})
 
+        ln = argd['ln']
         r_id = argd['r_id']
         i_id = argd['i_id']
         p_id = argd['p_id']

@@ -6672,7 +6672,7 @@ def rules_selection(req, r_id, i_id, p_id, loc, active, toggle, delete, ln=CFG_S
             status = _("activated")
         else:
             status = _("deactivated")
-        infos.append(_("Rule selection %(status_msg)." % status))
+        infos.append(_("Rule selection %(status_msg)s." % status))
 
 
     elif r_id and i_id and p_id and active:

@@ -3206,6 +3206,14 @@ def get_loan_rules():
             """)
     return res
 
+def get_loan_rule_names():
+
+    res = run_sql("""
+            SELECT id, name
+            FROM crcLOANRULES
+            """)
+    return res
+
 def add_loan_rule(name, code, loan_period, holdable, homepickup, shippable, ship_time):
     run_sql("""
             INSERT INTO crcLOANRULES(name, code, loan_period, holdable, homepickup, shippable, ship_time)

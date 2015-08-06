@@ -6689,7 +6689,7 @@ def rules_selection(req, r_id, i_id, p_id, loc, active, toggle, delete, ln=CFG_S
 
 
     rules_selections = db.get_rules_selections()
-    rules = db.get_item_rules()
+    rules = db.get_loan_rule_names()
     itemtypes = db.get_item_types()
     patrontypes = db.get_patron_types()
     body = bc_templates.tmpl_rules_selection(rules_selections=rules_selections, rules=rules, itemtypes=itemtypes,

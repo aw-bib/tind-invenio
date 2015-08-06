@@ -6675,7 +6675,7 @@ def rules_selection(req, r_id, i_id, p_id, loc, active, toggle, delete, ln=CFG_S
         infos.append(_("Rule selection %(status_msg)." % status))
 
 
-    elif r_id and i_id and p_id and loc and active:
+    elif r_id and i_id and p_id and active:
         try:
             db.add_rules_selection(r_id, i_id, p_id, loc, active)
             infos.append(_("Rule selection added successfully."))

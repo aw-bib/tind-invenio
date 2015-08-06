@@ -16304,7 +16304,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                     </tr>
 
                     """ % (rule, itemtype, patrontype, location, active,
-                          toggletext, _("Delete"), id, id)
+                          toggletext, id, _("Delete"), id)
 
         out += """
                     </tbody>

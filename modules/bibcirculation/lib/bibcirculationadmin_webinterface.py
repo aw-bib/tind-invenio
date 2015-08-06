@@ -2040,7 +2040,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
 
     def rules_selection(self, req, form):
         """http://cds.cern.ch/admin2/bibcirculation/rules_selection"""
-        argd = wash_urlargd(form, {'i_id': (int, None),'r_id': (int, None),'p_id': (int, None), 'loc': (str, None), 'active': (str, None),
+        argd = wash_urlargd(form, {'i_id': (int, None),'r_id': (int, None),'p_id': (int, None), 'loc': (str, ''), 'active': (str, None),
                                    'delete': (int, None), 'toggle': (int, None), 'ln': (str, "en")})
 
         ln = argd['ln']

@@ -2047,7 +2047,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         i_id = argd['i_id']
         p_id = argd['p_id']
         loc = argd['loc']
-        active = ardgd['active']
+        active = argd['active']
         toggle = argd['toggle']
         delete = argd['delete']
 

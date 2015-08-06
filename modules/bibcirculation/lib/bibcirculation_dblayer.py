@@ -3248,7 +3248,7 @@ def delete_item_type(id):
 
 def get_rules_selections():
     return run_sql("""
-                    SELECT r.name as rule, i.name as itemtype, p.name as patrontype, location, active FROM crcRULES_SELECTION rs
+                    SELECT rs.id, r.name as rule, i.name as itemtype, p.name as patrontype, location, active FROM crcRULES_SELECTION rs
                     JOIN crcLOANRULES r on rs.rule_id = r.id
                     JOIN crcITEMTYPES i on rs.itemtype_id = i.id
                     JOIN crcPATRONTYPES p on rs.patrontype_id = p.id

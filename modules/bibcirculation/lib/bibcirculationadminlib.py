@@ -2820,9 +2820,10 @@ def add_new_copy_step4(req, barcode, library, location, collection, description,
 
     else:
         library_name = db.get_library_name(library)
+        item_type_name = db.get_item_type_name(item_type)
         tup_infos = (barcode, library, library_name, location, collection,
                      description, item_type, status, expected_arrival_date,
-                     recid)
+                     recid, item_type_name)
         title = _("Add new copy") + " - IV"
         body  = bc_templates.tmpl_add_new_copy_step4(tup_infos=tup_infos, ln=ln)
 

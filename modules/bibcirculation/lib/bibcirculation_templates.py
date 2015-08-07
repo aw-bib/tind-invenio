@@ -6599,7 +6599,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                     tup_infos[2], cgi.escape(tup_infos[4], True),
                     cgi.escape(tup_infos[5], True),
                     cgi.escape(tup_infos[6], True),
-                    cgi.escape(tup_infos[7], True),
+                    tup_infos[7],
                     cgi.escape(tup_infos[8], True),
                     cgi.escape(tup_infos[9], True), tup_infos[10])
 

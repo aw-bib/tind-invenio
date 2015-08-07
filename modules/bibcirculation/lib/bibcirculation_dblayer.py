@@ -1190,7 +1190,11 @@ def update_item_info(barcode, library_id, collection, location, description,
                    WHERE  barcode=%s""",
                 (barcode, library_id, collection, location, description,
                  status, expected_arrival_date, barcode)))
-    run_sql("UPDATE crcITEMTYPE_ITEM set itemtype_id=%s WHERE barcode='%s'" % (item_type, barcode))
+    run_sql("""INSERT INTO crcITEMTYPE_ITEM(barcode, itemtype_id)
+                    VALUES (%s, %s)
+                    ON DUPLICATE KEY
+                    UPDATE itemtype_id=%s""",
+            (barcode, item_type, item_type))
 
 def update_barcode(old_barcode, barcode):
 

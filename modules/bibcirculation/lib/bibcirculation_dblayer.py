@@ -1166,7 +1166,7 @@ def get_loan_period(barcode):
         return None
 
 def update_item_info(barcode, library_id, collection, location, description,
-                 loan_period, status, expected_arrival_date):
+                 item_type, status, expected_arrival_date):
     """
     Update item's information.
 
@@ -1183,13 +1183,13 @@ def update_item_info(barcode, library_id, collection, location, description,
                           collection=%s,
                           location=%s,
                           description=%s,
-                          loan_period=%s,
                           status=%s,
                           expected_arrival_date=%s,
                           modification_date=NOW()
                    WHERE  barcode=%s""",
                 (barcode, library_id, collection, location, description,
-                 loan_period, status, expected_arrival_date, barcode)))
+                 status, expected_arrival_date, barcode)))
+    run_sql("UPDATE crcITEMTYPE_ITEM set itemtype_id=%s WHERE barcode='%s'" % (item_type, barcode))
 
 def update_barcode(old_barcode, barcode):
 
@@ -1209,6 +1209,11 @@ def update_barcode(old_barcode, barcode):
                 """, (barcode, old_barcode))
 
     run_sql("""UPDATE crcILLREQUEST
+                  SET barcode=%s
+                WHERE barcode=%s
+                """, (barcode, old_barcode))
+
+    run_sql("""UPDATE crcITEMTYPE_ITEM
                   SET barcode=%s
                 WHERE barcode=%s
                 """, (barcode, old_barcode))
@@ -3247,6 +3252,9 @@ def delete_loan_rule(id):
 
 def get_item_types():
     return run_sql("SELECT id, name FROM crcITEMTYPES")
+
+def get_item_type_name(id):
+    return run_sql("SELECT name FROM crcITEMTYPES WHERE id = %s" % id)[0][0]
 
 def add_item_type(name):
     run_sql("""

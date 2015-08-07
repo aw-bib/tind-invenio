@@ -3068,6 +3068,7 @@ def update_item_info_step4(req, barcode, ln=CFG_SITE_LANG):
     result = db.get_item_info(barcode)
     libraries = db.get_internal_libraries()
     libraries += db.get_hidden_libraries()
+    item_types = db.get_item_types()
 
     navtrail_previous_links = '<a class="navtrail" ' \
                               'href="%s/help/admin">Admin Area' \
@@ -3083,6 +3084,7 @@ def update_item_info_step4(req, barcode, ln=CFG_SITE_LANG):
     body = bc_templates.tmpl_update_item_info_step4(recid=recid,
                                                     result=result,
                                                     libraries=libraries,
+                                                    item_types=item_types,
                                                     ln=ln)
 
     return page(title=_("Update item information"),
@@ -3094,7 +3096,7 @@ def update_item_info_step4(req, barcode, ln=CFG_SITE_LANG):
                 lastupdated=__lastupdated__)
 
 def update_item_info_step5(req, barcode, old_barcode, library, location,
-                           collection, description, loan_period, status,
+                           collection, description, item_type, status,
                            expected_arrival_date, recid, ln=CFG_SITE_LANG):
 
     """
@@ -3108,9 +3110,10 @@ def update_item_info_step5(req, barcode, old_barcode, library, location,
     _ = gettext_set_language(ln)
 
     library_name = db.get_library_name(library)
+    item_type_name = db.get_item_type_name(item_type)
     tup_infos = (barcode, old_barcode, library, library_name, location,
-                 collection, description, loan_period, status,
-                 expected_arrival_date, recid)
+                 collection, description, item_type, status,
+                 expected_arrival_date, recid, item_type_name)
 
     navtrail_previous_links = '<a class="navtrail"' \
                               ' href="%s/help/admin">Admin Area' \
@@ -3140,7 +3143,7 @@ def update_item_info_step6(req, tup_infos, ln=CFG_SITE_LANG):
 
     # tuple containing information for the update process.
     (barcode, old_barcode, library_id, location, collection,
-     description, loan_period, status, expected_arrival_date, recid) = tup_infos
+     description, item_type, status, expected_arrival_date, recid) = tup_infos
 
     is_on_loan = db.is_on_loan(old_barcode)
     #is_requested = db.is_requested(old_barcode)
@@ -3157,7 +3160,7 @@ def update_item_info_step6(req, tup_infos, ln=CFG_SITE_LANG):
 
     # update item information.
     db.update_item_info(old_barcode, library_id, collection, location, description.strip(),
-                        loan_period, status, expected_arrival_date)
+                        item_type, status, expected_arrival_date)
     update_requests_statuses(old_barcode)
     navtrail_previous_links = '<a class="navtrail"' \
                               'href="%s/help/admin">Admin Area' \

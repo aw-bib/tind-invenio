@@ -6216,14 +6216,14 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                                 _("Status"),
                                 _("Library"),
                                 _("Location"),
-                                _("Loan period"),
+                                _("Item type"),
                                 _("No of loans"),
                                 _("Collection"),
                                 _("Description"))
 
 
         for (barcode, loan_period, lib_name, libid, location, nb_requests,
-             status, collection, description) in result:
+             status, collection, description, code, item_type) in result:
 
             library_link = create_html_link(CFG_SITE_URL +
                                 '/admin2/bibcirculation/get_library_details',
@@ -6246,7 +6246,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                      </td>
                      <td class="bibcirccontent" width="350"></td>
                  </tr>
-                 """ % (barcode, status, library_link, location, loan_period,
+                 """ % (barcode, status, library_link, location, item_type,
                         nb_requests, collection, description, CFG_SITE_URL, ln,
                         barcode, _("Update"))
 
@@ -6268,7 +6268,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
         return out
 
-    def tmpl_update_item_info_step4(self, recid, result, libraries,
+    def tmpl_update_item_info_step4(self, recid, result, libraries, item_types,
                                     ln=CFG_SITE_LANG):
         """
         @param recid: identify the record. Primary key of bibrec
@@ -6435,18 +6435,18 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                 <tr>
                     <th width="100">%s</th>
                     <td>
-                      <select name="loan_period"  style='border: 1px solid #cfcfcf'>
-                """ % (_("Loan period"))
+                      <select name="item_type"  style='border: 1px solid #cfcfcf'>
+                """ % (_("Item type"))
 
-        for loan_period in CFG_BIBCIRCULATION_ITEM_LOAN_PERIOD:
-            if loan_period == result[6]:
+        for id, item_type in item_types:
+            if item_type == result[6]:
                 out += """
                           <option value="%s" selected="selected">%s</option>
-                       """ % (loan_period, loan_period)
+                       """ % (id, item_type)
             else:
                 out += """
                           <option value="%s">%s</option>
-                       """ % (loan_period, loan_period)
+                       """ % (id, item_type)
 
         out += """
                       </select>
@@ -6590,7 +6590,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                     _("Location"), cgi.escape(tup_infos[4], True),
                     _("Collection"), cgi.escape(tup_infos[5], True),
                     _("Description"), cgi.escape(tup_infos[6], True),
-                    _("Loan period"), cgi.escape(tup_infos[7], True),
+                    _("Item type"), cgi.escape(tup_infos[11], True),
                     _("Status"), cgi.escape(tup_infos[8], True),
                     _("Expected arrival date"), cgi.escape(tup_infos[9], True),
                     _("Back"), _("Confirm"),

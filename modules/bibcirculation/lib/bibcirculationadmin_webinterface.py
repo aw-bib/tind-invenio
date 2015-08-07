@@ -723,7 +723,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         """http://cds.cern.ch/admin2/bibcirculation/update_item_info_step5"""
         argd = wash_urlargd(form, {'barcode': (str, ''), 'old_barcode': (str, ''),
             'library_id': (int, 0), 'location': (str, 'Unknown'), 'collection': (str, 'Unknown'),
-            'description': (str, '-'), 'loan_period': (str, '4 weeks'),
+            'description': (str, '-'), 'item_type': (int, None),
             'status': (str, CFG_BIBCIRCULATION_ITEM_STATUS_ON_SHELF), 'expected_arrival_date': (str, ''),
             'recid': (int, 0), 'ln': (str, "en")})
 
@@ -733,7 +733,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         location = argd['location']
         collection = argd['collection']
         description = argd['description']
-        loan_period = argd['loan_period']
+        item_type = argd['item_type']
         status = argd['status']
         expected_arrival_date = argd['expected_arrival_date']
         recid = argd['recid']
@@ -744,19 +744,18 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         location = location.strip()
         collection = collection.strip()
         description = description.strip()
-        loan_period = loan_period.strip()
         status = status.strip()
         expected_arrival_date = expected_arrival_date.strip()
 
         return bal.update_item_info_step5(req, barcode, old_barcode, library, location,
-                                          collection, description, loan_period,
+                                          collection, description, item_type,
                                           status, expected_arrival_date, recid, ln)
 
     def update_item_info_step6(self, req, form):
         """http://cds.cern.ch/admin2/bibcirculation/update_item_info_step6"""
         argd = wash_urlargd(form, {'barcode': (str, '-'), 'old_barcode': (str, '-'),
             'library_id': (int, 0), 'location': (str, 'Unknown'), 'collection': (str, 'Unknown'),
-            'description': (str, '-'), 'loan_period': (str, '4 weeks'),
+            'description': (str, '-'), 'item_type': (int, None),
             'status': (str, CFG_BIBCIRCULATION_ITEM_STATUS_ON_SHELF), 'expected_arrival_date': (str, ''),
             'recid': (int, 0), 'ln': (str, "en")})
 
@@ -766,7 +765,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         location = argd['location']
         collection = argd['collection']
         description = argd['description']
-        loan_period = argd['loan_period']
+        item_type = argd['item_type']
         status = argd['status']
         expected_arrival_date = argd['expected_arrival_date']
         recid = argd['recid']
@@ -774,7 +773,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         ln = argd['ln']
 
         tup_infos = (barcode, old_barcode, library_id, location, collection,
-                    description, loan_period, status, expected_arrival_date, recid)
+                    description, item_type, status, expected_arrival_date, recid)
 
         return bal.update_item_info_step6(req, tup_infos, ln)
 

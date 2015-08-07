@@ -6223,7 +6223,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
 
         for (barcode, loan_period, lib_name, libid, location, nb_requests,
-             status, collection, description, code, item_type) in result:
+             status, collection, description, due_date, code, item_type) in result:
 
             library_link = create_html_link(CFG_SITE_URL +
                                 '/admin2/bibcirculation/get_library_details',

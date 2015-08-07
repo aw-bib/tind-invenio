@@ -7149,7 +7149,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
         _ = gettext_set_language(ln)
 
         (barcode, library, _library_name, location, collection, description,
-         loan_period, status, expected_arrival_date, recid) = tup_infos
+         item_type, status, expected_arrival_date, recid) = tup_infos
 
         out = """ """
 

@@ -5204,11 +5204,11 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                       <th>%s</th>
                    """ % (_("Location"))
 
-        out += """
+        out += """    <th>%s</th>
                       <th>%s
                             <select onchange="location = this.options[this.selectedIndex].value;">
                                 <option value="item_search_result?f=recid&p=%s">Select patron type</option>
-           """ % (_("Loan period"), recid)
+           """ % (_("Item type"), _("Loan period"), recid)
         for id, name in db.get_patron_types():
             out += """
                                 <option """
@@ -5239,7 +5239,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
 
         for (barcode, loan_period, library_name, library_id,
              location, nb_requests, status, collection,
-             description, due_date, code) in copies:
+             description, due_date, code, item_type) in copies:
 
             number_of_requests = db.get_number_requests_per_copy(barcode)
             if number_of_requests > 0:
@@ -5289,7 +5289,8 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
             out += """
                      <td>%s</td>
                      <td>%s</td>
-                     """ % (loan_period_text, nb_requests)
+                     <td>%s</td>
+                     """ % (item_type, loan_period_text, nb_requests)
 
             if not record_is_periodical:
                 out += """

@@ -1383,7 +1383,8 @@ def get_item_copies_details(recid, patrontype=None):
         qry = """SELECT DISTINCT it.barcode, GROUP_CONCAT(lrv.loan_period), lib.name,
                                     lib.id, it.location, it.number_of_requests,
                                     it.status, it.collection, it.description,
-                                    DATE_FORMAT(ln.due_date,'%%d-%%m-%%Y'), GROUP_CONCAT(lrv.code)
+                                    DATE_FORMAT(ln.due_date,'%%d-%%m-%%Y'), GROUP_CONCAT(lrv.code),
+                                    itt.name as itemtype
                              FROM crcITEM it
                                     left join crcLOAN ln
                                     on it.barcode = ln.barcode and ln.status != "%(returncode)s"
@@ -1391,6 +1392,10 @@ def get_item_copies_details(recid, patrontype=None):
                                     on lib.id = it.id_crcLIBRARY
                                     left join crcLOANRULES_MATCH_VIEW lrv
                                     on it.barcode = lrv.barcode
+                                    left join crcITEMTYPE_ITEM itt_it
+                                    on it.barcode = itt_it.barcode
+                                    left join crcITEMTYPES itt
+                                    on itt_it.itemtype_id = itt.id
                              WHERE it.id_bibrec=%(recid)s
                              AND lrv.`patrontype_id` = %(patrontype)s
                              GROUP BY it.barcode
@@ -1398,7 +1403,8 @@ def get_item_copies_details(recid, patrontype=None):
                 SELECT DISTINCT it.barcode, NULL, lib.name,
                                     lib.id, it.location, it.number_of_requests,
                                     it.status, it.collection, it.description,
-                                    DATE_FORMAT(ln.due_date,'%%d-%%m-%%Y'), NULL
+                                    DATE_FORMAT(ln.due_date,'%%d-%%m-%%Y'), NULL,
+                                    itt.name as itemtype
                             FROM crcITEM it
                                     LEFT JOIN crcLOAN ln
                                     ON it.barcode = ln.barcode AND ln.status != "%(returncode)s"
@@ -1406,6 +1412,10 @@ def get_item_copies_details(recid, patrontype=None):
                                     ON lib.id = it.id_crcLIBRARY
                                     LEFT JOIN crcLOANRULES_MATCH_VIEW lrv
                                     ON it.barcode = lrv.barcode
+                                    left join crcITEMTYPE_ITEM itt_it
+                                    on it.barcode = itt_it.barcode
+                                    left join crcITEMTYPES itt
+                                    on itt_it.itemtype_id = itt.id
                             WHERE it.id_bibrec=%(recid)s
                             AND (lrv.`patrontype_id` != %(patrontype)s OR lrv.patrontype_id IS NULL)
                             GROUP BY it.barcode
@@ -1421,12 +1431,17 @@ def get_item_copies_details(recid, patrontype=None):
              SELECT it.barcode, NULL, lib.name,
                     lib.id, it.location, it.number_of_requests,
                     it.status, it.collection, it.description,
-                    DATE_FORMAT(ln.due_date,'%%d-%%m-%%Y'), NULL
+                    DATE_FORMAT(ln.due_date,'%%d-%%m-%%Y'), NULL,
+                    itt.name as item_type
              FROM crcITEM it
                     left join crcLOAN ln
                     on it.barcode = ln.barcode and ln.status != "%(returncode)s"
                     left join crcLIBRARY lib
                     on lib.id = it.id_crcLIBRARY
+                    left join crcITEMTYPE_ITEM itt_it
+                    on it.barcode = itt_it.barcode
+                    left join crcITEMTYPES itt
+                    on itt_it.itemtype_id = itt.id
              WHERE it.id_bibrec=%(recid)s
              ORDER BY barcode
              """ % {

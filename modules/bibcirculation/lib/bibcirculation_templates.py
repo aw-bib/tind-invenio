@@ -5290,7 +5290,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                      <td>%s</td>
                      <td>%s</td>
                      <td>%s</td>
-                     """ % (item_type, loan_period_text, nb_requests)
+                     """ % (item_type or '-', loan_period_text, nb_requests)
 
             if not record_is_periodical:
                 out += """

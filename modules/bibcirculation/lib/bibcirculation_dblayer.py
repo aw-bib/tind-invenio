@@ -1629,7 +1629,7 @@ def add_new_copy(barcode, recid, library_id, collection, location, description,
                                 collection, location, description,
                                 status, expected_arrival_date, creation_date,
                                 modification_date)
-                values (%s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())""",
+                values (%s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())""",
             (barcode, recid, library_id, collection, location, description or '-',
              status, expected_arrival_date))
     run_sql("INSERT INTO crcITEMTYPE_ITEM(barcode, itemtype_id) VALUES(%s, %s)" % (barcode, item_type))

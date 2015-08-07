@@ -1135,11 +1135,12 @@ def get_item_info(barcode):
                             it.collection,
                             it.location,
                             it.description,
-                            it.loan_period,
+                            itt.itemtype_id,
                             it.status
-                       FROM crcITEM it,
-                            crcLIBRARY lib
-                      WHERE it.barcode=%s and it.id_crcLIBRARY = lib.id""",
+                       FROM crcITEM it
+                       JOIN crcLIBRARY lib ON it.id_crcLIBRARY = lib.id
+                  LEFT JOIN crcITEMTYPE_ITEM itt on itt.barcode = it.barcode
+                      WHERE it.barcode=%s""",
                   (barcode, ))
 
     if res:

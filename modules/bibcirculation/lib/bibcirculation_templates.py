@@ -6876,7 +6876,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
         out += """
                       <th>%s</th>
                       <th>%s</th>
-                """ % (_("Loan period"),
+                """ % (_("Item type"),
                        _("No of loans"))
 
         if not record_is_periodical:
@@ -6892,7 +6892,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                     """ % (_("Description"))
 
         for (barcode, loan_period, lib_name, libid, location, nb_requests,
-             status, collection, description, due_date) in result:
+             status, collection, description, due_date, code, item_type) in result:
 
             library_link = create_html_link(CFG_SITE_URL +
                                 '/admin2/bibcirculation/get_library_details',
@@ -6914,7 +6914,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
             out += """
                      <td>%s</td>
                      <td>%s</td>
-                     """ % (loan_period, nb_requests)
+                     """ % (item_type or '-', nb_requests)
 
             if not record_is_periodical:
                 out += """

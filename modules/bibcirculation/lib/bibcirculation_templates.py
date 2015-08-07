@@ -6573,7 +6573,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                      <input type=hidden name=location value="%s">
                      <input type=hidden name=collection value="%s">
                      <input type=hidden name=description value="%s">
-                     <input type=hidden name=loan_period value="%s">
+                     <input type=hidden name=item_type value="%s">
                      <input type=hidden name=status value="%s">
                      <input type=hidden name=expected_arrival_date value="%s">
                      <input type=hidden name=recid value="%s">

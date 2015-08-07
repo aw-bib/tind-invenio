@@ -2837,7 +2837,7 @@ def add_new_copy_step4(req, barcode, library, location, collection, description,
                 lastupdated=__lastupdated__)
 
 def add_new_copy_step5(req, barcode, library, location, collection, description,
-                        loan_period, status, expected_arrival_date, recid,
+                        item_type, status, expected_arrival_date, recid,
                         ln=CFG_SITE_LANG):
     """
     Add a new copy.

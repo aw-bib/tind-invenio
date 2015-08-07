@@ -6439,7 +6439,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                 """ % (_("Item type"))
 
         for id, item_type in item_types:
-            if item_type == result[6]:
+            if id == result[6]:
                 out += """
                           <option value="%s" selected="selected">%s</option>
                        """ % (id, item_type)

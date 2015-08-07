@@ -2727,6 +2727,7 @@ def add_new_copy_step3(req, recid, barcode, ln=CFG_SITE_LANG):
     infos = []
     result = db.get_item_copies_details(recid)
     libraries = db.get_internal_libraries()
+    item_types = db.get_item_types()
 
     navtrail_previous_links = '<a class="navtrail"' \
                               ' href="%s/help/admin">Admin Area' \
@@ -2741,6 +2742,7 @@ def add_new_copy_step3(req, recid, barcode, ln=CFG_SITE_LANG):
     body = bc_templates.tmpl_add_new_copy_step3(recid=recid,
                                                 result=result,
                                                 libraries=libraries,
+                                                item_types=item_types,
                                                 original_copy_barcode=barcode,
                                                 tmp_barcode=tmp_barcode,
                                                 infos=infos,
@@ -2754,7 +2756,7 @@ def add_new_copy_step3(req, recid, barcode, ln=CFG_SITE_LANG):
                 lastupdated=__lastupdated__)
 
 def add_new_copy_step4(req, barcode, library, location, collection, description,
-                       loan_period, status, expected_arrival_date, recid,
+                       item_type, status, expected_arrival_date, recid,
                        ln=CFG_SITE_LANG):
 
     """
@@ -2775,6 +2777,7 @@ def add_new_copy_step4(req, barcode, library, location, collection, description,
 
     result = db.get_item_copies_details(recid)
     libraries = db.get_internal_libraries()
+    item_types = db.get_item_types()
 
     if db.barcode_in_use(barcode):
         infos.append(_("The given barcode <strong>%s</strong> is already in use." % barcode))
@@ -2782,6 +2785,7 @@ def add_new_copy_step4(req, barcode, library, location, collection, description,
         body  = bc_templates.tmpl_add_new_copy_step3(recid=recid,
                                                     result=result,
                                                     libraries=libraries,
+                                                    item_types=item_types,
                                                     original_copy_barcode=None,
                                                     tmp_barcode=None,
                                                     infos=infos,
@@ -2792,6 +2796,7 @@ def add_new_copy_step4(req, barcode, library, location, collection, description,
         body  = bc_templates.tmpl_add_new_copy_step3(recid=recid,
                                                     result=result,
                                                     libraries=libraries,
+                                                    item_types=item_types,
                                                     original_copy_barcode=None,
                                                     tmp_barcode=None,
                                                     infos=infos,
@@ -2800,12 +2805,13 @@ def add_new_copy_step4(req, barcode, library, location, collection, description,
         and status in [CFG_BIBCIRCULATION_ITEM_STATUS_ON_SHELF,
                        CFG_BIBCIRCULATION_ITEM_STATUS_ON_LOAN,
                        CFG_BIBCIRCULATION_ITEM_STATUS_IN_PROCESS]:
-        infos.append(_("The status selected does not accept tamporary barcodes."))
+        infos.append(_("The status selected does not accept temporary barcodes."))
         title = _("Add new copy") + " - III"
         tmp_barcode = generate_tmp_barcode()
         body  = bc_templates.tmpl_add_new_copy_step3(recid=recid,
                                                     result=result,
                                                     libraries=libraries,
+                                                    item_types=item_types,
                                                     original_copy_barcode=None,
                                                     tmp_barcode=tmp_barcode,
                                                     infos=infos,
@@ -2815,7 +2821,7 @@ def add_new_copy_step4(req, barcode, library, location, collection, description,
     else:
         library_name = db.get_library_name(library)
         tup_infos = (barcode, library, library_name, location, collection,
-                     description, loan_period, status, expected_arrival_date,
+                     description, item_type, status, expected_arrival_date,
                      recid)
         title = _("Add new copy") + " - IV"
         body  = bc_templates.tmpl_add_new_copy_step4(tup_infos=tup_infos, ln=ln)
@@ -2846,7 +2852,7 @@ def add_new_copy_step5(req, barcode, library, location, collection, description,
     infos = []
     if not db.barcode_in_use(barcode):
         db.add_new_copy(barcode, recid, library, collection, location, description.strip() or '-',
-                        loan_period, status, expected_arrival_date)
+                        item_type, status, expected_arrival_date)
         update_requests_statuses(barcode)
     else:
         infos.append(_("The given barcode <strong>%s</strong> is already in use.") % barcode)

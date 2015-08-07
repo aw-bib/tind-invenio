@@ -616,7 +616,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         """http://cds.cern.ch/admin2/bibcirculation/add_new_copy_step4"""
         argd = wash_urlargd(form, {'barcode': (str, None), 'library': (str, ''),
             'location': (str, ''), 'collection': (str, ''), 'description': (str, '-'),
-            'loan_period': (str, ''), 'status': (str, ''),
+            'item_type': (int, ''), 'status': (str, ''),
             'expected_arrival_date': (str, ''), 'recid': (str, None), 'ln': (str, "en")})
 
         barcode     = argd['barcode']
@@ -624,7 +624,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         location    = argd['location']
         collection  = argd['collection']
         description = argd['description']
-        loan_period = argd['loan_period']
+        item_type   = argd['item_type']
         status      = argd['status']
         expected_arrival_date = argd['expected_arrival_date']
         recid       = argd['recid']
@@ -638,7 +638,6 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         collection  = collection.strip()
         description = description.strip()
 
-        loan_period = loan_period.strip()
         status      = status.strip()
         expected_arrival_date = expected_arrival_date.strip()
 
@@ -646,14 +645,14 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
             recid = recid.strip()
 
         return bal.add_new_copy_step4(req, barcode, library, location, collection,
-                                      description, loan_period, status,
+                                      description, item_type, status,
                                       expected_arrival_date, recid, ln)
 
     def add_new_copy_step5(self, req, form):
 
         argd = wash_urlargd(form, {'barcode': (str, None), 'library': (str, None),
             'location': (str, None), 'collection': (str, None), 'description': (str, '-'),
-            'loan_period': (str, None), 'status': (str, None),
+            'item_type': (int, None), 'status': (str, None),
             'expected_arrival_date': (str, None), 'recid': (str, None), 'ln': (str, "en")})
 
         barcode = argd['barcode']
@@ -661,13 +660,13 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         location = argd['location']
         collection = argd['collection']
         description = argd['description']
-        loan_period = argd['loan_period']
+        item_type = argd['item_type']
         status = argd['status']
         expected_arrival_date = argd['expected_arrival_date']
         recid = argd['recid']
         ln = argd['ln']
         return bal.add_new_copy_step5(req, barcode, library, location, collection,
-                            description, loan_period, status, expected_arrival_date, recid, ln)
+                            description, item_type, status, expected_arrival_date, recid, ln)
 
 
     def delete_copy_step1(self, req, form):

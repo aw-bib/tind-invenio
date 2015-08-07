@@ -6728,7 +6728,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
         """ % (_("Back"))
         return out
 
-    def tmpl_add_new_copy_step3(self, recid, result, libraries,
+    def tmpl_add_new_copy_step3(self, recid, result, libraries, item_types,
                                 original_copy_barcode, tmp_barcode,
                                 infos, ln=CFG_SITE_LANG):
         """
@@ -7073,20 +7073,15 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                 <tr>
                     <th width="100">%s</th>
                     <td %s>
-                      <select name="loan_period"  style='border: 1px solid #cfcfcf'>
-                """ % (_("Loan period"), colspan)
+                      <select name="item_type"  style='border: 1px solid #cfcfcf'>
+                        <option>-</option>
+                """ % (_("Item type"), colspan)
 
-        for loan_period in CFG_BIBCIRCULATION_ITEM_LOAN_PERIOD:
-            if original_copy_barcode is not None and \
-                 default_loan_period is not None and \
-                 loan_period == default_loan_period:
-                out += """
-                          <option value="%s" selected="selected">%s</option>
-                       """ % (loan_period, loan_period)
-            else:
-                out += """
-                          <option value="%s">%s</option>
-                       """ % (loan_period, loan_period)
+
+        for id, item_type in item_types:
+            out += """
+                        <option value="%s">%s</option>
+                   """ % (id, item_type)
 
         out += """
                       </select>
@@ -7209,7 +7204,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                        <input type=hidden name=location value="%s">
                        <input type=hidden name=collection value="%s">
                        <input type=hidden name=description value="%s">
-                       <input type=hidden name=loan_period value="%s">
+                       <input type=hidden name=item_type value="%s">
                        <input type=hidden name=status value="%s">
                        <input type=hidden name=expected_arrival_date value="%s">
                        <input type=hidden name=recid value="%s">
@@ -7227,12 +7222,12 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                        _("Location"), tup_infos[3],
                        _("Collection"), tup_infos[4],
                        _("Description"), tup_infos[5],
-                       _("Loan period"), tup_infos[6],
+                       _("Item type"), tup_infos[6],
                        _("Status"), tup_infos[7],
                        _("Expected arrival date"), expected_arrival_date,
                        _("Back"), _("Continue"),
                        barcode, library, location, collection, description,
-                       loan_period, status, expected_arrival_date, recid)
+                       item_type, status, expected_arrival_date, recid)
 
         return out
 
@@ -16080,7 +16075,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                     </tr>
                </thead>
               <tbody>
-                       """% _("Name")
+              """ % (_("Name"))
 
         for (id, name) in result:
 

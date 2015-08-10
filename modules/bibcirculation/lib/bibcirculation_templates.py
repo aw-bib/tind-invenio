@@ -7648,6 +7648,10 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                 <th width="100">%s</th>
                 <td>%s</td>
                </tr>
+              <tr>
+                <th width="100">%s</th>
+                <td>%s</td>
+               </tr>
             </table>
             """% (CFG_SITE_URL,
                   borrower_id,

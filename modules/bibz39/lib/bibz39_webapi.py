@@ -53,6 +53,16 @@ def get_css():
            .fullwidth {
              width:100%;
             }
+            .error {
+              color: #A94442;
+              background-color:#F2DEDE;
+              border: 1px solid;
+              border-color: #EBCCD1;
+              padding:15px;
+              margin:2px;
+              margin-top:20px;
+              height:100%;
+            }
 
            .server_area {
             margin-top: 20px;
@@ -164,6 +174,7 @@ def get_javascript():
                         function spinning() {
                             $("#middle_area > table").remove();
                             $("#middle_area").append("<p class='spinning_wheel'><i class='fa fa fa-spinner fa-pulse fa-5x'></i></p><p class='bibz39_button_td'>Searching...</p>");
+                            $("#main_form").submit();
                         }
                     </script>
                  """ % {'site_url': CFG_SITE_URL}

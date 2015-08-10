@@ -15926,7 +15926,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
               <tbody>
                        """% (CFG_SITE_URL,
                           _("Name"),
-                          _("Code"),
+                          _("Type"),
                           _("Loan period"),
                           _("Holdable"),
                           _("Home pickup"),
@@ -15998,7 +15998,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
               """ % (_("Add new rule"),
                       CFG_SITE_URL,
                      _("Name"),
-                     _("Code"),
+                     _("Type"),
                      _("Loan period"),
                      _("Holdable"),
                      _("Home pickup"),

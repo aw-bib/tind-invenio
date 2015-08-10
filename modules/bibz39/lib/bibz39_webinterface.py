@@ -82,6 +82,7 @@ class WebInterfacebibz39Pages(WebInterfaceDirectory):
                                                                                 new_recid))
 
         body_content = ''
+        warnings = '<p class="error">'
         body_content += self.generate_request_form(argd)
 
         if "search" in argd and argd["search"] and 'search_type' in argd and argd["search_type"] in \
@@ -92,7 +93,7 @@ class WebInterfacebibz39Pages(WebInterfaceDirectory):
             try:
                 res = []
                 err = False
-
+                pro_err = False
                 for server in argd["server"]:
 
                     conn = zoom.Connection(CFG_Z39_SERVER[server]["address"],
@@ -107,13 +108,23 @@ class WebInterfacebibz39Pages(WebInterfaceDirectory):
                             "search"]))
                     body_content += ""
                     try:
-                        res.extend({"value": x, "provider": server} for x in conn.search(query))
-
+                        server_answer = conn.search(query)
+                        if len(server_answer) < 100:
+                            nb_to_browse = len(server_answer)
+                        else:
+                            nb_to_browse = 100
+                            warnings += "The server {0} returned too many results. {1}/{2} are printed.<br>".format(
+                                server, nb_to_browse, len(server_answer))
+                            pro_err = True
+                        for result in server_answer[0:nb_to_browse]:
+                            res.append({"value": result, "provider": server})
                     except zoom.Bib1Err as e:
                         body_content += "<h4>{0}</h4>".format(e)
                         err = True
                     conn.close()
                 if res:
+                    if pro_err:
+                        body_content += warnings + "</p>"
                     body_content += "<table id='result_area' class='fullwidth  tablesorter'>"
                     body_content += "<tr><th class='bibz39_titles_th' >Title</th><th class='bibz39_sources_th'>Authors</th><th>Publisher</th><th class='bibz39_sources_th'>Source</th><th><div class='bibz39_button_td'>View XML</div></th><th><div class='bibz39_button_td'>Import</div></th></tr>"
 
@@ -227,7 +238,7 @@ class WebInterfacebibz39Pages(WebInterfaceDirectory):
 
         html += """</div>
         <input type="text" name="search" id="search" value="{0}" />
-        <input type="submit" onclick="spinning()" value="search" />
+        <button onclick="spinning()" /> Search</button>
         </div>
         </form>""".format(argd["search"])
 

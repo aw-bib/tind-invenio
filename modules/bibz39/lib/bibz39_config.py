@@ -4,9 +4,6 @@
 CFG_Z39_SERVER = {
     'Library of Congress': {'address': 'lx2.loc.gov', 'port': 210, 'databasename': 'LCDB',
                             'preferredRecordSyntax': 'USMARC'},
-    'Library of Congress MARC8': {'address': 'lx2.loc.gov', 'port': 210,
-                                  'databasename': 'LCDB_MARC8',
-                                  'preferredRecordSyntax': 'USMARC', 'default': True},
     'UNOG Library': {'address': 'eu.alma.exlibrisgroup.com', 'port': 1921,
                      'databasename': '41UNOG_INST',
                      'preferredRecordSyntax': 'USMARC', 'default': True},

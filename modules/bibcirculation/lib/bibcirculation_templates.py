@@ -3300,6 +3300,8 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
         else:
             book_cover = "%s/img/book_cover_placeholder.gif" % (CFG_SITE_URL)
 
+        item_type = db.get_item_type_name_from_barcode(barcode)
+
         out = self.tmpl_infobox(infos, ln)
 
         out += load_menu(ln)
@@ -3343,6 +3345,10 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                           <th width="100">%s</th>
                           <td>%s</td>
                         </tr>
+                        <tr>
+                          <th width="100">%s</th>
+                          <td>%s</td>
+                        </tr>
                       </table>
                      </td>
                      <td width="200" align='center' valign='top'>
@@ -3361,6 +3367,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                             _("Publisher"), book_editor,
                             _("ISBN"), book_isbn,
                             _("Barcode"), barcode,
+                            _("Item type"), item_type,
                             str(book_cover))
 
         out += """

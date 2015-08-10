@@ -1553,7 +1553,7 @@ def get_holdings_information(recid, include_hidden_libraries=True):
                                 it.collection,
                                 it.location,
                                 it.description,
-                                it.loan_period,
+                                itt.name AS item_type,
                                 it.status,
                                 DATE_FORMAT(ln.due_date, '%%Y-%%m-%%d')
                            FROM crcITEM it
@@ -1561,6 +1561,10 @@ def get_holdings_information(recid, include_hidden_libraries=True):
                                 on it.barcode = ln.barcode and ln.status != %s
                                 left join crcLIBRARY lib
                                 on lib.id = it.id_crcLIBRARY
+                                left join crcITEMTYPE_ITEM it_i
+                                on it.barcode = it_i.barcode
+                                left join crcITEMTYPES itt
+                                on it_i.itemtype_id = itt.id
                           WHERE it.id_bibrec=%s
                     """, (CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED, recid))
 
@@ -1570,7 +1574,7 @@ def get_holdings_information(recid, include_hidden_libraries=True):
                                 it.collection,
                                 it.location,
                                 it.description,
-                                it.loan_period,
+                                itt.name AS item_type,
                                 it.status,
                                 DATE_FORMAT(ln.due_date, '%%Y-%%m-%%d')
                            FROM crcITEM it
@@ -1578,6 +1582,10 @@ def get_holdings_information(recid, include_hidden_libraries=True):
                                 on it.barcode = ln.barcode and ln.status != %s
                                 left join crcLIBRARY lib
                                 on lib.id = it.id_crcLIBRARY
+                                left join crcITEMTYPE_ITEM it_i
+                                on it.barcode = it_i.barcode
+                                left join crcITEMTYPES itt
+                                on it_i.itemtype_id = itt.id
                           WHERE it.id_bibrec=%s
                             AND lib.type<>%s
                     """, (CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED, recid,

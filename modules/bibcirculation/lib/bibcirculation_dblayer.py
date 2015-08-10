@@ -3179,7 +3179,7 @@ def delete_brief_format_cache(recid):
 def get_matching_loan_rule(user_id, barcode):
 
     res = run_sql("""
-        SELECT * FROM crcLOANRULES_MATCH_VIEW
+        SELECT id, name, code, loan_period, holdable, homepickup, renewable FROM crcLOANRULES_MATCH_VIEW
         WHERE user_id = %(user_id)s
         AND barcode = %(barcode)s
     """ % {
@@ -3247,7 +3247,7 @@ def delete_patron_type(id):
 def get_loan_rules():
 
     res = run_sql("""
-            SELECT id, name, code, loan_period, holdable, homepickup, shippable, ship_time
+            SELECT id, name, code, loan_period, holdable, homepickup, renewable
             FROM crcLOANRULES
             """)
     return res
@@ -3260,11 +3260,11 @@ def get_loan_rule_names():
             """)
     return res
 
-def add_loan_rule(name, code, loan_period, holdable, homepickup, shippable, ship_time):
+def add_loan_rule(name, code, loan_period, holdable, homepickup, renewable):
     run_sql("""
-            INSERT INTO crcLOANRULES(name, code, loan_period, holdable, homepickup, shippable, ship_time)
+            INSERT INTO crcLOANRULES(name, code, loan_period, holdable, homepickup, renewable)
             VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s')
-    """ % (name, code, loan_period, holdable, homepickup, shippable, ship_time))
+    """ % (name, code, loan_period, holdable, homepickup, renewable))
 
 def delete_loan_rule(id):
     res = run_sql("SELECT COUNT(*) FROM crcRULES_SELECTION WHERE rule_id = %s" % id)

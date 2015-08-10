@@ -2003,20 +2003,19 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
     def loan_rules(self, req, form):
         """http://cds.cern.ch/admin2/bibcirculation/loan_rules"""
         argd = wash_urlargd(form, {'name': (str, None), 'code': (str, None), 'loan_period': (str, None),
-                                   'holdable': (str, None), 'homepickup': (str, None), 'shippable': (str, None),
-                                   'ship_time': (int, 0), 'delete': (int, None), 'ln': (str, "en")})
+                                   'holdable': (str, None), 'homepickup': (str, None), 'renewable': (str, None),
+                                   'delete': (int, None), 'ln': (str, "en")})
         ln = argd['ln']
         name = argd['name']
         code = argd['code']
         loan_period = argd['loan_period']
         holdable = argd['holdable']
         homepickup = argd['homepickup']
-        shippable = argd['shippable']
-        ship_time = argd['ship_time']
+        renewable = argd['renewable']
         delete = argd['delete']
 
         return bal.loan_rules(req, name=name, code=code, loan_period=loan_period, holdable=holdable,
-                              homepickup=homepickup, shippable=shippable, ship_time=ship_time, delete=delete, ln=ln)
+                              homepickup=homepickup, renewable=renewable, delete=delete, ln=ln)
 
     def patron_types(self, req, form):
         """http://cds.cern.ch/admin2/bibcirculation/patron_types"""

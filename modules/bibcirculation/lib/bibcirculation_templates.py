@@ -15994,7 +15994,6 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                        <th>%s</th>
                        <th>%s</th>
                        <th>%s</th>
-                       <th>%s</th>
                        <th></th>
                     </tr>
                </thead>
@@ -16005,15 +16004,13 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                           _("Loan period"),
                           _("Holdable"),
                           _("Home pickup"),
-                          _("Shippable"),
-                          _("Ship time (days)"))
+                          _("Renewable")
 
         for (id, name, code, loan_period, holdable,
-                 home_pickup, shippable, ship_time) in result:
+                 home_pickup, renewable) in result:
 
             out += """
                     <tr>
-                        <td>%s</td>
                         <td>%s</td>
                         <td>%s</td>
                         <td>%s</td>
@@ -16024,7 +16021,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                     </tr>
 
                     """ % (name, code, loan_period, holdable,
-                           home_pickup, shippable, ship_time,
+                           home_pickup, renewable, ,
                           _("Delete"), id)
 
         out += """
@@ -16062,7 +16059,6 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                                <th>%s</th>
                                <th>%s</th>
                                <th>%s</th>
-                               <th>%s</th>
                                <th></th>
                             </tr>
                        </thead>
@@ -16077,8 +16073,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                      _("Loan period"),
                      _("Holdable"),
                      _("Home pickup"),
-                     _("Shippable"),
-                     _("Ship time (days)"))
+                     _("Renewable"))
 
         for code in CFG_BIBCIRCULATION_LOAN_RULE_CODES:
             out += """
@@ -16090,8 +16085,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                                  <td><input type="text" name="loan_period" style="width:100px"></td>
                                  <td><select name="holdable"><option>Y</option><option>N</option></select></td>
                                  <td><select name="homepickup"><option>Y</option><option selected="selected">N</option></select></td>
-                                 <td><select name="shippable"><option>Y</option><option>N</option></select></td>
-                                 <td><input type="text"name="ship_time" value="0" style="width:133px"></td>
+                                 <td><select name="renewable"><option>Y</option><option>N</option></select></td>
                                  <td><input type="submit" value="%s" class="bibcircbutton"></td>
                              </tr>
                          </tbody>

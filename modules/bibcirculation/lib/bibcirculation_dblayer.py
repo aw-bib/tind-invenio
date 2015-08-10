@@ -3218,8 +3218,10 @@ def get_loan_period_from_loan_rule(user_id, barcode):
     return returndict
 
 def get_patron_types():
-
     return run_sql("SELECT id, name FROM crcPATRONTYPES")
+
+def get_patron_type_name(id):
+    return run_sql("SELECT name FROM crcPATRONTYPES WHERE id = %s" % id)[0][0]
 
 def add_patron_type(name):
     run_sql("""

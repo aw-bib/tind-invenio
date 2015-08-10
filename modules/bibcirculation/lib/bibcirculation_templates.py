@@ -7744,11 +7744,15 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
         out = load_menu(ln)
 
-        (borrower_id, ccid, name, email, phone, address, mailbox) = borrower
+        (borrower_id, ccid, name, email, phone, address, mailbox, p_id) = borrower
 
 
         display_id = borrower_id
-        id_string = "ID"
+        id_string = _("ID")
+        patron_type = db.get_patron_type_name(p_id)
+        if CFG_CERN_SITE == 1:
+            display_id = ccid
+            id_string = _("CCID")
 
         no_notes_link = create_html_link(CFG_SITE_URL +
                                     '/admin2/bibcirculation/get_borrower_notes',
@@ -7802,6 +7806,10 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                 <th width="100">%s</th>
                 <td>%s</td>
                </tr>
+              <tr>
+                <th width="100">%s</th>
+                <td>%s</td>
+               </tr>
                <tr>
                  <th width="100">%s</th>
                  <td>%s</td>
@@ -7814,6 +7822,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                    _("Mailbox"), mailbox,
                    _("Email"), email,
                    _("Phone"), phone,
+                   _("Patron type"), patron_type,
                    _("Notes"), check_notes)
 
         nb_requests = len(requests)

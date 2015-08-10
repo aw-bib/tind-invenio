@@ -1256,7 +1256,7 @@ def place_new_request_step3(req, barcode, recid, user_info,
         else:
     (_id, ccid, name, email, phone, address, mailbox) = user_info
 
-    loan_rule = db.get_matching_loan_rule(user_id, barcode)
+    loan_rule = db.get_matching_loan_rule(_id, barcode)
     infos = []
 
     # validate the period of interest given by the admin. Also check if barcode + borrower matches a loan rule

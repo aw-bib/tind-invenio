@@ -8776,11 +8776,11 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
             if id == p_id:
                 out += """
                             <option selected="selected" value="%s">%s</option>
-                """
+                """ % (id, patrontype)
             else:
                 out += """
                             <option value="%s">%s</option>
-                """
+                """ % (id, patrontype)
 
         out += """
                       </select>

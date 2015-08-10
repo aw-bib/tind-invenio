@@ -16004,7 +16004,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                           _("Loan period"),
                           _("Holdable"),
                           _("Home pickup"),
-                          _("Renewable")
+                          _("Renewable"))
 
         for (id, name, code, loan_period, holdable,
                  home_pickup, renewable) in result:

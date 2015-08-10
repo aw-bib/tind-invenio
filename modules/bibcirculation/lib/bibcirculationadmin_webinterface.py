@@ -843,7 +843,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         address = argd['address']
         mailbox = argd['mailbox']
         notes = argd['notes']
-        p_id = p_id['notes']
+        p_id = argd['p_id']
         ln = argd['ln']
 
         name = name.strip()

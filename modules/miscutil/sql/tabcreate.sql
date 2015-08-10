@@ -5176,7 +5176,6 @@ CREATE TABLE IF NOT EXISTS  `crcITEMTYPE_ITEM` (
   `itemtype_id` int(11) unsigned NOT NULL,
   KEY `barcode_fk` (`barcode`),
   KEY `itemtype_fk` (`itemtype_id`),
-  CONSTRAINT `itemtype_fk` FOREIGN KEY (`itemtype_id`) REFERENCES `crcITEMTYPES` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `barcode_fk` FOREIGN KEY (`barcode`) REFERENCES `crcITEM` (`barcode`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -5193,7 +5192,6 @@ CREATE TABLE IF NOT EXISTS  `crcPATRONTYPE_BORROWER` (
   KEY `borrower_fk` (`borrower_id`),
   KEY `patrontype_fk` (`patrontype_id`),
   CONSTRAINT `borrower_fk` FOREIGN KEY (`borrower_id`) REFERENCES `crcBORROWER` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `patrontype_fk` FOREIGN KEY (`patrontype_id`) REFERENCES `crcPATRONTYPES` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS  `crcLOANRULES` (

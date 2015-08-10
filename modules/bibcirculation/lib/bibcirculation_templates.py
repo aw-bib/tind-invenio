@@ -3098,7 +3098,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                           <td class="bibcirccontent" align="center">%s</td>
                           <td class="bibcirccontent" align="center">%s</td>
                           <td class="bibcirccontent" align="right">
-                          <input type=button onClick="location.href='%s/admin2/bibcirculation/place_new_request_step2?ln=%s&barcode=%s&recid=%s&user_info=%s,%s,%s,%s,%s,%s,%s'"
+                          <input type=button onClick="location.href='%s/admin2/bibcirculation/place_new_request_step2?ln=%s&barcode=%s&recid=%s&user_info=%s,%s,%s,%s,%s,%s,%s,%s'"
                           value='%s' class="formbutton"></td>
                      </tr>
 
@@ -3106,7 +3106,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                        description, loan_period, status, due_date,
                        CFG_SITE_URL, ln, barcode, recid, user_info[0],
                        user_info[1], user_info[2], user_info[3],
-                       user_info[4], user_info[5], user_info[6],
+                       user_info[4], user_info[5], user_info[6], user_info[7],
                        _("Request"))
 
         out += """
@@ -3432,11 +3432,11 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
             """ % (CFG_SITE_URL, barcode, recid)
 
             for (borrower_id, ccid, name, email,
-                 phone, address, mailbox) in result:
+                 phone, address, mailbox, p_id) in result:
                 out += """
-                       <option value ='%s,%s,%s,%s,%s,%s,%s'>%s
+                       <option value ='%s,%s,%s,%s,%s,%s,%s,%s'>%s
                        """ % (borrower_id, ccid, name, email, phone,
-                              address, mailbox, name)
+                              address, mailbox, p_id, name)
 
             out += """
                     </select>
@@ -3492,9 +3492,11 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
         else:
             book_cover = "%s/img/book_cover_placeholder.gif" % (CFG_SITE_URL)
 
-        (borrower_id, ccid, name, email, phone, address, mailbox) = user_info
+        (borrower_id, ccid, name, email, phone, address, mailbox, p_id) = user_info
 
         _ = gettext_set_language(ln)
+
+        patron_type = db.get_patron_type_name(p_id)
 
         out = self.tmpl_infobox(infos, ln)
 
@@ -3507,7 +3509,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                   method="post" >
             <input type=hidden name=barcode value='%s'>
             <input type=hidden name=recid value='%s'>
-            <input type=hidden name=user_info value="%s,%s,%s,%s,%s,%s,%s">
+            <input type=hidden name=user_info value="%s,%s,%s,%s,%s,%s,%s,%s">
             <br />
 
                 <table class="bibcirctable">
@@ -3558,7 +3560,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
 
               <br />
               """ % (CFG_SITE_URL, barcode, recid,
-                     borrower_id, ccid, name, email, phone, address, mailbox,
+                     borrower_id, ccid, name, email, phone, address, mailbox, p_id,
                      _("Item details"),
                      _("Name"), book_title,
                      _("Author(s)"), book_author,
@@ -3600,6 +3602,10 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                     <th width="100">%s</th>
                     <td>%s</td>
                  </tr>
+                  <tr>
+                    <th width="100">%s</th>
+                    <td>%s</td>
+                 </tr>
                 </table>
                 </td>
                 </table>
@@ -3609,7 +3615,8 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                        _("Address"), address,
                        _("Mailbox"), mailbox,
                        _("Email"), email,
-                       _("Phone"), phone)
+                       _("Phone"), phone,
+                       _("Patron type"), patron_type)
 
         out += """
 

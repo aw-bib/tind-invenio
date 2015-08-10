@@ -1790,12 +1790,11 @@ def get_borrower_data_by_id(borrower_id):
     """
     Retrieve borrower's data by borrower_id.
     """
-
-    res = run_sql("""SELECT id, ccid, name, email, phone,
-                            address, mailbox
-                       FROM crcBORROWER
+    res = run_sql("""SELECT b.id, b.ccid, b.name, b.email, b.phone,
+                            b.address, b.mailbox, p_b.patrontype_id
+                       FROM crcBORROWER b
+                  LEFT JOIN crcPATRONTYPE_BORROWER p_b ON b.id = p_b.borrower_id
                       WHERE id=%s""", (borrower_id, ))
-
     if res:
         return res[0]
     else:

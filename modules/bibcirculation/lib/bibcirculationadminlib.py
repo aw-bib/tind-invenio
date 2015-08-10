@@ -3442,8 +3442,8 @@ def add_new_borrower_step2(req, name, email, phone, address, mailbox,
 
     if len(infos) > 0:
         patron_types = db.get_patron_types()
-        body = bc_templates.tmpl_add_new_borrower_step1(tup_infos=tup_infos,
-                                                        infos=infos, patron_types=patron_types, ln=ln)
+        body = bc_templates.tmpl_add_new_borrower_step1(patron_types=patron_types, tup_infos=tup_infos,
+                                                        infos=infos, ln=ln)
         title = _("Add new borrower") + " - I"
     else:
         if notes != '':

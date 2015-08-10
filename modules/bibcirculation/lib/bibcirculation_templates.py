@@ -8701,7 +8701,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
         return out
 
-    def tmpl_add_new_borrower_step1(self, tup_infos=None, infos=None, patron_types, ln=CFG_SITE_LANG):
+    def tmpl_add_new_borrower_step1(self, patron_types, tup_infos=None, infos=None, ln=CFG_SITE_LANG):
 
         _ = gettext_set_language(ln)
 

@@ -1705,27 +1705,23 @@ def barcode_in_use(barcode):
 
 
 
-def new_borrower(ccid, name, email, phone, address, mailbox, notes):
+def new_borrower(ccid, name, email, phone, address, mailbox, notes, patrontype_id):
     """
     Add/Register a new borrower on the crcBORROWER table.
+    Also creates an entry in the patrontype-borrower relation table
     name: borrower's name.
     email: borrower's email.
     phone: borrower's phone.
     address: borrower's address.
     """
 
-    return run_sql("""insert into crcBORROWER ( ccid,
-                                                name,
-                                                email,
-                                                phone,
-                                                address,
-                                                mailbox,
-                                                borrower_since,
-                                                borrower_until,
-                                                notes)
-        values(%s, %s, %s, %s, %s, %s, NOW(), '0000-00-00 00:00:00', %s)""",
-        (ccid, name, email, phone, address, mailbox, str(notes)))
-    # IntegrityError: (1062, "Duplicate entry '665119' for key 2")
+    return run_sql("""INSERT INTO crcBORROWER(ccid, name, email, phone, address, mailbox, borrower_since, borrower_until, notes)
+              VALUES(%s, %s, %s, %s, %s, %s, NOW(), '0000-00-00 00:00:00', %s);
+              SELECT LAST_INSERT_ID() INTO @last_id;
+              INSERT INTO crcPATRONTYPE_BORROWER(borrower_id, patrontype_id) VALUES(@last_id, %s)
+              """,
+        (ccid, name, email, phone, address, mailbox, str(notes), patrontype_id))
+
 
 def get_borrower_details(borrower_id):
     """

@@ -3384,7 +3384,9 @@ def add_new_borrower_step1(req, ln=CFG_SITE_LANG):
 
     _ = gettext_set_language(ln)
 
-    body = bc_templates.tmpl_add_new_borrower_step1(ln=ln)
+    patron_types = db.get_patron_types()
+
+    body = bc_templates.tmpl_add_new_borrower_step1(patron_types=patron_types, ln=ln)
 
     return page(title=_("Add new borrower") + " - I",
                 uid=id_user,
@@ -3394,7 +3396,7 @@ def add_new_borrower_step1(req, ln=CFG_SITE_LANG):
                 lastupdated=__lastupdated__)
 
 def add_new_borrower_step2(req, name, email, phone, address, mailbox,
-                           notes, ln=CFG_SITE_LANG):
+                           notes, p_id, ln=CFG_SITE_LANG):
     """
     Add new borrower. Step 2.
 
@@ -3418,6 +3420,12 @@ def add_new_borrower_step2(req, name, email, phone, address, mailbox,
     if name == '':
         infos.append(_("Please, insert a name"))
 
+    if not p_id:
+        infos.append(_("Please select a patrontype"))
+
+    if email == '':
+        infos.append(_("Please, insert a valid email address"))
+
     if email == '':
         infos.append(_("Please, insert a valid email address"))
     else:
@@ -3426,15 +3434,16 @@ def add_new_borrower_step2(req, name, email, phone, address, mailbox,
             infos.append(_("There is already a borrower using the following email:")
                          + " <strong>%s</strong>" % (email))
 
-    tup_infos = (name, email, phone, address, mailbox, notes)
+    tup_infos = (name, email, phone, address, mailbox, notes, p_id)
 
     navtrail_previous_links = '<a class="navtrail" ' \
                               'href="%s/help/admin">Admin Area' \
                               '</a>' % (CFG_SITE_SECURE_URL,)
 
     if len(infos) > 0:
+        patron_types = db.get_patron_types()
         body = bc_templates.tmpl_add_new_borrower_step1(tup_infos=tup_infos,
-                                                        infos=infos, ln=ln)
+                                                        infos=infos, patron_types=patron_types, ln=ln)
         title = _("Add new borrower") + " - I"
     else:
         if notes != '':
@@ -3445,7 +3454,7 @@ def add_new_borrower_step2(req, name, email, phone, address, mailbox,
             borrower_notes = ''
 
         borrower_id = db.new_borrower(None, name, email, phone,
-                                      address, mailbox, borrower_notes)
+                                      address, mailbox, borrower_notes, p_id)
 
         return redirect_to_url(req,
             '%s/admin2/bibcirculation/get_borrower_details?ln=%s&borrower_id=%s' \

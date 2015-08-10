@@ -8701,14 +8701,14 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
         return out
 
-    def tmpl_add_new_borrower_step1(self, tup_infos=None, infos=None, ln=CFG_SITE_LANG):
+    def tmpl_add_new_borrower_step1(self, tup_infos=None, infos=None, patron_types, ln=CFG_SITE_LANG):
 
         _ = gettext_set_language(ln)
 
         if tup_infos:
-            (name, email, phone, address, mailbox, notes) = tup_infos
+            (name, email, phone, address, mailbox, notes, p_id) = tup_infos
         else:
-            (name, email, phone, address, mailbox, notes) = ('', '', '', '', '', '')
+            (name, email, phone, address, mailbox, notes, p_id) = ('', '', '', '', '', '', None)
 
         out = ''
 
@@ -8760,6 +8760,31 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                              size=45 name="mailbox" value="%s">
                     </td>
                  </tr>
+                  <tr>
+                    <td width="70">%s</td>
+                    <td class="bibcirccontent">
+                      <select name="p_id">
+                """ % (CFG_SITE_URL,
+                       _("Name"), name,
+                       _("Email"), email,
+                       _("Phone"), phone,
+                       _("Address"), address,
+                       _("Mailbox"), mailbox,)
+
+        for id, patrontype in patron_types:
+            if id == p_id:
+                out += """
+                            <option selected="selected" value="%s">%s</option>
+                """
+            else:
+                out += """
+                            <option value="%s">%s</option>
+                """
+
+        out += """
+                      </select>
+                    </td>
+                 </tr>
                  <tr>
                     <td width="70" valign="top">%s</td>
                     <td class="bibcirccontent">
@@ -8782,13 +8807,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                 <br />
                 </form>
                 </div>
-                """ % (CFG_SITE_URL,
-                       _("Name"), name,
-                       _("Email"), email,
-                       _("Phone"), phone,
-                       _("Address"), address,
-                       _("Mailbox"), mailbox,
-                       _("Notes"), notes,
+                """ % (_("Notes"), notes,
                        _("Back"), _("Continue"))
 
         return out

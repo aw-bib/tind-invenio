@@ -3281,7 +3281,7 @@ def get_item_types():
 def get_item_type_name(id):
     return run_sql("SELECT name FROM crcITEMTYPES WHERE id = %s" % id)[0][0]
 
-def get_item_type_name_from_barcode(barcode)
+def get_item_type_name_from_barcode(barcode):
     return run_sql("""
                    SELECT name FROM crcITEMTYPES it
                    JOIN crcITEMTYPE_ITEM it_i on it_i.itemtype_id = it.id

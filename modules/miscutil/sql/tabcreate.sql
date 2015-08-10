@@ -5208,7 +5208,7 @@ CREATE TABLE IF NOT EXISTS `crcLOANRULES` (
 ) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `crcRULES_SELECTION` (
-  `rule_id` int(11) unsigned NOT NULL,
+  `rule_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `active` varchar(1) NOT NULL DEFAULT '',
   `itemtype_id` int(11) unsigned NOT NULL,
   `patrontype_id` int(11) unsigned NOT NULL,

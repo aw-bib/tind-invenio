@@ -383,7 +383,7 @@ def loan_on_desk_step3(req, user_id, list_of_barcodes, ln=CFG_SITE_LANG):
                                                         infos=infos,
                                                         ln=ln)
         elif not loan_rule:
-            infos.append(_('This patron does not have permission to loan this item.'))
+            infos.append(_('%(x_strong_tag_open)sError:%(x_strong_tag_close)s This patron does not have permission to loan this item.' % {'x_strong_tag_open': '<strong>', 'x_strong_tag_close': '</strong>'}))
             body = bc_templates.tmpl_loan_on_desk_step1(result=None,
                                                         key='',
                                                         string='',
@@ -1235,13 +1235,53 @@ def place_new_request_step3(req, barcode, recid, user_info,
 
     _ = gettext_set_language(ln)
 
+    if user_info:
+        (_id, ccid, name, email, phone, address, mailbox, p_id) = user_info
+    else:
+        # Case someone try directly to access to step3 without passing by previous step
+        if barcode:
+            return page(title=_("New request"),
+                        uid=id_user,
+                        req=req,
+                        body=bc_templates.tmpl_place_new_request_step1(result=None,
+                                                                       key="",
+                                                                       string="",
+                                                                       barcode=barcode,
+                                                                       recid=recid,
+                                                                       infos=[],
+                                                                       ln=ln),
+                        language=ln,
+                        navtrail=navtrail_previous_links,
+                        lastupdated=__lastupdated__)
+        else:
     (_id, ccid, name, email, phone, address, mailbox) = user_info
 
-    # validate the period of interest given by the admin
-    if validate_date_format(period_from) is False:
-        infos = []
+    loan_rule = db.get_matching_loan_rule(user_id, barcode)
+    infos = []
+
+    # validate the period of interest given by the admin. Also check if barcode + borrower matches a loan rule
+    if not period_from or validate_date_format(period_from) is False:
         infos.append(_("The period of interest %(x_strong_tag_open)sFrom: %(x_date)s%(x_strong_tag_close)s is not a valid date or date format") % {'x_date': period_from, 'x_strong_tag_open': '<strong>', 'x_strong_tag_close': '</strong>'})
 
+    if not period_to or validate_date_format(period_to) is False:
+        infos.append(_("The period of interest %(x_strong_tag_open)sTo: %(x_date)s%(x_strong_tag_close)s is not a valid date or date format") % {'x_date': period_to, 'x_strong_tag_open': '<strong>', 'x_strong_tag_close': '</strong>'})
+
+
+    if not loan_rule:
+        infos.append(_('%(x_strong_tag_open)sError:%(x_strong_tag_close)s This patron does not have permission to loan this item.' % {'x_strong_tag_open': '<strong>', 'x_strong_tag_close': '</strong>'}))
+        body = bc_templates.tmpl_place_new_request_step2(barcode=barcode,
+                                                         recid=recid,
+                                                         user_info=user_info,
+                                                         infos=infos,
+                                                         ln=ln)
+    elif not loan_rule[4].upper() == 'Y':
+        infos.append(_('%(x_strong_tag_open)sError:%(x_strong_tag_close)s The corresponding loan rule for this patron and item type does not allow requests.' % {'x_strong_tag_open': '<strong>', 'x_strong_tag_close': '</strong>'}))
+        body = bc_templates.tmpl_place_new_request_step2(barcode=barcode,
+                                                         recid=recid,
+                                                         user_info=user_info,
+                                                         infos=infos,
+                                                         ln=ln)
+    if len(infos) > 0:
         body = bc_templates.tmpl_place_new_request_step2(barcode=barcode,
                                                          recid=recid,
                                                          user_info=user_info,
@@ -1256,21 +1296,11 @@ def place_new_request_step3(req, barcode, recid, user_info,
                     navtrail=navtrail_previous_links,
                     lastupdated=__lastupdated__)
 
-    elif validate_date_format(period_to) is False:
-        infos = []
-        infos.append(_("The period of interest %(x_strong_tag_open)sTo: %(x_date)s%(x_strong_tag_close)s is not a valid date or date format") % {'x_date': period_to, 'x_strong_tag_open': '<strong>', 'x_strong_tag_close': '</strong>'})
-
-        body = bc_templates.tmpl_place_new_request_step2(barcode=barcode,
-                                                         recid=recid,
-                                                         user_info=user_info,
-                                                         infos=infos,
-                                                         ln=ln)
-
     # Register request
     borrower_id = db.get_borrower_id_by_email(email)
 
-    if borrower_id == None:
-        db.new_borrower(ccid, name, email, phone, address, mailbox, '')
+    if borrower_id is None:
+        db.new_borrower(ccid, name, email, phone, address, mailbox, '', p_id)
         borrower_id = db.get_borrower_id_by_email(email)
 
     req_id = db.new_hold_request(borrower_id, recid, barcode,

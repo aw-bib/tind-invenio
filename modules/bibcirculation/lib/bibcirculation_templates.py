@@ -3089,10 +3089,10 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                    <td class="bibcirctableheader"></td>
                    </tr>
                    """ % (_("Barcode"), _("Library"), _("Collection"),
-                          _("Location"), _("Description"), _("Loan period"),
+                          _("Location"), _("Description"), _("Item type"),
                           _("Status"), _("Due date"))
 
-        for (barcode, library, collection, location, description, loan_period,
+        for (barcode, library, collection, location, description, item_type,
              status, due_date) in holdings_information:
             out += """
                      <tr onMouseOver="this.className='highlight'" onmouseout="this.className='normal'">
@@ -3110,7 +3110,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                      </tr>
 
                 """ % (barcode, library, collection, location,
-                       description, loan_period, status, due_date,
+                       description, item_type, status, due_date,
                        CFG_SITE_URL, ln, barcode, recid, user_info[0],
                        user_info[1], user_info[2], user_info[3],
                        user_info[4], user_info[5], user_info[6], user_info[7],

@@ -3580,7 +3580,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                      _("Publisher"), book_editor,
                      _("ISBN"), book_isbn,
                      _("Barcode"), barcode,
-                     _("Item type"), item_type,
+                     _("Item type"), item_type or '-',
                      str(book_cover))
 
         out += """

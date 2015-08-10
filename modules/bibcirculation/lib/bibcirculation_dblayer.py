@@ -1646,6 +1646,8 @@ def add_new_copy(barcode, recid, library_id, collection, location, description,
 
 def delete_copy(barcode):
     res = run_sql("""delete FROM crcITEM WHERE barcode=%s""", (barcode, ))
+    if res:
+        run_sql("""DELETE FROM crcITEMTYPE_ITEM WHERE barcode=%s""", (barcode, ))
     return res
 
 def get_expected_arrival_date(barcode):

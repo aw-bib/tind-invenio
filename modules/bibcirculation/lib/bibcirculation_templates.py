@@ -7443,7 +7443,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
         out += """
                       <th>%s</th>
                       <th>%s</th>
-                """ % (_("Loan period"),
+                """ % (_("Item type"),
                        _("No of loans"))
 
         if not record_is_periodical:
@@ -7459,7 +7459,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                     """ % (_("Description"))
 
         for (barcode, loan_period, lib_name, libid, location, nb_requests,
-             status, collection, description, due_date) in result:
+             status, collection, description, due_date, code, item_type) in result:
 
             library_link = create_html_link(CFG_SITE_URL +
                                 '/admin2/bibcirculation/get_library_details',
@@ -7481,7 +7481,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
             out += """
                      <td>%s</td>
                      <td>%s</td>
-                     """ % (loan_period, nb_requests)
+                     """ % (item_type, nb_requests)
 
             if not record_is_periodical:
                 out += """
@@ -7539,13 +7539,13 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                         _("Due date"),
                         _("Library"),
                         _("Location"),
-                        _("Loan period"),
+                        _("Item type"),
                         _("No of loans"),
                         _("Collection"),
                         _("Description"))
 
         for (barcode, loan_period, lib_name, libid, location, nb_requests,
-             status, collection, description, due_date) in result:
+             status, collection, description, due_date, code, item_type) in result:
             if barcode == barcode_to_delete:
                 library_link = create_html_link(CFG_SITE_URL +
                                 '/admin2/bibcirculation/get_library_details',
@@ -7564,7 +7564,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                          <td>%s</td>
                      </tr>
                      """ % (barcode, status, due_date, library_link, location,
-                            loan_period, nb_requests, collection or '-',
+                            item_type, nb_requests, collection or '-',
                             description or '-')
 
         out += """ </tbody>

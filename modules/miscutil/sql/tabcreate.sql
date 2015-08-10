@@ -5219,7 +5219,7 @@ CREATE TABLE IF NOT EXISTS `crcRULES_SELECTION` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE VIEW crcLOANRULES_MATCH_VIEW AS
-SELECT b.id AS user_id, it_i.barcode, pt.id AS patrontype_id, lr.name, lr.code, lr.loan_period, lr.holdable, lr.bookable, lr.homepickup, lr.shippable, lr.ship_time FROM crcBORROWER AS b
+SELECT b.id AS user_id, it_i.barcode, pt.id AS patrontype_id, lr.name, lr.code, lr.loan_period, lr.holdable, lr.homepickup, lr.renewable FROM crcBORROWER AS b
 JOIN crcPATRONTYPE_BORROWER AS p_b ON b.id = p_b.borrower_id
 JOIN crcPATRONTYPES AS pt ON p_b.patrontype_id = pt.id
 JOIN crcRULES_SELECTION AS r_s ON pt.id = r_s.patrontype_id

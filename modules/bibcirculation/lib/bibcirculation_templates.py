@@ -3016,6 +3016,10 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                                <th width="100">%s</th>
                                <td>%s</td>
                              </tr>
+                             <tr>
+                               <th width="100">%s</th>
+                               <td>%s</td>
+                             </tr>
                         </table>
                     </td>
                 </tr>

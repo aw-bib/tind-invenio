@@ -3504,6 +3504,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
         _ = gettext_set_language(ln)
 
         patron_type = db.get_patron_type_name(p_id)
+        item_type = db.get_item_type_name_from_barcode(barcode)
 
         out = self.tmpl_infobox(infos, ln)
 
@@ -3552,6 +3553,10 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                                    <th width="100">%s</th>
                                    <td>%s</td>
                                 </tr>
+                                <tr>
+                                   <th width="100">%s</th>
+                                   <td>%s</td>
+                                </tr>
                             </table>
                         </td>
                         <td width="200" align='center' valign='top'>
@@ -3575,6 +3580,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                      _("Publisher"), book_editor,
                      _("ISBN"), book_isbn,
                      _("Barcode"), barcode,
+                     _("Item type"), item_type,
                      str(book_cover))
 
         out += """

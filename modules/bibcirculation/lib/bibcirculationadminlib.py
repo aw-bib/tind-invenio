@@ -1262,36 +1262,22 @@ def place_new_request_step3(req, barcode, recid, user_info,
     # validate the period of interest given by the admin. Also check if barcode + borrower matches a loan rule
     if not period_from or validate_date_format(period_from) is False:
         infos.append(_("The period of interest %(x_strong_tag_open)sFrom: %(x_date)s%(x_strong_tag_close)s is not a valid date or date format") % {'x_date': period_from, 'x_strong_tag_open': '<strong>', 'x_strong_tag_close': '</strong>'})
-        body = bc_templates.tmpl_place_new_request_step2(barcode=barcode,
-                                                         recid=recid,
-                                                         user_info=user_info,
-                                                         infos=infos,
-                                                         ln=ln)
 
     if not period_to or validate_date_format(period_to) is False:
         infos.append(_("The period of interest %(x_strong_tag_open)sTo: %(x_date)s%(x_strong_tag_close)s is not a valid date or date format") % {'x_date': period_to, 'x_strong_tag_open': '<strong>', 'x_strong_tag_close': '</strong>'})
+        
+    if not loan_rule:
+        infos.append(_('%(x_strong_tag_open)sError:%(x_strong_tag_close)s This patron does not have permission to loan this item.' % {'x_strong_tag_open': '<strong>', 'x_strong_tag_close': '</strong>'}))
+
+    elif not loan_rule[4].upper() == 'Y':
+        infos.append(_('%(x_strong_tag_open)sError:%(x_strong_tag_close)s The corresponding loan rule for this patron and item type does not allow requests.' % {'x_strong_tag_open': '<strong>', 'x_strong_tag_close': '</strong>'}))
+
+    if len(infos) > 0:
         body = bc_templates.tmpl_place_new_request_step2(barcode=barcode,
                                                          recid=recid,
                                                          user_info=user_info,
                                                          infos=infos,
                                                          ln=ln)
-
-    if not loan_rule:
-        infos.append(_('%(x_strong_tag_open)sError:%(x_strong_tag_close)s This patron does not have permission to loan this item.' % {'x_strong_tag_open': '<strong>', 'x_strong_tag_close': '</strong>'}))
-        body = bc_templates.tmpl_place_new_request_step1(barcode=barcode,
-                                                         recid=recid,
-                                                         user_info=user_info,
-                                                         infos=infos,
-                                                         ln=ln)
-    elif not loan_rule[4].upper() == 'Y':
-        infos.append(_('%(x_strong_tag_open)sError:%(x_strong_tag_close)s The corresponding loan rule for this patron and item type does not allow requests.' % {'x_strong_tag_open': '<strong>', 'x_strong_tag_close': '</strong>'}))
-        body = bc_templates.tmpl_place_new_request_step1(barcode=barcode,
-                                                         recid=recid,
-                                                         user_info=user_info,
-                                                         infos=infos,
-                                                         ln=ln)
-    if len(infos) > 0:
-
         return page(title=_("New request"),
                     uid=id_user,
                     req=req,

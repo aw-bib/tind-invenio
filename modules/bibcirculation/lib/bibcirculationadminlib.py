@@ -45,7 +45,7 @@ from invenio.config import \
     CFG_SITE_LANG, \
     CFG_SITE_URL, \
     CFG_SITE_SECURE_URL, \
-    CFG_CERN_SITE
+    CFG_CERN_SITE, CFG_BIBCIRCULATION_LIBRARY_TYPE_INTERNAL
 import invenio.access_control_engine as acce
 from invenio.webpage import page
 from invenio.webuser import getUid, page_not_authorized
@@ -2022,7 +2022,9 @@ def all_expired_loans_data(req, ln=CFG_SITE_LANG):
 
     result = db.get_expired_loans_with_parameters(libraries=library,
                                                   sort_by=args["order[0][column]"][0],
-                                                  sort_dir=args["order[0][dir]"][0])
+                                                  sort_dir=args["order[0][dir]"][0],
+                                                  type_l=[CFG_BIBCIRCULATION_LIBRARY_TYPE_MAIN,
+                                                        CFG_BIBCIRCULATION_LIBRARY_TYPE_INTERNAL])
 
     ajax_answer = {"draw": args["draw"][0], "recordsTotal": len(result), "recordsFiltered": len(result)}
     start = int(args["start"][0])
@@ -2099,7 +2101,7 @@ def all_expired_loans(req, ln=CFG_SITE_LANG, library=(), loans_per_page=0, nb_pa
     body = bc_templates.tmpl_all_expired_loans(result=result,
                                                infos=infos,
                                                ln=ln,
-                                               libraries=db.get_all_libraries())
+                                               libraries=db.get_internal_and_main_libraries())
 
     return page(title=_('Overdue loans'),
                 uid=id_user,

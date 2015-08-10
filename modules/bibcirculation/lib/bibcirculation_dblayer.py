@@ -814,12 +814,13 @@ def get_all_loans(limit):
 
     return res
 
-def get_expired_loans_with_parameters(sort= None, libraries=(), sort_by=-1, sort_dir="asc"):
+def get_expired_loans_with_parameters(sort= None, libraries=(), sort_by=-1, sort_dir="asc", type_l=[]):
     """
     Get all expired(overdue) loans.
     """
     where_addition = ""
     order_addition = ""
+    type_addition = ""
     if libraries:
         if not isinstance(libraries, list):
             libraries = [libraries]
@@ -835,6 +836,8 @@ def get_expired_loans_with_parameters(sort= None, libraries=(), sort_by=-1, sort
                     "li.name", "it.location"]
         order_addition += " ORDER BY {0} {1}".format(criteria[int(sort_by)], sort_dir.capitalize())
 
+    if type_l:
+        type_addition += " and li.type IN {0} ".format(str(type_l).replace("[","(").replace("]",")"))
 
     query_select = """
     SELECT bor.id,
@@ -860,10 +863,10 @@ def get_expired_loans_with_parameters(sort= None, libraries=(), sort_by=-1, sort
           and bibrec.id_bibrec = it.id_bibrec
           and bibrec.id_bibxxx = bi.id
           and bi.tag like '%a'
-          {2}{3}
+          {2}{4}{3}
     """.format(CFG_BIBCIRCULATION_LOAN_STATUS_ON_LOAN,
           CFG_BIBCIRCULATION_LOAN_STATUS_EXPIRED,
-          where_addition, order_addition)
+          where_addition, order_addition, type_addition )
 
     res = run_sql(query_select)
 
@@ -2075,7 +2078,17 @@ def update_borrower_notes(borrower_id, borrower_notes):
 ###
 
 
+def get_internal_and_main_libraries():
+    res = run_sql("""SELECT id, name
+                     FROM crcLIBRARY
+                     WHERE type=%s OR type=%s
+                     """, (CFG_BIBCIRCULATION_LIBRARY_TYPE_MAIN,
+                           CFG_BIBCIRCULATION_LIBRARY_TYPE_INTERNAL))
 
+    if res:
+        return res
+    else:
+        return []
 
 def get_all_libraries():
 

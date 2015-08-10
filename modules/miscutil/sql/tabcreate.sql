@@ -5171,7 +5171,7 @@ CREATE TABLE IF NOT EXISTS  `crcITEMTYPES` (
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS  `crcITEMTYPE_ITEM` (
+CREATE TABLE IF NOT EXISTS `crcITEMTYPE_ITEM` (
   `barcode` varchar(30) NOT NULL DEFAULT '',
   `itemtype_id` int(11) unsigned NOT NULL,
   KEY `barcode_fk` (`barcode`),
@@ -5179,14 +5179,14 @@ CREATE TABLE IF NOT EXISTS  `crcITEMTYPE_ITEM` (
   CONSTRAINT `barcode_fk` FOREIGN KEY (`barcode`) REFERENCES `crcITEM` (`barcode`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS  `crcPATRONTYPES` (
+CREATE TABLE IF NOT EXISTS `crcPATRONTYPES` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(32) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS  `crcPATRONTYPE_BORROWER` (
+CREATE TABLE IF NOT EXISTS `crcPATRONTYPE_BORROWER` (
   `borrower_id` int(15) unsigned NOT NULL,
   `patrontype_id` int(11) unsigned DEFAULT NULL,
   KEY `borrower_fk` (`borrower_id`),
@@ -5194,20 +5194,20 @@ CREATE TABLE IF NOT EXISTS  `crcPATRONTYPE_BORROWER` (
   CONSTRAINT `borrower_fk` FOREIGN KEY (`borrower_id`) REFERENCES `crcBORROWER` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS  `crcLOANRULES` (
+CREATE TABLE IF NOT EXISTS `crcLOANRULES` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(20) DEFAULT NULL,
-  `code` varchar(1) DEFAULT NULL,
+  `code` varchar(29) DEFAULT NULL,
   `loan_period` smallint(6) DEFAULT NULL,
   `holdable` varchar(1) DEFAULT NULL,
+  `bookable` varchar(1) DEFAULT NULL,
   `homepickup` varchar(1) DEFAULT NULL,
-  `shippable` varchar(1) DEFAULT NULL,
-  `ship_time` smallint(6) DEFAULT NULL,
+  `renewable` varchar(1) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS  `crcRULES_SELECTION` (
+CREATE TABLE IF NOT EXISTS `crcRULES_SELECTION` (
   `rule_id` int(11) unsigned NOT NULL,
   `active` varchar(1) NOT NULL DEFAULT '',
   `itemtype_id` int(11) unsigned NOT NULL,
@@ -5218,7 +5218,7 @@ CREATE TABLE IF NOT EXISTS  `crcRULES_SELECTION` (
   CONSTRAINT `rule_fk` FOREIGN KEY (`rule_id`) REFERENCES `crcLOANRULES` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE VIEW IF NOT EXISTS crcLOANRULES_MATCH_VIEW AS
+CREATE VIEW crcLOANRULES_MATCH_VIEW AS
 SELECT b.id AS user_id, it_i.barcode, pt.id AS patrontype_id, lr.name, lr.code, lr.loan_period, lr.holdable, lr.bookable, lr.homepickup, lr.shippable, lr.ship_time FROM crcBORROWER AS b
 JOIN crcPATRONTYPE_BORROWER AS p_b ON b.id = p_b.borrower_id
 JOIN crcPATRONTYPES AS pt ON p_b.patrontype_id = pt.id

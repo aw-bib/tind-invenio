@@ -20,8 +20,10 @@
 # pylint: disable=C0103
 """Invenio Interface for bibz39 live view."""
 import cgi
+
 from PyZ3950 import zoom, zmarc
 from invenio.bibrecord import create_record, record_add_field, record_xml_output
+
 
 try:
     import json
@@ -29,7 +31,10 @@ except ImportError:
     import simplejson as json
 
 from invenio.errorlib import register_exception
-from invenio.bibz39_config import CFG_Z39_SERVER
+try:
+    from invenio.config import CFG_Z39_SERVER
+except ImportError:
+    from invenio.bibz39_config import CFG_Z39_SERVER
 from invenio.config import CFG_SITE_URL, CFG_SITE_SECURE_URL
 from invenio.access_control_engine import acc_authorize_action
 from invenio.webinterface_handler import WebInterfaceDirectory, wash_urlargd

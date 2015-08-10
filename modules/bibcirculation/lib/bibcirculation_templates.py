@@ -16021,7 +16021,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                     </tr>
 
                     """ % (name, code, loan_period, holdable,
-                           home_pickup, renewable, ,
+                           home_pickup, renewable,
                           _("Delete"), id)
 
         out += """

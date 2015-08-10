@@ -7658,8 +7658,8 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                   _("Address"), address,
                   _("Mailbox"), mailbox,
                   _("Email"), email,
-                  _("Phone"), phone),
-                  _("Patron type"), patron_type),
+                  _("Phone"), phone,
+                  _("Patron type"), patron_type)
 
         out += """
         <br />

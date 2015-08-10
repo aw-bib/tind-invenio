@@ -708,6 +708,7 @@ def validate_date_format(date):
 
     try:
         tmp_date =  datetime.datetime.strptime(date, "%Y-%m-%d")
+        tmp_date += datetime.timedelta(days=1)
     except ValueError:
         try:
             tmp_date = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M")

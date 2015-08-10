@@ -3263,7 +3263,7 @@ def get_loan_rule_names():
 def add_loan_rule(name, code, loan_period, holdable, homepickup, renewable):
     run_sql("""
             INSERT INTO crcLOANRULES(name, code, loan_period, holdable, homepickup, renewable)
-            VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s')
+            VALUES('%s', '%s', '%s', '%s', '%s', '%s')
     """ % (name, code, loan_period, holdable, homepickup, renewable))
 
 def delete_loan_rule(id):

@@ -7602,10 +7602,12 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
         out += load_menu(ln)
 
-        (borrower_id, ccid, name, email, phone, address, mailbox) = borrower
+        (borrower_id, ccid, name, email, phone, address, mailbox, p_id) = borrower
 
         display_id = ccid
         id_string = "UID"
+
+        patron_type = db.get_patron_type_name(p_id)
 
         out += """
             <style type="text/css"> @import url("/img/tablesorter.css"); </style>
@@ -7656,7 +7658,8 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                   _("Address"), address,
                   _("Mailbox"), mailbox,
                   _("Email"), email,
-                  _("Phone"), phone)
+                  _("Phone"), phone),
+                  _("Patron type"), patron_type),
 
         out += """
         <br />

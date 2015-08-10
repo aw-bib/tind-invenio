@@ -1728,29 +1728,42 @@ def get_borrower_details(borrower_id):
     borrower_id: identify the borrower. It is also the primary key of
                  the table crcBORROWER.
     """
-    res =  run_sql("""SELECT id, ccid, name, email, phone, address, mailbox
-                        FROM crcBORROWER
-                       WHERE id=%s""", (borrower_id, ))
+    res = run_sql("""SELECT b.id, b.ccid, b.name, b.email, b.phone, b.address, b.mailbox, p_b.patrontype_id
+                     FROM crcBORROWER b
+                     LEFT JOIN crcPATRONTYPE_BORROWER p_b ON b.id = p_b.borrower_id
+                     WHERE b.id=%s""", (borrower_id, ))
     if res:
         return res[0]
     else:
         return None
 
-def update_borrower_info(borrower_id, name, email, phone, address, mailbox):
+def clean_data(data):
+    final_res = list(data)
+    for i in range(0, len(final_res)):
+        if isinstance(final_res[i], str):
+            final_res[i] = final_res[i].replace(",", " ")
+    return final_res
+
+
+def update_borrower_info(borrower_id, name, email, phone, address, mailbox, p_id):
     """
     Update borrower info.
 
     borrower_id: identify the borrower. It is also the primary key of
                  the table crcBORROWER.
     """
-    return int(run_sql("""UPDATE crcBORROWER
+    run_sql("""UPDATE crcBORROWER
                              set name=%s,
                                  email=%s,
                                  phone=%s,
                                  address=%s,
                                  mailbox=%s
                           WHERE  id=%s""",
-                       (name, email, phone, address, mailbox, borrower_id)))
+                       (name, email, phone, address, mailbox, borrower_id))
+    run_sql("""UPDATE crcPATRONTYPE_BORROWER
+                  SET patrontype_id=%s
+                WHERE borrower_id=%s
+            """ % (p_id, borrower_id))
 
 def get_borrower_data(borrower_id):
     """

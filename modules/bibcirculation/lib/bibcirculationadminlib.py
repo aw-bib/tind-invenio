@@ -3530,11 +3530,12 @@ def update_borrower_info_step1(req, borrower_id, ln=CFG_SITE_LANG):
     _ = gettext_set_language(ln)
 
     borrower_details = db.get_borrower_details(borrower_id)
+    patron_types = db.get_patron_types()
 
     tup_infos = (borrower_details[0], borrower_details[2], borrower_details[3],
-                 borrower_details[4], borrower_details[5], borrower_details[6])
+                 borrower_details[4], borrower_details[5], borrower_details[6], borrower_details[7])
 
-    body = bc_templates.tmpl_update_borrower_info_step1(tup_infos=tup_infos,
+    body = bc_templates.tmpl_update_borrower_info_step1(patron_types=patron_types, tup_infos=tup_infos,
                                                         ln=ln)
 
     return page(title=_("Update borrower information"),
@@ -3546,7 +3547,7 @@ def update_borrower_info_step1(req, borrower_id, ln=CFG_SITE_LANG):
                 lastupdated=__lastupdated__)
 
 def update_borrower_info_step2(req, borrower_id, name, email, phone, address,
-                               mailbox, ln=CFG_SITE_LANG):
+                               mailbox, p_id, ln=CFG_SITE_LANG):
     """
     Update the borrower's information.
     """
@@ -3563,6 +3564,9 @@ def update_borrower_info_step2(req, borrower_id, name, email, phone, address,
     if name == '':
         infos.append(_("Please, insert a name"))
 
+    if not p_id:
+        infos.append(_("Please select a patron type"))
+
     if email == '':
         infos.append(_("Please, insert a valid email address"))
     else:
@@ -3571,7 +3575,7 @@ def update_borrower_info_step2(req, borrower_id, name, email, phone, address,
             infos.append(_("There is already a borrower using the following email:")
                          + " <strong>%s</strong>" % (email))
 
-    tup_infos = (borrower_id, name, email, phone, address, mailbox)
+    tup_infos = (borrower_id, name, email, phone, address, mailbox, p_id)
 
     navtrail_previous_links = '<a class="navtrail" ' \
                               'href="%s/help/admin">Admin Area' \
@@ -3582,7 +3586,7 @@ def update_borrower_info_step2(req, borrower_id, name, email, phone, address,
                                                         infos=infos, ln=ln)
     else:
         db.update_borrower_info(borrower_id, name, email,
-                                phone, address, mailbox)
+                                phone, address, mailbox, p_id)
 
         return redirect_to_url(req,
             '%s/admin2/bibcirculation/get_borrower_details?ln=%s&borrower_id=%s' \

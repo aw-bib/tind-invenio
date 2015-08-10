@@ -8936,12 +8936,12 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
         return out
 
-    def tmpl_update_borrower_info_step1(self, tup_infos, infos=None,
+    def tmpl_update_borrower_info_step1(self, patron_types, tup_infos, infos=None,
                                         ln=CFG_SITE_LANG):
 
         _ = gettext_set_language(ln)
 
-        (borrower_id, name, email, phone, address, mailbox) = tup_infos
+        (borrower_id, name, email, phone, address, mailbox, p_id) = tup_infos
 
         display_id = borrower_id
         id_string = _("UID")
@@ -9006,6 +9006,33 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                         <input type=hidden name=borrower_id value="%s">
                     </td>
                 </tr>
+                <tr>
+                    <td width="70">%s</td>
+                    <td class="bibcirccontent">
+                        <select name="p_id">
+                """ % (CFG_SITE_URL, _("Borrower information"),
+                       id_string, display_id,
+                       _("Name"), name,
+                       _("Address"), address,
+                       _("Mailbox"), mailbox,
+                       _("Email"), email,
+                       _("Phone"), phone,
+                       borrower_id,
+                       _("Patron type"))
+        for id, patrontype in patron_types:
+            if id == int(p_id):
+                out += """
+                            <option selected="selected" value="%s">%s</option>
+                """ % (id, patrontype)
+            else:
+                out += """
+                            <option value="%s">%s</option>
+                """ % (id, patrontype)
+
+        out += """
+                        </select>
+                    </td>
+                </tr>
 
                 </table>
                 <br />
@@ -9022,15 +9049,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                 <br />
                 </form>
                 </div>
-                """ % (CFG_SITE_URL, _("Borrower information"),
-                       id_string, display_id,
-                       _("Name"), name,
-                       _("Address"), address,
-                       _("Mailbox"), mailbox,
-                       _("Email"), email,
-                       _("Phone"), phone,
-                       borrower_id,
-                       _("Back"), _("Continue"))
+                """ % (_("Back"), _("Continue"))
 
 
         return out

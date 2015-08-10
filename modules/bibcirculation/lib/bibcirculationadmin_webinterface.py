@@ -867,7 +867,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         """http://cds.cern.ch/admin2/bibcirculation/update_borrower_info_step2"""
         argd = wash_urlargd(form, {'borrower_id': (int, None), 'name': (str, ''),
             'email': (str, ''), 'phone': (str, ''), 'address': (str, ''),
-            'mailbox': (str, ''), 'ln': (str, "en")})
+            'mailbox': (str, ''), 'p_id': (int, None), 'ln': (str, "en")})
 
         name = argd['name']
         email = argd['email']
@@ -875,6 +875,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         address = argd['address']
         mailbox = argd['mailbox']
         borrower_id = argd['borrower_id']
+        p_id = argd['p_id']
         ln = argd['ln']
 
         name = name.strip()
@@ -884,7 +885,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         mailbox = mailbox.strip()
 
         return bal.update_borrower_info_step2(req, borrower_id, name, email, phone, address,
-                                              mailbox, ln)
+                                              mailbox, p_id, ln)
 
 
     def get_borrower_requests_details(self, req, form):

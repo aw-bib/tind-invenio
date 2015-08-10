@@ -836,7 +836,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         """http://cds.cern.ch/admin2/bibcirculation/add_new_borrower_step2"""
         argd = wash_urlargd(form, {'name': (str, ''), 'email': (str, ''),
             'phone': (str, ''), 'address': (str, ''), 'mailbox': (str, ''),
-            'notes': (str, ''), 'p_id': (int, None), ln': (str, "en")})
+            'notes': (str, ''), 'p_id': (int, None), 'ln': (str, "en")})
         name = argd['name']
         email = argd['email']
         phone = argd['phone']

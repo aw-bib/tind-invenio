@@ -7481,7 +7481,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
             out += """
                      <td>%s</td>
                      <td>%s</td>
-                     """ % (item_type, nb_requests)
+                     """ % (item_type or '-', nb_requests)
 
             if not record_is_periodical:
                 out += """
@@ -7564,7 +7564,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                          <td>%s</td>
                      </tr>
                      """ % (barcode, status, due_date, library_link, location,
-                            item_type, nb_requests, collection or '-',
+                            item_type or '-', nb_requests, collection or '-',
                             description or '-')
 
         out += """ </tbody>

@@ -8769,7 +8769,8 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                        _("Email"), email,
                        _("Phone"), phone,
                        _("Address"), address,
-                       _("Mailbox"), mailbox,)
+                       _("Mailbox"), mailbox,
+                       _("Patron type"))
 
         for id, patrontype in patron_types:
             if id == p_id:

@@ -983,14 +983,15 @@ def get_last_loan():
     Get the recid, the borrower_id and the due date of
     the last loan who was registered on the crcLOAN table.
     """
-
     res = run_sql("""SELECT id_bibrec,
+                            barcode,
                             id_crcBORROWER,
-                            DATE_FORMAT(due_date, '%Y-%m-%d')
+                            DATE_FORMAT(due_date, '%Y-%m-%d %H:%i')
                      FROM   crcLOAN ORDER BY id DESC LIMIT 1""")
-
     if res:
-        return res[0]
+        templist = list(res[0])
+        templist[3] = templist[3].replace(' 00:00', '')
+        return tuple(templist)
     else:
         return None
 

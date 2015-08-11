@@ -1265,7 +1265,7 @@ def place_new_request_step3(req, barcode, recid, user_info,
 
     if not period_to or validate_date_format(period_to) is False:
         infos.append(_("The period of interest %(x_strong_tag_open)sTo: %(x_date)s%(x_strong_tag_close)s is not a valid date or date format") % {'x_date': period_to, 'x_strong_tag_open': '<strong>', 'x_strong_tag_close': '</strong>'})
-        
+
     if not loan_rule:
         infos.append(_('%(x_strong_tag_open)sError:%(x_strong_tag_close)s This patron does not have permission to loan this item.' % {'x_strong_tag_open': '<strong>', 'x_strong_tag_close': '</strong>'}))
 

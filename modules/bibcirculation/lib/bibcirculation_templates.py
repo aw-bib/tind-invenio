@@ -9857,11 +9857,11 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                    publisher, year, edition, isbn)
 
             for (borrower_id, ccid, name, email,
-                 phone, address, mailbox) in result:
+                 phone, address, mailbox, p_id) in result:
                 out += """
-                       <option value ='%s,%s,%s,%s,%s,%s,%s'>%s
+                       <option value ='%s,%s,%s,%s,%s,%s,%s,%s'>%s
                        """ % (borrower_id, ccid, name, email, phone,
-                              address, mailbox, name)
+                              address, mailbox, p_id, name)
 
             out += """
                     </select>
@@ -9925,10 +9925,11 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
         (title, authors, place, publisher, year, edition, isbn) = book_info
 
-        (borrower_id, ccid, name, email, phone, address, mailbox) = user_info
+        (borrower_id, ccid, name, email, phone, address, mailbox, p_id) = user_info
 
         display_id = ccid
         id_string = _("UID")
+        patron_type = db.get_patron_type_name(p_id)
 
         (budget_code, period_of_interest_from, period_of_interest_to,
          additional_comments, only_edition)= request_details
@@ -10102,7 +10103,8 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                              _("Address"), address,
                              _("Mailbox"), mailbox,
                              _("Email"), email,
-                             _("Phone"), phone)
+                             _("Phone"), phone,
+                             _("Patron type"), patron_type)
 
         out += """<br />
                   <table class="bibcirctable">

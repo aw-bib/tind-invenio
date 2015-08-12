@@ -42,7 +42,6 @@ from invenio.bibedit_utils import cache_exists, cache_expired, \
     get_marcxml_of_revision_id
 from invenio.htmlutils import remove_html_markup
 from invenio.bibrecord import create_record, record_xml_output, record_add_field, \
-                              record_order_subfields, \
                               record_extract_dois
 from invenio.bibedit_config import CFG_BIBEDIT_TO_MERGE_SUFFIX
 
@@ -412,7 +411,6 @@ def _get_record(recid, uid, result, fresh_record=False):
             if not latest_record_revision(recid, record_revision):
                 result['cacheOutdated'] = True
         result['resultCode'], result['resultText'], result['cacheDirty'], result['cacheMTime'] = 0, 'Record OK', cache_dirty, mtime
-    record_order_subfields(record)
     return record
 
 def _get_record_slave(recid, result, mode=None, uid=None):
@@ -459,7 +457,6 @@ def _get_record_slave(recid, result, mode=None, uid=None):
 
     else:
         result['resultCode'], result['resultText'] = 1, 'Invalid record mode for record2'
-    record_order_subfields(record)
     return record
 
 def _field_info(fieldIdCode):

@@ -413,15 +413,12 @@ class Template:
         for (barcode, library, collection, location, description,
              item_type, status, due_date) in holdings_info:
 
-            if loan_period == 'Reference':
-                request_button = '-'
-            else:
-                request_button = """
-                <input type=button
-                onClick="location.href='%s/%s/%s/holdings/request?barcode=%s&ln=%s'"
-                value='%s' class="bibcircbutton" onmouseover="this.className='bibcircbuttonover'"
-                onmouseout="this.className='bibcircbutton'">
-                """ % (CFG_SITE_URL, CFG_SITE_RECORD, recid, barcode, ln, _("Request"))
+            request_button = """
+            <input type=button
+            onClick="location.href='%s/%s/%s/holdings/request?barcode=%s&ln=%s'"
+            value='%s' class="bibcircbutton" onmouseover="this.className='bibcircbuttonover'"
+            onmouseout="this.className='bibcircbutton'">
+            """ % (CFG_SITE_URL, CFG_SITE_RECORD, recid, barcode, ln, _("Request"))
 
             if status in (CFG_BIBCIRCULATION_ITEM_STATUS_ON_ORDER,
                           'claimed'):

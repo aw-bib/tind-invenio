@@ -407,11 +407,11 @@ class Template:
                     </thead>
                     <tbody>
                 """ % (_("Options"), _("Library"), _("Collection"),
-                       _("Location"), _("Description"), _("Loan period"),
+                       _("Location"), _("Description"), _("Item type"),
                        _("Status"), _("Due date"), _("Barcode"))
 
         for (barcode, library, collection, location, description,
-             loan_period, status, due_date) in holdings_info:
+             item_type, status, due_date) in holdings_info:
 
             if loan_period == 'Reference':
                 request_button = '-'
@@ -443,7 +443,7 @@ class Template:
                     <td align='center'>%s</td>
                 </tr>
                 """ % (request_button, library, collection or '-', location,
-                       description, loan_period, status, due_date or '-', barcode)
+                       description, item_type or '-', status, due_date or '-', barcode)
 
         if auth_code != 0:
             bibcirc_link = ''

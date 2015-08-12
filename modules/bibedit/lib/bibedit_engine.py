@@ -92,7 +92,7 @@ from invenio.bibrecord import create_record, print_rec, record_add_field, \
     record_modify_controlfield, record_get_field_values, \
     record_get_subfields, record_get_field_instances, record_add_fields, \
     record_strip_empty_fields, record_strip_empty_volatile_subfields, \
-    record_strip_controlfields, record_order_subfields, \
+    record_strip_controlfields, \
     field_add_subfield, field_get_subfield_values, record_extract_dois
 
 from invenio.config import CFG_BIBEDIT_PROTECTED_FIELDS, CFG_CERN_SITE, \
@@ -343,7 +343,6 @@ def get_marcxml_of_revision_id(recid, revid):
             # now we create a record object from this xml and sort fields and subfields
             # and return marcxml
             rec = create_record(xml)[0]
-            record_order_subfields(rec)
             marcxml = record_xml_output(rec, order_fn="_order_by_tags")
     return marcxml
 
@@ -616,8 +615,6 @@ def perform_request_holdingpen(request_type, recId, changeId=None):
                     holdingPenRecord = merged_record
 
 
-            # order subfields alphabetically
-            record_order_subfields(holdingPenRecord)
             # databaseRecord = get_record(hpContent[1])
             response['record'] = holdingPenRecord
             response['changeset_number'] = changeId

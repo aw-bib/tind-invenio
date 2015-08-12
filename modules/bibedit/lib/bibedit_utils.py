@@ -54,7 +54,7 @@ from invenio.bibedit_dblayer import (get_record_last_modification_date,
 from invenio.bibrecord import create_record, create_records, \
     record_get_field_value, record_has_field, record_xml_output, \
     record_strip_empty_fields, record_strip_empty_volatile_subfields, \
-    record_order_subfields, record_get_field_instances, \
+    record_get_field_instances, \
     record_add_field, field_get_subfield_codes, field_add_subfield, \
     field_get_subfield_values, record_delete_fields, record_add_fields, \
     record_get_field_values, print_rec, record_modify_subfield, \
@@ -260,9 +260,6 @@ def create_cache(recid, uid, record='', cache_dirty=False, pending_changes=[],
 
     assert_undo_redo_lists_correctness(undo_list, redo_list)
 
-    # Order subfields alphabetically after loading the record
-    record_order_subfields(record)
-
     data = [cache_dirty, record_revision, record, pending_changes,
             disabled_hp_changes, undo_list, redo_list]
     update_cache(recid, uid, data)
@@ -351,9 +348,6 @@ def save_xml_record(recid, uid, xml_record='', to_upload=True, to_merge=False,
     # clean the record from unfilled volatile fields
     record_strip_empty_volatile_subfields(record)
     record_strip_empty_fields(record)
-
-    # order subfields alphabetically before saving the record
-    record_order_subfields(record)
 
     xml_to_write = wash_for_xml(record_xml_output(record))
 
@@ -837,7 +831,6 @@ def merge_record_with_template(rec, template_name, is_hp_record=False):
                             field_add_subfield(field_instance, code,
                                                field_get_subfield_values(template_field_instance,
                                                code)[0])
-    record_order_subfields(rec)
     return rec
 
 #################### Reference extraction ####################

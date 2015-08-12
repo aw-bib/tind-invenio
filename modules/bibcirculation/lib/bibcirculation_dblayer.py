@@ -807,10 +807,10 @@ def get_all_loans(limit=None):
               FROM crcLOAN l, crcBORROWER bor, crcITEM it
              WHERE l.id_crcBORROWER = bor.id
                AND l.barcode = it.barcode
-               AND l.status = %s
+               AND l.status = '{0}'
           ORDER BY 5 DESC
-             %s
-        """, (CFG_BIBCIRCULATION_LOAN_STATUS_ON_LOAN, "LIMIT 0,%s".format(limit) if limit else ""))
+             {1}
+        """.format(CFG_BIBCIRCULATION_LOAN_STATUS_ON_LOAN, 'LIMIT %s'.format(limit) if limit else ''))
 
 
 

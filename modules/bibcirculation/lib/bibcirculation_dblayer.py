@@ -787,32 +787,32 @@ def get_loan_status(loan_id):
     else:
         return None
 
-def get_all_loans(limit):
+def get_all_loans(limit=None):
     """
     Get all loans.
     """
 
-    res = run_sql("""
-        SELECT bor.id,
-               bor.name,
-               it.id_bibrec,
-               l.barcode,
-               DATE_FORMAT(l.loaned_on,'%%d-%%m-%%Y %%T'),
-               DATE_FORMAT(l.due_date,'%%d-%%m-%%Y'),
-               l.number_of_renewals,
-               l.overdue_letter_number,
-               DATE_FORMAT(l.overdue_letter_date,'%%d-%%m-%%Y'),
-               l.notes,
-               l.id
-          FROM crcLOAN l, crcBORROWER bor, crcITEM it
-         WHERE l.id_crcBORROWER = bor.id
-           AND l.barcode = it.barcode
-           AND l.status = %s
-      ORDER BY 5 DESC
-         LIMIT 0,%s
-    """, (CFG_BIBCIRCULATION_LOAN_STATUS_ON_LOAN, limit))
+    return run_sql("""
+            SELECT bor.id,
+                   bor.name,
+                   it.id_bibrec,
+                   l.barcode,
+                   DATE_FORMAT(l.loaned_on,'%%d-%%m-%%Y %%T'),
+                   DATE_FORMAT(l.due_date,'%%d-%%m-%%Y'),
+                   l.number_of_renewals,
+                   l.overdue_letter_number,
+                   DATE_FORMAT(l.overdue_letter_date,'%%d-%%m-%%Y'),
+                   l.notes,
+                   l.id
+              FROM crcLOAN l, crcBORROWER bor, crcITEM it
+             WHERE l.id_crcBORROWER = bor.id
+               AND l.barcode = it.barcode
+               AND l.status = %s
+          ORDER BY 5 DESC
+             %s
+        """, (CFG_BIBCIRCULATION_LOAN_STATUS_ON_LOAN, "LIMIT 0,%s".format(limit) if limit else ""))
 
-    return res
+
 
 def get_expired_loans_with_parameters(sort= None, libraries=(), sort_by=-1, sort_dir="asc"):
     """

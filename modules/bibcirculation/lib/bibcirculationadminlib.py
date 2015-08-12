@@ -702,7 +702,7 @@ def register_new_loan(req, barcode, borrower_id,
             db.update_request_barcode(barcode, request_id)
             update_requests_statuses(barcode)
 
-            result = db.get_all_loans(20)
+            result = db.get_all_loans()
 
             infos.append(_('A new loan has been registered with success.'))
 
@@ -1900,7 +1900,7 @@ def create_new_loan_step2(req, borrower_id, barcode, notes, ln=CFG_SITE_LANG):
         tag_all_requests_as_done(barcode, borrower_id)
         db.update_item_status(CFG_BIBCIRCULATION_ITEM_STATUS_ON_LOAN, barcode)
         update_requests_statuses(barcode)
-        result = db.get_all_loans(20)
+        result = db.get_all_loans()
         title = _("Current loans")
         infos.append(_('A new loan has been registered with success.'))
         body = bc_templates.tmpl_all_loans(result=result, infos=infos, ln=ln)
@@ -1978,7 +1978,7 @@ def all_loans(req, msg=None, ln=CFG_SITE_LANG):
     if msg == 'ok':
         infos.append(_('A new loan has been registered with success.'))
 
-    result = db.get_all_loans(20)
+    result = db.get_all_loans()
 
     navtrail_previous_links = '<a class="navtrail" ' \
                     'href="%s/help/admin">Admin Area' \

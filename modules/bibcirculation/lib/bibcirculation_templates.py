@@ -10721,11 +10721,11 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                    author, report_number, volume, issue, page, year, issn)
 
             for (borrower_id, ccid, name, email,
-                 phone, address, mailbox) in result:
+                 phone, address, mailbox, p_id) in result:
                 out += """
-                       <option value ='%s,%s,%s,%s,%s,%s,%s'>%s
+                       <option value ='%s,%s,%s,%s,%s,%s,%s,%s'>%s
                        """ % (borrower_id, ccid, name, email,
-                              phone, address, mailbox, name)
+                              phone, address, mailbox, p_id, name)
 
             out += """
                     </select>

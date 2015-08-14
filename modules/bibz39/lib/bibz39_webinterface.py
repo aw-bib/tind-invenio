@@ -22,7 +22,8 @@
 import cgi
 
 from PyZ3950 import zoom, zmarc
-from invenio.bibrecord import create_record, record_add_field, record_xml_output
+from invenio.bibrecord import create_record, record_add_field, record_xml_output,\
+    record_delete_field
 
 
 try:
@@ -75,6 +76,7 @@ class WebInterfacebibz39Pages(WebInterfaceDirectory):
             uid = getUid(req)
             new_recid = reserve_record_id()
             record = create_record(argd["marcxml"])[0]
+            record_delete_field(record, '001')
             record_add_field(record, '001',
                              controlfield_value=str(new_recid))
             create_cache(new_recid, uid, record, True)
@@ -206,7 +208,6 @@ class WebInterfacebibz39Pages(WebInterfaceDirectory):
     def __call__(self, req, form):
         """Redirect calls without final slash."""
         redirect_to_url(req, '%s/admin2/bibz39/' % CFG_SITE_SECURE_URL)
-
 
     def generate_request_form(self, argd):
         html = ""

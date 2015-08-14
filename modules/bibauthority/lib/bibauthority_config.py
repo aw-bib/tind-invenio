@@ -119,8 +119,8 @@ CFG_BIBAUTHORITY_CONTROLLED_FIELDS_AUTHORITY = {
     '530__a': 'UNIFORM',
     '550__a': 'SUBJECT',
     '551__a': 'GEOGRAPHICAL',
-    '909C1u': 'INSTITUTE', # used in bfe_affiliation
-    '920__v': 'INSTITUTE', # used by FZ Juelich demo data
+    '909C1u': 'INSTITUTE',  # used in bfe_affiliation
+    '920__v': 'INSTITUTE',  # used by FZ Juelich demo data
 }
 
 # constants for CFG_BIBEDIT_AUTOSUGGEST_TAGS
@@ -180,34 +180,39 @@ CFG_BIBAUTHORITY_AUTOSUGGEST_CONFIG = {
 CFG_BIBAUTHORITY_AUTHORITY_SUBFIELDS_TO_INDEX = {
     'AUTHOR': [
         '100__a',  # Personal Name (NR, NR)
-        '100__d',  #Year of birth or other dates (NR, NR)
-        '100__q',  #Fuller form of name (NR, NR)
+        '100__d',  # Year of birth or other dates (NR, NR)
+        '100__q',  # Fuller form of name (NR, NR)
         '400__a',  #(See From Tracing) (R, NR)
         '400__d',  #(See From Tracing) (R, NR)
         '400__q',  #(See From Tracing) (R, NR)
     ],
     'CORPORATE': [
         '110__a',  # (NR, NR)
-        '410__a',  #(R, NR)
+        '410__a',  # (R, NR)
     ],
     'MEETING': [
         '111__a',  # (NR, NR)
-        '111__f',  #(NR, NR)
-        '111__l',  #(NR, NR)
+        '111__f',  # (NR, NR)
+        '111__l',  # (NR, NR)
         '411__a',  #(R, NR)
     ],
     'UNIFORM': [
         '130__a',  # (NR, NR)
-        '430__a',  #(R, NR)
+        '430__a',  # (R, NR)
     ],
     'SUBJECT': [
         '150__a',  # (NR, NR)
-        '450__a',  #(R, NR)
+        '450__a',  # (R, NR)
     ],
     'GEOGRAPHICAL': [
         '151__a',  # (NR, NR)
-        '451__a',  #(R, NR)
+        '451__a',  # (R, NR)
     ],
 }
 
 CFG_AUTHORITY_COPY_NATIVE_FIELD = True
+
+CFG_ARBITRARY_AUTOSUGGEST_FIELD = {
+    "962__t": {"main": {"245": "t"},
+               "sub": [{"001": "w"}]}
+}

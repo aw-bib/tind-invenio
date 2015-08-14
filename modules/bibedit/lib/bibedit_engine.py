@@ -1336,7 +1336,7 @@ def perform_request_autocomplete(request_type, recid, uid, data):
                     new_suggest_vals.append(sugg)
             from invenio.bibauthority_engine import process_authority_autosuggest
 
-            authority_results = process_authority_autosuggest(searchby, fulltag[:3])
+            authority_results = process_authority_autosuggest(searchby, fulltag)
             for result in authority_results:
                 new_suggest_vals.append(result)
             response['autosuggest'] = new_suggest_vals

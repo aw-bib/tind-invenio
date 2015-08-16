@@ -68,7 +68,7 @@ class WebInterfacebibz39Pages(WebInterfaceDirectory):
             'search': (str, ''),
             'marcxml': (str, ''),
             'server': (list, []),
-            'search_type': (str, ""),
+            'search_type': (str, ''),
         })
 
         if argd['marcxml']:
@@ -102,10 +102,9 @@ class WebInterfacebibz39Pages(WebInterfaceDirectory):
                                            password=CFG_Z39_SERVER[server].get("password", None))
                     conn.databaseName = CFG_Z39_SERVER[server]["databasename"]
                     conn.preferredRecordSyntax = CFG_Z39_SERVER[server]["preferredRecordSyntax"]
-                    query = zoom.Query('CCL', '{0}={1}'.format(
-                        self._request_type_dict[argd["search_type"]],
-                        argd["search"].replace("-", "") if argd["search_type"] == "ISBN" else argd[
-                            "search"]))
+                    value = argd["search"].replace("-", "") if argd["search_type"] == "ISBN" else argd["search"]
+                    query = zoom.Query('CCL', u'{0}="{1}"'.format(
+                        self._request_type_dict[argd["search_type"]], value))
                     body_content += ""
                     try:
                         server_answer = conn.search(query)

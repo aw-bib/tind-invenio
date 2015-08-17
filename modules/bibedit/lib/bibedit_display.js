@@ -105,7 +105,6 @@ function generateAdvancedControlFieldGUI(list_of_fields, current_value) { 
                 title_comp = sub_list[1];
             }
             sub_list = sub_list[0];
-            form_html += '<tr><td><hr></td><td><hr></td></tr>';
             for(var nb_subfields=0; nb_subfields<sub_list.length; nb_subfields++) {
                 value = "";
                 maxlength_value = "";
@@ -125,7 +124,6 @@ function generateAdvancedControlFieldGUI(list_of_fields, current_value) { 
                 }
                 form_html += "<tr><td><label for='f" + nb_subfields +"_"+nb_fields + "'>" + label + "</label></td><td><input id='f"+ nb_subfields +"_"+nb_fields +"' type='text' name='f"+ nb_subfields +"_"+nb_fields +"' "+value+" "+maxlength_value+" "+size_value+" " + title_value +"'></td></tr>";
             }
-            form_html += '<tr><td><hr></td><td><hr></td></tr>';
         } else {
             if (list_of_fields[nb_fields][0]!= undefined) {
                 label = list_of_fields[nb_fields][0];
@@ -147,6 +145,40 @@ function generateAdvancedControlFieldGUI(list_of_fields, current_value) { 
 }
 
 
+function define_008_start () {
+
+    var leader = $("#content_000_0")
+    if((leader===undefined)||(leader.length===0))
+    {
+        return [[['Date entered on file',6],["Type of date/Publication status",1],["Date 1",4],["Date 2",4], ["Place of publication, production, or execution",3]],""]
+    }
+    var leader = leader[0].innerHTML;
+    var typel = leader[6];
+    var bvl = leader[7];
+    if(typel=="z") {
+            return [[],""]
+    } else {
+            return [[['Date entered on file',6],["Type of date/Publication status",1],["Date 1",4],["Date 2",4], ["Place of publication, production, or execution",3]],""]
+    }
+}
+
+function define_008_end () {
+
+    var leader = $("#content_000_0")
+    if((leader===undefined)||(leader.length===0))
+    {
+        return [[["Language",3],["Modified record",1], ["Cataloging source",1]], ""]
+    }
+    var leader = leader[0].innerHTML;
+    var typel = leader[6];
+    var bvl = leader[7];
+    if(typel == "z") {
+            return [[], ""]
+    } else {
+            return [[["Language",3],["Modified record",1], ["Cataloging source",1]], ""]
+    }
+}
+
 function define_008 () {
 
     var leader = $("#content_000_0")
@@ -163,9 +195,13 @@ function define_008 () {
      "MU": [["Form of composition",2],["Format of music",1],["Music parts",1],["Target audience",1],["Form of item",1],["Accompanying matter",6],["Literary text for sound recordings",2], ["Undefined",1], ["Transposition and arrangement",1], ["Undefined",1]],
      "CR": [["Frequency",1],["Regularity",1],["Undefined",1],["Type of continuing resource",1],["Form of original item",1],["Form of item",1],["Nature of entire work",1],["Nature of contents",3],["Government publication",1],["Conference publication",1],["Undefined",3],["Original alphabet or script of title",1], ["Entry convention",1]],
      "VM": [["Running time for motion pictures and videorecordings",3],["Undefined",1],["Target audience",1],["Undefined",5],["Government publication",1], ["Form of item",1], ["Undefined",3], ["Type of visual material",1], ["Technique",1]],
-     "MX": [["Undefined",5],["Form of item",1],["Undefined",1]]}
+     "MX": [["Undefined",5],["Form of item",1],["Undefined",1]],
+     "AU": [["Data entered on file", 6], ["Direct or indirect geographic subdivision", 1], ["Romanization scheme",1], ["Language of catalog",1],["Kind of record", 1],["Descriptive cataloging rules",1], ["Subject heading system/thesaurus",1], ["Type of series",1], ["Numbered or unnumbered series",1], ["Heading use-main or added entry",1], ["Heading use-subject added entry",1], ["Heading use-series added entry",1], ["Type of subject subdivision", 1], ["Undefined character positions",10], ["Type of government agency",1], ["Reference evaluation",1], ["Undefined character position", 1], ["Record update in process",1], ["Undifferentiated personal name",1], ["Level of establishment",1], ["Undefined character positions",4], ["Modified record",1], ["Cataloguing source",1]]}
 
      var choice = "";
+     if(typel==="z") { 
+        return [MARC_008["AU"], "Authority"]
+     }
      if(typel==="a")
      {
         if(["a","c","d","m"].indexOf(bvl)>-1) {
@@ -261,7 +297,7 @@ function createPopUp(current_value, id, checkdate) {
 
     var tags_list = {"000":[["Record length",5],["Record status",1],["Type of record",1],["Bibliographic level",1],["Type of control",1],["Character coding scheme",1],["Indicator count",1],
     ["Subfield code count",1],["Base address of data",5],["Encoding level",1],["Descriptive cataloging form",1],["Multipart resource record level",1], ["Entry map",4]],
-    "008": [['Date entered on file',6],["Type of date/Publication status",1],["Date 1",4],["Date 2",4], ["Place of publication, production, or execution",3],define_008,["Language",3],["Modified record",1], ["Cataloging source",1]]};
+    "008": [define_008_start , define_008, define_008_end]};
 
     var array_form = tags_list[id.split("_")[1]];
 
@@ -270,9 +306,6 @@ function createPopUp(current_value, id, checkdate) {
     if(checkdate) {
         if (!regex.test(date_field))
         {
-            console.log(date_field);
-            console.log(parseInt(date_field));
-            console.log(parseInt(date_field).toString().length);
             createReq({recID: gRecID, requestType: 'getRecordCreationDate'},function(json) {
                 current_value = json["creation_date"] +  current_value.slice(6);
                 advGenControlFieldGUI(array_form, current_value, id);
@@ -333,10 +366,8 @@ function createControlField(tag, field, fieldPosition) {
     if (!fieldIsProtected(tag)) {
         cellContentClass = '';
     }
-    console.log(gProtectedControlfield.indexOf(tag) )
     if (gProtectedControlfield.indexOf(tag) == -1) {
 
-        console.log("Up")
         if (gAdvancedGuiCf.indexOf(tag) > -1) {
             if(tag!="008") {
                 EditCode =' onclick="createPopUp($(\'#content_' + tag + '_0\')[0].innerHTML, this.id, false)" ';
@@ -421,6 +452,8 @@ function createRow(tag, ind1, ind2, subfieldCode, subfieldValue, fieldID,
         if (autosuggest === true) {
           i = gAUTOSUGGEST_TAGS.length + 1;
         }
+      } else { 
+        break;
       }
     }
     for (var i = 0, n = gAUTOCOMPLETE_TAGS.length; i < n; i++) {
@@ -541,8 +574,11 @@ function redrawFields(tag, skipAddFileds) {
     } else {
         // New tag. Determine previous sibling.
         var prevTag = getPreviousTag(tag);
-        var lastIndex = gRecord[prevTag].length - 1;
-        prevRowGroup = $('#rowGroup_' + prevTag + '_' + lastIndex);
+        if(prevTag!==0) {
+            var lastIndex = gRecord[prevTag].length - 1;
+            prevRowGroup = $('#rowGroup_' + prevTag + '_' + lastIndex);
+        }
+
     }
 
     // Redraw all fields and append to table.
@@ -559,7 +595,12 @@ function redrawFields(tag, skipAddFileds) {
                 result += createField(tag, fields[i], i);
             }
         }
-        prevRowGroup.after(result);
+        if(prevRowGroup!==undefined) { 
+            prevRowGroup.after(result);
+        } else { 
+            $('#rowGroup_001_0').before(result);
+        }
+
     }
 
     // Now redraw all the Holding Pen changes connected controls

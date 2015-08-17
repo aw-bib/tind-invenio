@@ -4084,12 +4084,12 @@ function onAutosuggest(event) {
   var mygrandparent = myparent.parentNode;
   var parentid = myparent.id;
   var value = mytarget.value;
-  var mylen = value.length;
   var replacement = ""; //used by autocomplete
   var tmpArray = mygrandparent.id.split('_');
   if(tmpArray.length === 4) {
     /*ids for autosuggest/autocomplete html elements*/
     autosuggest_id = 'autosuggest_' + tmpArray[1] + '_' + tmpArray[2] + '_' + tmpArray[3];
+
     param_tag = tmpArray[1] + '_' + tmpArray[2] + '_' + tmpArray[3];
     maintag = tmpArray[1], fieldPosition = tmpArray[2],
       subfieldIndex = tmpArray[3];
@@ -4100,6 +4100,7 @@ function onAutosuggest(event) {
     //check if this an autosuggest or autocomplete field.
     fullcode = getMARC(maintag, fieldPosition, subfieldIndex);
   } else {
+    // If the field is not already created it needs additional processing
     var idAdd = tmpArray[1];
     var idAddPos = tmpArray[2];
     maintag = $("#txtAddFieldTag_" + idAdd)[0].value;
@@ -4122,6 +4123,7 @@ function onAutosuggest(event) {
     param_tag = idAdd + "_" + idAddPos;
     fullcode = maintag+subtag1+subtag2+subfieldcode;
   }
+  console.log(autosuggest_id);
   var reqtype = ""; //autosuggest or autocomplete, according to tag..
   var i = 0;
   var n = 0;
@@ -4139,7 +4141,10 @@ function onAutosuggest(event) {
       if (reqtype == "autosuggest") {
         i = gAUTOSUGGEST_TAGS.length + 1;
       }
+    } else {
+        break;
     }
+
   }
   for (i=0;i<gAUTOCOMPLETE_TAGS.length;i++) {if (fullcode == gAUTOCOMPLETE_TAGS[i]) {reqtype = "autocomplete"}}
   if (fullcode == gKEYWORD_TAG) {reqtype = "autokeyword"}
@@ -4199,19 +4204,21 @@ function onAutosuggest(event) {
         if ((suggestions != null) && (suggestions.length > 0)) {
             /*put the suggestions in the div autosuggest_xxxx*/
             //make a nice box..
-            var myselb_count = 0;
-            var mysel_count = 0;
+            var knowledgeTable_count = 0;
+            var authorityTable_count = 0;
             var final_shape = ""
-            myselb = '<h3 class="bibeditscrollAreaTitle">Authorities</h3><table border="0" class="bibeditscrollTable"><tr><td><span class="bibeditscrollArea"><ul>';
-            mysel = '<h3 class="bibeditscrollAreaTitle">Knowledge base</h3><table border="0" class="bibeditscrollTable"><tr><td><span class="bibeditscrollArea"><ul>';
-            //create the select items..
+
+            // We create two tables, one for knowledge base result and another one for authority
+            knowledgeTable = '<h3 class="bibeditscrollAreaTitle">Authorities</h3><table border="0" class="bibeditscrollTable"><tr><td><span class="bibeditscrollArea"><ul>';
+            authorityTable = '<h3 class="bibeditscrollAreaTitle">Knowledge base</h3><table border="0" class="bibeditscrollTable"><tr><td><span class="bibeditscrollArea"><ul>';
+
             var finalText = "";
             var textSplited = "";
             for (var i=0, n=suggestions.length; i < n; i++) {
                if(typeof(suggestions[i])=="string")
                {
-                    mysel = mysel +'<li onClick="onAutosuggestSelect('+ i +',\''+ param_tag +'\');"><b>'+suggestions[i]+"</b></li>";
-                    mysel_count += 1;
+                    authorityTable = authorityTable +'<li onClick="onAutosuggestSelect('+ i +',\''+ param_tag +'\');"><b>'+suggestions[i]+"</b></li>";
+                    authorityTable_count += 1;
                } else {
                     textSplited = suggestions[i]["print"].split(";");
                     for(var part=0;part < textSplited.length; part++)
@@ -4222,24 +4229,22 @@ function onAutosuggest(event) {
                         finalText += textSplited[part];
                       }
                     }
-                    myselb = myselb +'<li onClick="onAutosuggestSelect('+ i +',\''+ param_tag +'\');">'+finalText+"</li>";
-                    myselb_count += 1;
+                    knowledgeTable = knowledgeTable +'<li onClick="onAutosuggestSelect('+ i +',\''+ param_tag +'\');">'+finalText+"</li>";
+                    knowledgeTable_count += 1;
                }
             }
-            mysel = mysel + "</ul></td></tr></table>";
-            myselb = myselb + "</ul></td></tr></table>";
-             //add a stylish close link in case the user does not find
-            //the value among the suggestions
-
-            if(mysel_count > 0) { 
-              final_shape += mysel;
+            authorityTable = authorityTable + "</ul></td></tr></table>";
+            knowledgeTable = knowledgeTable + "</ul></td></tr></table>";
+             
+            // If during the creationg process we realized that one of the table doesn't have an item inside we don't print it.
+            if(authorityTable_count > 0) { 
+              final_shape += authorityTable;
             }
-            if(myselb_count > 0) {
-              final_shape += myselb;
+            if(knowledgeTable_count > 0) {
+              final_shape += knowledgeTable;
             }
 
             final_shape += "<table border='0'><tr><td><form><input type='button' class='formbutton' value='Close' onClick='onAutosuggestSelect(\"-1\", \"" + param_tag + "\");'></form></td></tr></table>";
-
             autosugg_in = document.getElementById(autosuggest_id);
             if (autosugg_in != null) {autosugg_in.innerHTML = final_shape;}
          } else { //there were no suggestions

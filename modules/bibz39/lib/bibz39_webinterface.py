@@ -82,7 +82,7 @@ class WebInterfacebibz39Pages(WebInterfaceDirectory):
                                                                                 new_recid))
 
         body_content = ''
-        warnings = '<p class="error">'
+
         body_content += self.generate_request_form(argd)
 
         if "search" in argd and argd["search"] and 'search_type' in argd and argd["search_type"] in \
@@ -90,12 +90,13 @@ class WebInterfacebibz39Pages(WebInterfaceDirectory):
 
             conn = None
             list_of_record = []
-            try:
-                res = []
-                err = False
-                pro_err = False
-                for server in argd["server"]:
+            errors = {}
 
+            res = []
+            err = False
+            for server in argd["server"]:
+                try:
+                    errors[server] = {"internal": [],"remote": []}
                     conn = zoom.Connection(CFG_Z39_SERVER[server]["address"],
                                            CFG_Z39_SERVER[server]["port"],
                                            user=CFG_Z39_SERVER[server].get("user", None),
@@ -113,77 +114,90 @@ class WebInterfacebibz39Pages(WebInterfaceDirectory):
                             nb_to_browse = len(server_answer)
                         else:
                             nb_to_browse = 100
-                            warnings += "The server {0} returned too many results. {1}/{2} are printed.<br>".format(
-                                server, nb_to_browse, len(server_answer))
-                            pro_err = True
+                            errors[server]["remote"].append("The server {0} returned too many results. {1}/{2} are printed.".format(
+                                server, nb_to_browse, len(server_answer)))
                         for result in server_answer[0:nb_to_browse]:
                             res.append({"value": result, "provider": server})
                     except zoom.Bib1Err as e:
-                        body_content += "<h4>{0}</h4>".format(e)
+                        errors[server]["remote"].append("{0}".format(e))
                         err = True
                     conn.close()
-                if res:
-                    if pro_err:
-                        body_content += warnings + "</p>"
-                    body_content += "<table id='result_area' class='fullwidth  tablesorter'>"
-                    body_content += "<tr><th class='bibz39_titles_th' >Title</th><th class='bibz39_sources_th'>Authors</th><th>Publisher</th><th class='bibz39_sources_th'>Source</th><th><div class='bibz39_button_td'>View XML</div></th><th><div class='bibz39_button_td'>Import</div></th></tr>"
+                except Exception as e:
+                    register_exception()
+                    errors[server]["internal"].append("{0}".format(e))
+                    if conn:
+                        conn.close()
 
-                    for identifier, rec in enumerate(res):
-                        list_of_record.append(
-                            create_record(
-                                self.interpret_string(zmarc.MARC(
-                                    rec["value"].data, strict=0).toMARCXML()))[0])
-                        title = ''
-                        authors = ''
-                        publishers = ''
+            p_err = False
+            warnings = '<div class="error">'
+            for server in errors:
+                if errors[server]["internal"] or errors[server]["remote"]:
+                    warnings += "<b>{0}</b><ul>".format(server)
+                    for error in errors[server]["internal"]:
+                        warnings += "<li>(internal) {0}</li>".format(error)
+                    for error in errors[server]["remote"]:
+                        warnings += "<li>(remote) {0}</li>".format(error)
+                    warnings += "</ul>"
+                    p_err = True
+            if p_err:
+                body_content += "{0}</div>".format(warnings)
 
-                        if "100" in list_of_record[identifier]:
-                            for author in list_of_record[identifier]["100"]:
-                                for tag in author[0]:
-                                    if tag[0] == 'a':
-                                        if authors != "":
-                                            authors += " / " + tag[1].strip(",;.")
-                                        else:
-                                            authors += tag[1].strip(",;.") + " "
-                        if "700" in list_of_record[identifier]:
-                            for author in list_of_record[identifier]["700"]:
-                                for tag in author[0]:
-                                    if tag[0] == 'a':
-                                        if authors != "":
-                                            authors += " / " + tag[1].strip(",;.")
-                                        else:
-                                            authors += tag[1].strip(",;.") + " "
-                        if "260" in list_of_record[identifier]:
-                            for publisher in list_of_record[identifier]["260"][0][0]:
-                                publishers += publisher[1] + " "
-                        if "245" in list_of_record[identifier]:
-                            for title_constituant in list_of_record[identifier]["245"][0][0]:
-                                title += title_constituant[1] + " "
+            if res:
 
-                        body_content += "<tr><td><div class='bibz39_titles' onclick='showxml({6})'>{0}<div><td>{4}</td><td>{5}</td</td><td><div>{2}</div></td><td><div class='bibz39_button_td'>{3}</div></td><td><div class='bibz39_button_td'>{1}</div></td></tr>".format(
-                            title,
-                            '<form method="post" action="/admin2/bibz39/"><input type="hidden"  name="marcxml"  value="{0}"><input type="submit" value="Import" /></form>'.format(
-                                cgi.escape(record_xml_output(list_of_record[identifier])).replace(
-                                    "\"", "&quot;").replace("\'", "&quot;")),
-                            rec["provider"],
-                            '<button onclick="showxml({0})">View</button>'.format(identifier),
-                            authors, publishers, identifier)
-                    body_content += "</table>"
-                    body_content += '<script type="text/javascript">'
-                    body_content += "var gAllMarcXml= {"
-                    for i, rec in enumerate(list_of_record):
-                        body_content += "{0}:{1},".format(i, json.dumps(record_xml_output(rec)))
-                    body_content += "};"
-                    body_content += '</script>'
+                body_content += "<table id='result_area' class='fullwidth  tablesorter'>"
+                body_content += "<tr><th class='bibz39_titles_th' >Title</th><th class='bibz39_sources_th'>Authors</th><th>Publisher</th><th class='bibz39_sources_th'>Source</th><th><div class='bibz39_button_td'>View XML</div></th><th><div class='bibz39_button_td'>Import</div></th></tr>"
 
-                else:
-                    if not err:
-                        body_content += "<p class='bibz39_button_td spinning_wheel'> No result</p>"
-            except Exception as e:
-                if conn:
-                    conn.close()
-                body_content += "<h3>An error occured</h3><p>{0}</p>".format(e)
-                register_exception()
+                for identifier, rec in enumerate(res):
+                    list_of_record.append(
+                        create_record(
+                            self.interpret_string(zmarc.MARC(
+                                rec["value"].data, strict=0).toMARCXML()))[0])
+                    title = ''
+                    authors = ''
+                    publishers = ''
+
+                    if "100" in list_of_record[identifier]:
+                        for author in list_of_record[identifier]["100"]:
+                            for tag in author[0]:
+                                if tag[0] == 'a':
+                                    if authors != "":
+                                        authors += " / " + tag[1].strip(",;.")
+                                    else:
+                                        authors += tag[1].strip(",;.") + " "
+                    if "700" in list_of_record[identifier]:
+                        for author in list_of_record[identifier]["700"]:
+                            for tag in author[0]:
+                                if tag[0] == 'a':
+                                    if authors != "":
+                                        authors += " / " + tag[1].strip(",;.")
+                                    else:
+                                        authors += tag[1].strip(",;.") + " "
+                    if "260" in list_of_record[identifier]:
+                        for publisher in list_of_record[identifier]["260"][0][0]:
+                            publishers += publisher[1] + " "
+                    if "245" in list_of_record[identifier]:
+                        for title_constituant in list_of_record[identifier]["245"][0][0]:
+                            title += title_constituant[1] + " "
+
+                    body_content += "<tr><td><div class='bibz39_titles' onclick='showxml({6})'>{0}<div><td>{4}</td><td>{5}</td</td><td><div>{2}</div></td><td><div class='bibz39_button_td'>{3}</div></td><td><div class='bibz39_button_td'>{1}</div></td></tr>".format(
+                        title,
+                        '<form method="post" action="/admin2/bibz39/"><input type="hidden"  name="marcxml"  value="{0}"><input type="submit" value="Import" /></form>'.format(
+                            cgi.escape(record_xml_output(list_of_record[identifier])).replace(
+                                "\"", "&quot;").replace("\'", "&quot;")),
+                        rec["provider"],
+                        '<button onclick="showxml({0})">View</button>'.format(identifier),
+                        authors, publishers, identifier)
+                body_content += "</table>"
+                body_content += '<script type="text/javascript">'
+                body_content += "var gAllMarcXml= {"
+                for i, rec in enumerate(list_of_record):
+                    body_content += "{0}:{1},".format(i, json.dumps(record_xml_output(rec)))
+                body_content += "};"
+                body_content += '</script>'
+
+            else:
+                if not err:
+                    body_content += "<p class='bibz39_button_td spinning_wheel'> No result</p>"
 
             body_content += '<div id="dialog-message" title="XML Preview"></div></div>'
 

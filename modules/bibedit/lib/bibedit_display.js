@@ -306,9 +306,6 @@ function createPopUp(current_value, id, checkdate) {
     if(checkdate) {
         if (!regex.test(date_field))
         {
-            console.log(date_field);
-            console.log(parseInt(date_field));
-            console.log(parseInt(date_field).toString().length);
             createReq({recID: gRecID, requestType: 'getRecordCreationDate'},function(json) {
                 current_value = json["creation_date"] +  current_value.slice(6);
                 advGenControlFieldGUI(array_form, current_value, id);
@@ -369,10 +366,8 @@ function createControlField(tag, field, fieldPosition) {
     if (!fieldIsProtected(tag)) {
         cellContentClass = '';
     }
-    console.log(gProtectedControlfield.indexOf(tag) )
     if (gProtectedControlfield.indexOf(tag) == -1) {
 
-        console.log("Up")
         if (gAdvancedGuiCf.indexOf(tag) > -1) {
             if(tag!="008") {
                 EditCode =' onclick="createPopUp($(\'#content_' + tag + '_0\')[0].innerHTML, this.id, false)" ';

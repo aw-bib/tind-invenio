@@ -98,8 +98,7 @@ def get_all_authority_record_for_field(field, value):
             list_request.append(
                 'select bibrec_bib{0}x.id_bibrec from bibrec_bib{0}x, bib{0}x '
                 'where bib{0}x.tag="{2}" and bib{0}x.value like "%{1}%" '
-                'and bibrec_bib{0}x.id_bibxxx = bib{0}x.id'.format(
-                    first_two_char, value, field))
+                'and bibrec_bib{0}x.id_bibxxx = bib{0}x.id'.format(first_two_char, value, field))
 
         sql_request = " UNION ".join(list_request)
         authority_records_matching = run_sql(sql_request)

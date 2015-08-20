@@ -120,21 +120,22 @@ def process_authority_autosuggest(value, field):
     :param field: the field in which we are looking for
     :return: None or a list of authority information
     """
-    final_result = []
+    final_result = {"name": "Authority", "suggestions": []}
     if field[:3] in CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS_REVERSED:
         field = field[:3]
         res = find_records(value, field)
         res_sorted = res.keys()
         for res_to_process in res_sorted:
             record = res[res_to_process]["record"]
-            final_result.append(format_record_for_bibedit(record, field))
+            final_result["suggestions"].append(format_record_for_bibedit(record, field))
         return final_result
     elif field in CFG_ARBITRARY_AUTOSUGGEST_FIELD:
+        final_result["name"] = CFG_ARBITRARY_AUTOSUGGEST_FIELD[field]["name"]
         res = find_records_global(value, CFG_ARBITRARY_AUTOSUGGEST_FIELD[field]["main"].keys()[0])
         res_sorted = res.keys()
         for res_to_process in res_sorted:
             record = res[res_to_process]["record"]
-            final_result.append(format_record_for_bibedit_global(record, field))
+            final_result["suggestions"].append(format_record_for_bibedit_global(record, field))
         return final_result
     else:
         return None

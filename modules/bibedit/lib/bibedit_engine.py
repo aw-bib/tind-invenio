@@ -1330,15 +1330,15 @@ def perform_request_autocomplete(request_type, recid, uid, data):
             # add trailing '*' wildcard for 'search_unit_in_bibxxx()' if not already present
             suggest_values = get_kbd_values_for_bibedit(fulltag, "", searchby + "*")
             # remove ..
-            new_suggest_vals = []
+            new_suggest_vals = {"k": [], "a": []}
             for sugg in suggest_values:
                 if sugg.startswith(searchby):
-                    new_suggest_vals.append(sugg)
+                    new_suggest_vals["k"].append(sugg)
             from invenio.bibauthority_engine import process_authority_autosuggest
 
             authority_results = process_authority_autosuggest(searchby, fulltag)
-            for result in authority_results:
-                new_suggest_vals.append(result)
+
+            new_suggest_vals["a"] = authority_results
             response['autosuggest'] = new_suggest_vals
 
     if request_type == 'autocomplete':

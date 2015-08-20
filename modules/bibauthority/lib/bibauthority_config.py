@@ -214,5 +214,6 @@ CFG_AUTHORITY_COPY_NATIVE_FIELD = True
 
 CFG_ARBITRARY_AUTOSUGGEST_FIELD = {
     "962__t": {"main": {"245": "t"},
-               "sub": [{"001": "w"}]}
+               "sub": [{"001": "w"}],
+               "name": "Cross Reserves"}
 }

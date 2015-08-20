@@ -4197,7 +4197,7 @@ function onAutosuggest(event) {
         }
     } //autocomplete
     if ((reqtype == 'autosuggest') || (reqtype == 'autokeyword')) {
-        if ((suggestions != null) && (suggestions.length > 0)) {
+        if ((suggestions != null) && ((suggestions["k"].length > 0)||(suggestions["a"]["suggestions"].length > 0))) {
             /*put the suggestions in the div autosuggest_xxxx*/
             //make a nice box..
             var knowledgeTable_count = 0;
@@ -4205,9 +4205,9 @@ function onAutosuggest(event) {
             var final_shape = ""
 
             // We create two tables, one for knowledge base result and another one for authority
-            knowledgeTable = '<h3 class="bibeditscrollAreaTitle">Authorities</h3><table border="0" class="bibeditscrollTable"><tr><td><span class="bibeditscrollArea"><ul>';
+            knowledgeTable = '<h3 class="bibeditscrollAreaTitle">' + suggestions["a"]["name"] + '</h3><table border="0" class="bibeditscrollTable"><tr><td><span class="bibeditscrollArea"><ul>';
             authorityTable = '<h3 class="bibeditscrollAreaTitle">Knowledge base</h3><table border="0" class="bibeditscrollTable"><tr><td><span class="bibeditscrollArea"><ul>';
-
+            suggestions = suggestions["a"]["suggestions"].concat(suggestions["k"])
             var finalText = "";
             var textSplited = "";
             for (var i=0, n=suggestions.length; i < n; i++) {

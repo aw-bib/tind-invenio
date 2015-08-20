@@ -454,7 +454,11 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         msg = argd['msg']
         ln = argd['ln']
 
-        return bal.all_loans(req, msg=msg, ln=ln)
+        if "draw" in req.args:
+            return bal.all_loans_data(req, msg=msg, ln=ln)
+        else:
+            return bal.all_loans(req, msg=msg, ln=ln)
+
 
     def all_expired_loans(self, req, form):
         """http://cds.cern.ch/admin2/bibcirculation/all_expired_loans"""

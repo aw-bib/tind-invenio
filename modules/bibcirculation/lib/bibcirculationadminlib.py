@@ -1972,10 +1972,9 @@ def all_loans_data(req, msg=None, ln=CFG_SITE_LANG, library=(), loans_per_page=0
     result = result[start: start + amount]
 
     data = []
-
-    for (borrower_id, borrower_name, recid, title, barcode,
-         loaned_on, due_date, nb_renewal, nb_overdue,
-         date_overdue, notes, loan_id, library, location) in result:
+    for (borrower_id, borrower_name, recid, title , barcode,
+             loaned_on, due_date, nb_renewal, nb_overdue,
+             date_overdue, notes, loan_id, library, location) in result:
 
         borrower_link = create_html_link(CFG_SITE_URL +
                         '/admin2/bibcirculation/get_borrower_details',
@@ -2002,9 +2001,9 @@ def all_loans_data(req, msg=None, ln=CFG_SITE_LANG, library=(), loans_per_page=0
                             (title))
 
         data.append([borrower_link, title_link, barcode,
-                     loaned_on, due_date, nb_renewal, nb_overdue, date_overdue,
-                     location, CFG_SITE_URL, borrower_id, recid, loan_id, _("Send recall")])
-
+                       loaned_on, due_date,
+                       nb_renewal, nb_overdue, library, location, CFG_SITE_URL,
+                       borrower_id, recid, loan_id, _("Send recall")])
     ajax_answer["data"] = data
 
     return simplejson.dumps(ajax_answer)

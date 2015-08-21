@@ -1596,7 +1596,9 @@ function select_field_template(id, options, selectedOption) {
      */
 
     optionsHTML = "";
+    rest = options.splice(0,2)
     options.sort(compare_description_field_templates);
+    options = rest.concat(options)
     for (optionNr in options) {
         optionsHTML += "<option value=\"" + options[optionNr].value + "\"";
         if (selectedOption == options[optionNr].value) {

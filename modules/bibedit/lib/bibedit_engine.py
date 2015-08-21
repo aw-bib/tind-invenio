@@ -18,6 +18,7 @@
 # pylint: disable=C0103
 """Invenio BibEdit Engine."""
 
+
 __revision__ = "$Id"
 
 from datetime import datetime
@@ -54,6 +55,12 @@ from invenio.bibedit_config import CFG_BIBEDIT_AJAX_RESULT_CODES, \
     CFG_BIBEDIT_DISPLAY_REFERENCE_TAGS, CFG_BIBEDIT_DISPLAY_AUTHOR_TAGS, \
     CFG_BIBEDIT_EXCLUDE_CURATOR_TAGS, CFG_BIBEDIT_AUTHOR_DISPLAY_THRESHOLD, \
     CFG_BIBEDIT_PROTECTED_CONTROLFIELD, CFG_BIBEDIT_ADVANCED_GUI_CF
+try:
+    from invenio.config import CFG_ENABLE_KNOW
+    from invenio.config import CFG_ENABLE_AUTHORITY
+except:
+    from invenio.bibedit_config import CFG_ENABLE_KNOW
+    from invenio.bibedit_config import CFG_ENABLE_AUTHORITY
 
 from invenio.dbquery import run_sql
 
@@ -121,7 +128,7 @@ from invenio.refextract_api import FullTextNotAvailable, \
 
 from invenio import xmlmarc2textmarc as xmlmarc2textmarc
 from invenio.crossrefutils import get_marcxml_for_doi, CrossrefError
-
+from invenio.bibauthority_engine import process_authority_autosuggest
 import invenio.template
 
 bibedit_templates = invenio.template.load('bibedit')
@@ -1327,18 +1334,17 @@ def perform_request_autocomplete(request_type, recid, uid, data):
     if request_type == 'autosuggest':
         # call knowledge base function to put the suggestions in an array..
         if fulltag and searchby and len(searchby) > 3:
-            # add trailing '*' wildcard for 'search_unit_in_bibxxx()' if not already present
-            suggest_values = get_kbd_values_for_bibedit(fulltag, "", searchby + "*")
-            # remove ..
             new_suggest_vals = {"k": [], "a": []}
-            for sugg in suggest_values:
-                if sugg.startswith(searchby):
-                    new_suggest_vals["k"].append(sugg)
-            from invenio.bibauthority_engine import process_authority_autosuggest
+            if CFG_ENABLE_KNOW:
+                suggest_values = get_kbd_values_for_bibedit(fulltag, "", searchby + "*")
+                for sugg in suggest_values:
+                    if sugg.startswith(searchby):
+                        new_suggest_vals["k"].append(sugg)
 
-            authority_results = process_authority_autosuggest(searchby, fulltag)
+            if CFG_ENABLE_AUTHORITY:
+                authority_results = process_authority_autosuggest(searchby, fulltag[:3])
+                new_suggest_vals["a"] = authority_results
 
-            new_suggest_vals["a"] = authority_results
             response['autosuggest'] = new_suggest_vals
 
     if request_type == 'autocomplete':

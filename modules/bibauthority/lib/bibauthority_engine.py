@@ -65,7 +65,7 @@ def get_all_record_for_field(field, value):
     :return: List of records from bibextract
     """
 
-    sql_request = 'select bibrec_bib{0}x.id_bibrec from bibrec_bib{0}x, bib{0}x where bib{0}x.tag like "{2}%" and bib{0}x.value like "%{1}%" and bibrec_bib{0}x.id_bibxxx = bib{0}x.id'.format(
+    sql_request = 'SELECT DISTINCT bibrec_bib{0}x.id_bibrec from bibrec_bib{0}x, bib{0}x where bib{0}x.tag like "{2}%" and bib{0}x.value like "%{1}%" and bibrec_bib{0}x.id_bibxxx = bib{0}x.id'.format(
         field[:2], value, field)
     authority_records_matching = run_sql(sql_request)
     authority_records_matching = authority_records_matching[:20]
@@ -96,13 +96,19 @@ def get_all_authority_record_for_field(field, value):
         for field in list_index_fields:
             first_two_char = field[:2]
             list_request.append(
-                'select bibrec_bib{0}x.id_bibrec from bibrec_bib{0}x, bib{0}x '
-                'where bib{0}x.tag="{2}" and bib{0}x.value like "%{1}%" '
-                'and bibrec_bib{0}x.id_bibxxx = bib{0}x.id'.format(first_two_char, value, field))
+                'SELECT DISTINCT bibrec_bib{0}x.id_bibrec ' \
+                'FROM bibrec_bib{0}x, bib{0}x, bibrec_bib98x, bib98x ' \
+                'WHERE bib{0}x.tag like "{2}%" ' \
+                'AND bib{0}x.value like "%{1}%" ' \
+                'AND bibrec_bib{0}x.id_bibxxx=bib{0}x.id ' \
+                'AND bibrec_bib{0}x.id_bibrec=bibrec_bib98x.id_bibrec ' \
+                'AND bibrec_bib98x.id_bibxxx=bib98x.id ' \
+                'AND bib98x.value<>"DELETED" ' \
+                'AND bib98x.value="AUTHORITY"'.format(first_two_char, value, field))
 
         sql_request = " UNION ".join(list_request)
         authority_records_matching = run_sql(sql_request)
-        authority_records_matching = authority_records_matching[:20]
+        authority_records_matching = list(set(authority_records_matching))[:20]
         authority_records = []
         for authority_record in authority_records_matching:
             authority_records.append(get_record(authority_record[0]).record)

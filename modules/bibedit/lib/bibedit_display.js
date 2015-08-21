@@ -1119,7 +1119,7 @@ function createAddFieldForm(fieldTmpNo, fieldTemplateNo, def_field_tag,
         '<td></td>' + '<td><b>New</b></td>' + '<td></td>' + '<td></td>' +
         '<td><div class="bibEditAddFieldManipulationsBar">' +
         '<div class="bibEditAddFieldFormSelectTemplate">Add field: ' +
-        select('selectAddFieldTemplate_' + fieldTmpNo,
+        select_field_template('selectAddFieldTemplate_' + fieldTmpNo,
             fieldTemplatesData, fieldTemplateNo) +
         '</div><div class="bibEditAddFieldFormCreateSimilar"> Add ' +
         input('text', 'selectAddFieldTemplateTimes_' + fieldTmpNo,
@@ -1583,6 +1583,42 @@ function input(type, id, _class, attrs, defvalue) {
     }
     return '<input ' + type + id + _class + strAttrs + myval + '/>';
 }
+
+
+function select_field_template(id, options, selectedOption) {
+    /*
+     * Create the select input -> it has a different structure than most of the
+     * inputs
+     * options: a list of options appearing under the same id. Each option is a
+     *          dictionary describing the value associated and the description
+     *          a sample entry of the options :
+     *          {value: "1", description: "option1"}
+     */
+
+    optionsHTML = "";
+    rest = options.splice(0,2)
+    options.sort(compare_description_field_templates);
+    options = rest.concat(options)
+    for (optionNr in options) {
+        optionsHTML += "<option value=\"" + options[optionNr].value + "\"";
+        if (selectedOption == options[optionNr].value) {
+            optionsHTML += " selected";
+        }
+        optionsHTML += ">" + options[optionNr].description + "</option>";
+    }
+    return "<select id=\"" + id + "\">" + optionsHTML + "</select>";
+
+}
+
+function compare_description_field_templates(a,b) {
+  if (a.description < b.description)
+    return -1;
+  if (a.description > b.description)
+    return 1;
+  return 0;
+}
+
+
 
 function select(id, options, selectedOption) {
     /*

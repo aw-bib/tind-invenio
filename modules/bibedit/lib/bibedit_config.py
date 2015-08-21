@@ -196,8 +196,9 @@ CFG_BIBEDIT_FIELD_TEMPLATES_PATH = "%s%sbibedit%sfield_templates" % (
 # CFG_BIBEDIT_AUTOSUGGEST_TAGS - for which tags the editor should try to autosuggest values
 # This is "safe" to have configured since it does not rely to a particular existing KB
 CFG_BIBEDIT_AUTOSUGGEST_TAGS = ['100%%a', '110%%a', '111%%a', '611%%a',
-                                '700%%a', '711%%a', '130%%a', '630%%a',
-                                '730%%a', '650%%a', '651%%a', '751%%a', '962%%t']
+                                '700%%a', '710%%a', '711%%a', '130%%a',
+                                '630%%a', '610%%a', '600%%a', '730%%a',
+                                '650%%a', '651%%a', '751%%a', '962%%t']
 
 # CFG_BIBEDIT_AUTOCOMPLETE_TAGS_KBS - a dictionary whose keys are tags and values kb names
 # This is better left empty when in doubt

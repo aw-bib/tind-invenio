@@ -144,7 +144,6 @@ function initHotkeys() {
    * Hotkeys aren't tracked if you're inside of an input element (use function
    * initInputHotkeys)
    */
-  // New record.
 
   $(document).bind('keydown', 'ctrl+shift+g', function(event) {
       onGuessAffiliations();

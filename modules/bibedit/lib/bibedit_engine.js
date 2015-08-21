@@ -3010,9 +3010,6 @@ function addFieldAddSubfieldEditor(jQRowGroupID, fieldTmpNo, defaultCode, defaul
   $(jQRowGroupID).data('freeSubfieldTmpNo', subfieldTmpNo+1);
 
   var addFieldRows = $(jQRowGroupID + '>tr');
-  console.log(jQRowGroupID + '>tr');
-  console.log(addFieldRows);
-  console.log(addFieldRows.length-1);
   $(addFieldRows).eq(addFieldRows.length-1).after(createAddFieldRow(
     fieldTmpNo, subfieldTmpNo, defaultCode, defaultValue));
   $('#txtAddFieldSubfieldCode_' + fieldTmpNo + '_' + subfieldTmpNo).bind(
@@ -4123,7 +4120,6 @@ function onAutosuggest(event) {
     param_tag = idAdd + "_" + idAddPos;
     fullcode = maintag+subtag1+subtag2+subfieldcode;
   }
-  console.log(autosuggest_id);
   var reqtype = ""; //autosuggest or autocomplete, according to tag..
   var i = 0;
   var n = 0;
@@ -4201,7 +4197,7 @@ function onAutosuggest(event) {
         }
     } //autocomplete
     if ((reqtype == 'autosuggest') || (reqtype == 'autokeyword')) {
-        if ((suggestions != null) && (suggestions.length > 0)) {
+        if ((suggestions != null) && ((suggestions["k"].length > 0)||(suggestions["a"]["suggestions"].length > 0))) {
             /*put the suggestions in the div autosuggest_xxxx*/
             //make a nice box..
             var knowledgeTable_count = 0;
@@ -4209,9 +4205,9 @@ function onAutosuggest(event) {
             var final_shape = ""
 
             // We create two tables, one for knowledge base result and another one for authority
-            knowledgeTable = '<h3 class="bibeditscrollAreaTitle">Authorities</h3><table border="0" class="bibeditscrollTable"><tr><td><span class="bibeditscrollArea"><ul>';
+            knowledgeTable = '<h3 class="bibeditscrollAreaTitle">' + suggestions["a"]["name"] + '</h3><table border="0" class="bibeditscrollTable"><tr><td><span class="bibeditscrollArea"><ul>';
             authorityTable = '<h3 class="bibeditscrollAreaTitle">Knowledge base</h3><table border="0" class="bibeditscrollTable"><tr><td><span class="bibeditscrollArea"><ul>';
-
+            suggestions = suggestions["a"]["suggestions"].concat(suggestions["k"])
             var finalText = "";
             var textSplited = "";
             for (var i=0, n=suggestions.length; i < n; i++) {
@@ -4303,11 +4299,12 @@ function onAutosuggestSelect(i, val_to_modify) {
           var idAddPos = discomposure[1];
           var rowGroup = "#rowGroupAddField_" + idAdd;
           discomposure[0] = $("#txtAddFieldTag_" + idAdd)[0].value;
-          content.value = suggestions[i]["fields"][discomposure[0]]["a"][0];
+          subfield_letter = $("#txtAddFieldSubfieldCode_"+idAdd+"_"+idAddPos)[0].value
+          content.value = suggestions[i]["fields"][discomposure[0]][subfield_letter][0];
           setTimeout(function () {
           for (key in suggestions[i]["fields"]) {
               for (subkey in suggestions[i]["fields"][key]) {
-                if ((key == discomposure[0]) && (subkey != "a")) {
+                if ((key == discomposure[0]) && (subkey != subfield_letter)) {
                   for (val in suggestions[i]["fields"][key][subkey]) {
                      addFieldAddSubfieldEditor(rowGroup, parseInt(idAdd), subkey, suggestions[i]["fields"][key][subkey][val]);
                   }
@@ -4324,13 +4321,14 @@ function onAutosuggestSelect(i, val_to_modify) {
             ,1000);
 
         } else {
-          updateSubfieldValue(discomposure[0], discomposure[1], discomposure[2], "a", suggestions[i]["fields"][discomposure[0]]["a"][0]);
-          content.innerHTML = suggestions[i]["fields"][discomposure[0]]["a"][0];
-          content.value = suggestions[i]["fields"][discomposure[0]]["a"][0];
+          subfield_letter = $("#subfieldTag_"+discomposure[0]+"_"+discomposure[1]+"_"+discomposure[2]+"")[0].innerHTML
+          updateSubfieldValue(discomposure[0], discomposure[1], discomposure[2], subfield_letter, suggestions[i]["fields"][discomposure[0]][subfield_letter][0]);
+          content.innerHTML = suggestions[i]["fields"][discomposure[0]][subfield_letter][0];
+          content.value = suggestions[i]["fields"][discomposure[0]][subfield_letter][0];
           setTimeout(function () {
             for (key in suggestions[i]["fields"]) {
               for (subkey in suggestions[i]["fields"][key]) {
-                if ((key == discomposure[0]) && (subkey != "a")) {
+                if ((key == discomposure[0]) && (subkey != subfield_letter)) {
                   for (val in suggestions[i]["fields"][key][subkey]) {
                     addSubfield(discomposure[0] + "_" + discomposure[1], subkey, suggestions[i]["fields"][key][subkey][val]);
                     onAddSubfieldsSave(null, discomposure[0], discomposure[1]);

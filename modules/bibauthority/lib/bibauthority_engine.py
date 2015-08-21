@@ -18,9 +18,7 @@
 
 # pylint: disable=C0103
 """Invenio BibAuthority Engine."""
-import sys
 import re
-import Levenshtein
 
 from invenio.bibauthority_config import \
     CFG_BIBAUTHORITY_RECORD_CONTROL_NUMBER_FIELD, \
@@ -30,7 +28,8 @@ from invenio.bibauthority_config import \
     CFG_BIBAUTHORITY_AUTOSUGGEST_CONFIG, \
     CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS, \
     CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS_REVERSED, \
-    CFG_AUTHORITY_COPY_NATIVE_FIELD
+    CFG_AUTHORITY_COPY_NATIVE_FIELD, \
+    CFG_ARBITRARY_AUTOSUGGEST_FIELD
 
 from invenio.errorlib import register_exception
 from invenio.search_engine import search_pattern, \
@@ -52,6 +51,28 @@ def is_authority_record(recID):
     # low-level: don't use possibly indexed logical fields !
     return recID in search_pattern(p='980__a:AUTHORITY')
 
+
+def get_all_record_for_field(field, value):
+    """
+    Return all the authority record for a specific field.
+
+    This function will look in the configuration to see if it can create
+    a link between the field and the authority category.
+    If yes then it will do a database request to retrieve all the authority record matching
+    with it
+    .
+    :param field: Field tag for searching.
+    :return: List of records from bibextract
+    """
+
+    sql_request = 'select bibrec_bib{0}x.id_bibrec from bibrec_bib{0}x, bib{0}x where bib{0}x.tag like "{2}%" and bib{0}x.value like "%{1}%" and bibrec_bib{0}x.id_bibxxx = bib{0}x.id'.format(
+        field[:2], value, field)
+    authority_records_matching = run_sql(sql_request)
+    authority_records_matching = authority_records_matching[:20]
+    authority_records = []
+    for authority_record in authority_records_matching:
+        authority_records.append(get_record(authority_record[0]).record)
+    return authority_records
 
 def get_all_authority_record_for_field(field, value):
     """
@@ -75,8 +96,9 @@ def get_all_authority_record_for_field(field, value):
         for field in list_index_fields:
             first_two_char = field[:2]
             list_request.append(
-                'select bibrec_bib{0}x.id_bibrec from bibrec_bib{0}x, bib{0}x where bib{0}x.tag="{2}" and bib{0}x.value like "%{1}%" and bibrec_bib{0}x.id_bibxxx = bib{0}x.id'.format(
-                    first_two_char, value, field))
+                'select bibrec_bib{0}x.id_bibrec from bibrec_bib{0}x, bib{0}x '
+                'where bib{0}x.tag="{2}" and bib{0}x.value like "%{1}%" '
+                'and bibrec_bib{0}x.id_bibxxx = bib{0}x.id'.format(first_two_char, value, field))
 
         sql_request = " UNION ".join(list_request)
         authority_records_matching = run_sql(sql_request)
@@ -98,19 +120,22 @@ def process_authority_autosuggest(value, field):
     :param field: the field in which we are looking for
     :return: None or a list of authority information
     """
-    import time
-
-    if field in CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS_REVERSED:
-        start = time.time()
-        final_result = []
+    final_result = {"name": "Authority", "suggestions": []}
+    if field[:3] in CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS_REVERSED:
+        field = field[:3]
         res = find_records(value, field)
         res_sorted = res.keys()
         for res_to_process in res_sorted:
             record = res[res_to_process]["record"]
-            final_result.append(format_record_for_bibedit(record, field))
-
-        with open("/opt/invenio/time.txt", "a") as myfile:
-            myfile.write("\nfast A, {0} seconds".format(time.time() - start))
+            final_result["suggestions"].append(format_record_for_bibedit(record, field))
+        return final_result
+    elif field in CFG_ARBITRARY_AUTOSUGGEST_FIELD:
+        final_result["name"] = CFG_ARBITRARY_AUTOSUGGEST_FIELD[field]["name"]
+        res = find_records_global(value, CFG_ARBITRARY_AUTOSUGGEST_FIELD[field]["main"].keys()[0])
+        res_sorted = res.keys()
+        for res_to_process in res_sorted:
+            record = res[res_to_process]["record"]
+            final_result["suggestions"].append(format_record_for_bibedit_global(record, field))
         return final_result
     else:
         return None
@@ -122,6 +147,39 @@ def find_records(value, field):
     for record in records:
         result[record.get("001")[0].value] = {"record": record}
     return result
+
+def find_records_global(value, field):
+    records = get_all_record_for_field(field, value)
+    result = {}
+    for record in records:
+        result[record.get("001")[0].value] = {"record": record}
+    return result
+
+
+def format_record_for_bibedit_global(record, field):
+    """
+    Process the record to be manipulated by bibedit
+
+    :param record: The record you want to manipulate.
+    :param field: The field which is interesting you.
+    :return: Dict with the values needed by bibedit to work.
+    """
+    final_shape = {}
+    final_shape["fields"] = {}
+    try:
+        fields = CFG_ARBITRARY_AUTOSUGGEST_FIELD[field]
+        final_shape["print"] = record_get_field(record, fields["main"].keys()[0])[0]
+        final_shape["fields"][field[:3]] = {}
+        final_shape["fields"][field[:3]][fields["main"][fields["main"].keys()[0]]] = [record_get_field(record, fields["main"].keys()[0])[0]]
+
+        for field_to_add in fields["sub"]:
+            final_shape["fields"][field[:3]][field_to_add.values()[0]] = [record_get_field(record, field_to_add.keys()[0])[0]]
+
+    except:
+        register_exception()
+        final_shape["print"] = ""
+
+    return final_shape
 
 
 def format_record_for_bibedit(record, field):
@@ -194,18 +252,34 @@ def convert_record_to_dict(record, field_list, field_f):
 
 def record_get_field(record, field):
     values = []
-    fa = field[:5].strip("_")
+    fa = field[:3]
+    ind1 = None
+    ind2 = None
+    fb = None
     try:
+        ind1 = field[3]
+        ind2 = field[4]
         fb = field[5]
     except:
-        fb = "a"
+        pass
+    if ind1 == "_":
+        ind1 = " "
+    if ind2 == "_":
+        ind2 = " "
     fields = record.get(fa)
     if fields:
         for field in fields:
-            try:
-                values.append(field.find_subfields(fb)[0].value)
-            except:
-                pass
+            if fa[:2] != "00":
+                try:
+                    if (ind1 and ind2 and ind1 == field.ind1 and ind2 == field.ind2) or (not ind1 and not ind2):
+                        if fb:
+                            values.append(field.find_subfields(fb)[0].value)
+                        else:
+                            values.append(" ".join(x.value for x in field.subfields))
+                except:
+                    register_exception()
+            else:
+                values.append(field.value)
     return values
 
 

@@ -96,7 +96,7 @@ CFG_BIBEDIT_REQUESTS_UNTIL_SAVE = 3
 CFG_BIBEDIT_AJAX_RESULT_CODES_REV = {
     # TODO: all the result codes should be accessible through the constants rather than
     # a direct number ! some parts of the bibedit_engine.py are not readable because
-    #      of using the numbers
+    # of using the numbers
     #      The dictionary is convenient at this place because it can be imported with one command
     #      unlike a number of constants
     'record_submitted': 4,
@@ -195,10 +195,14 @@ CFG_BIBEDIT_FIELD_TEMPLATES_PATH = "%s%sbibedit%sfield_templates" % (
 
 # CFG_BIBEDIT_AUTOSUGGEST_TAGS - for which tags the editor should try to autosuggest values
 # This is "safe" to have configured since it does not rely to a particular existing KB
-CFG_BIBEDIT_AUTOSUGGEST_TAGS = ['100%%a', '110%%a', '111%%a', '611%%a',
-                                '700%%a', '710%%a', '711%%a', '130%%a',
-                                '630%%a', '610%%a', '600%%a', '730%%a',
-                                '650%%a', '651%%a', '751%%a', '962%%t']
+try:
+    from invenio.config import CFG_BIBEDIT_AUTOSUGGEST_TAGS
+except ImportError:
+    CFG_BIBEDIT_AUTOSUGGEST_TAGS = ['100%%a', '110%%a', '111%%a', '611%%a',
+                                    '700%%a', '710%%a', '711%%a', '130%%a',
+                                    '630%%a', '610%%a', '600%%a', '730%%a',
+                                    '650%%a', '651%%a', '751%%a', '962%%t',
+                                    '155%%a', '655%%a']
 
 # CFG_BIBEDIT_AUTOCOMPLETE_TAGS_KBS - a dictionary whose keys are tags and values kb names
 # This is better left empty when in doubt
@@ -212,9 +216,9 @@ CFG_BIBEDIT_KEYWORD_TAXONOMY = ""  # 'HEP.RDF'
 CFG_BIBEDIT_KEYWORD_TAG = ""  # '6531_a'
 
 # what label inside the RDF file contains the term
-CFG_BIBEDIT_KEYWORD_RDFLABEL = ""  #'prefLabel'
+CFG_BIBEDIT_KEYWORD_RDFLABEL = ""  # 'prefLabel'
 
-#where are BibEdit cache files stored
+# where are BibEdit cache files stored
 CFG_BIBEDIT_CACHEDIR = CFG_TMPSHAREDDIR + '/bibedit-cache'
 
 # CFG_BIBEDIT_DOI_LOOKUP_FIELD - for which tag bibedit should add a link

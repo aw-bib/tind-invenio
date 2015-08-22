@@ -4342,9 +4342,8 @@ function onAutosuggestSelect(i, val_to_modify) {
                   }
                 }
               }
-
             }
-            }
+          }
             , 1000);
         }
         content.focus();

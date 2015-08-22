@@ -18,51 +18,73 @@
 
 # CFG_BIBAUTHORITY_RECORD_CONTROL_NUMBER_FIELD
 # the authority record field containing the authority record control number
-CFG_BIBAUTHORITY_RECORD_CONTROL_NUMBER_FIELD = '035__a'
+try:
+    from invenio.config import CFG_BIBAUTHORITY_RECORD_CONTROL_NUMBER_FIELD
+except ImportError:
+    CFG_BIBAUTHORITY_RECORD_CONTROL_NUMBER_FIELD = '035__a'
+
 
 # the record field for authority control numbers
-CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS = {
-    'AUTHOR': ['100', '700', '600'],
-    'CORPORATE': ['110', '710', '610'],
-    'MEETING': ['111', '711', '611'],
-    'UNIFORM': ['130', '730'],
-    'SUBJECT': ['150', '650'],
-    'GEOGRAPHICAL': ['151', '751', '651']
-}
+try:
+    from invenio.config import CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS
+except ImportError:
+    CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS = {
+        'AUTHOR': ['100', '700', '600'],
+        'CORPORATE': ['110', '710', '610'],
+        'MEETING': ['111', '711', '611'],
+        'UNIFORM': ['130', '730'],
+        'SUBJECT': ['150', '650'],
+        'GEOGRAPHICAL': ['151', '751', '651']
+    }
 
-CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS_REVERSED = {
-    '100': 'AUTHOR',
-    '700': 'AUTHOR',
-    '600': 'AUTHOR',
-    '110': 'CORPORATE',
-    '710': 'CORPORATE',
-    '610': 'CORPORATE',
-    '111': 'MEETING',
-    '711': 'MEETING',
-    '611': 'MEETING',
-    '130': 'UNIFORM',
-    '630': 'UNIFORM',
-    '730': 'UNIFORM',
-    '150': 'SUBJECT',
-    '650': 'SUBJECT',
-    '151': 'GEOGRAPHICAL',
-    '751': 'GEOGRAPHICAL',
-    '651': 'GEOGRAPHICAL'
-}
+try:
+    from invenio.config import CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS_REVERSED
+except ImportError:
+    CFG_BIBAUTHORITY_RECORD_AUTHOR_CONTROL_NUMBER_FIELDS_REVERSED = {
+        '100': 'AUTHOR',
+        '700': 'AUTHOR',
+        '600': 'AUTHOR',
+        '110': 'CORPORATE',
+        '710': 'CORPORATE',
+        '610': 'CORPORATE',
+        '111': 'MEETING',
+        '711': 'MEETING',
+        '611': 'MEETING',
+        '130': 'UNIFORM',
+        '630': 'UNIFORM',
+        '730': 'UNIFORM',
+        '150': 'SUBJECT',
+        '650': 'SUBJECT',
+        '151': 'GEOGRAPHICAL',
+        '751': 'GEOGRAPHICAL',
+        '651': 'GEOGRAPHICAL'
+    }
 
 # Config variable to define if yes or no should the autocomplete check for authority record.
-CFG_AUTHORITY_AUTOCOMPLETE = True
+try:
+    from invenio.config import CFG_AUTHORITY_AUTOCOMPLETE
+except ImportError:
+    CFG_AUTHORITY_AUTOCOMPLETE = True
 
 # Separator to be used in control numbers to separate the authority type
 # PREFIX (e.g. "INSTITUTE") from the control_no (e.g. "(CERN)abc123"
-CFG_BIBAUTHORITY_PREFIX_SEP = '|'
+try:
+    from invenio.config import CFG_BIBAUTHORITY_PREFIX_SEP
+except ImportError:
+    CFG_BIBAUTHORITY_PREFIX_SEP = '|'
 
 # the ('980__a') string that identifies an authority record
-CFG_BIBAUTHORITY_AUTHORITY_COLLECTION_IDENTIFIER = 'AUTHORITY'
+try:
+    from invenio.config import CFG_BIBAUTHORITY_AUTHORITY_COLLECTION_IDENTIFIER
+except ImportError:
+    CFG_BIBAUTHORITY_AUTHORITY_COLLECTION_IDENTIFIER = 'AUTHORITY'
 
 # the name of the authority collection.
 # This is needed for searching within the authority record collection.
-CFG_BIBAUTHORITY_AUTHORITY_COLLECTION_NAME = 'Authorities'
+try:
+    from invenio.config import CFG_BIBAUTHORITY_AUTHORITY_COLLECTION_NAME
+except ImportError:
+    CFG_BIBAUTHORITY_AUTHORITY_COLLECTION_NAME = 'Authorities'
 
 # CFG_BIBAUTHORITY_TYPE_NAMES
 # Some administrators may want to be able to change the names used for the
@@ -73,14 +95,17 @@ CFG_BIBAUTHORITY_AUTHORITY_COLLECTION_NAME = 'Authorities'
 # ... since the same values are hard coded into the MARC data,
 # ... including the 980__a subfields of all authority records
 # ... and the $0 subfields of the bibliographic fields under authority control
-CFG_BIBAUTHORITY_TYPE_NAMES = {
-    'AUTHOR': 'AUTHOR',
-    'CORPORATE': 'CORPORATE',
-    'MEETING': 'MEETING',
-    'UNIFORM': 'UNIFORM',
-    'SUBJECT': 'SUBJECT',
-    'GEOGRAPHICAL': 'GEOGRAPHICAL'
-}
+try:
+    from invenio.config import CFG_BIBAUTHORITY_TYPE_NAMES
+except ImportError:
+    CFG_BIBAUTHORITY_TYPE_NAMES = {
+        'AUTHOR': 'AUTHOR',
+        'CORPORATE': 'CORPORATE',
+        'MEETING': 'MEETING',
+        'UNIFORM': 'UNIFORM',
+        'SUBJECT': 'SUBJECT',
+        'GEOGRAPHICAL': 'GEOGRAPHICAL'
+    }
 
 
 # CFG_BIBAUTHORITY_CONTROLLED_FIELDS_BIBLIOGRAPHIC
@@ -89,47 +114,59 @@ CFG_BIBAUTHORITY_TYPE_NAMES = {
 # ... authority record (must conform to the keys of CFG_BIBAUTHORITY_TYPE_NAMES)
 # Note: if you want to add new tag here you should also append appropriate tag
 # to the miscellaneous index on the BibIndex Admin Site
-CFG_BIBAUTHORITY_CONTROLLED_FIELDS_BIBLIOGRAPHIC = {
-    '100__a': 'AUTHOR',
-    '110__a': 'CORPORATE',
-    '111__a': 'MEETING',
-    '130__a': 'UNIFORM',
-    '150__a': 'SUBJECT',
-    '151__a': 'GEOGRAPHICAL',
-    '700__a': 'AUTHOR',
-    '600__a': 'AUTHOR',
-    '710__a': 'CORPORATE',
-    '610__a': 'CORPORATE',
-    '711__a': 'MEETING',
-    '611__a': 'MEETING',
-    '730__a': 'UNIFORM',
-    '650__a': 'SUBJECT',
-    '751__a': 'GEOGRAPHICAL',
-    '651__a': 'GEOGRAPHICAL',
-}
+try:
+    from invenio.config import CFG_BIBAUTHORITY_CONTROLLED_FIELDS_BIBLIOGRAPHIC
+except ImportError:
+    CFG_BIBAUTHORITY_CONTROLLED_FIELDS_BIBLIOGRAPHIC = {
+        '100__a': 'AUTHOR',
+        '110__a': 'CORPORATE',
+        '111__a': 'MEETING',
+        '130__a': 'UNIFORM',
+        '150__a': 'SUBJECT',
+        '151__a': 'GEOGRAPHICAL',
+        '700__a': 'AUTHOR',
+        '600__a': 'AUTHOR',
+        '710__a': 'CORPORATE',
+        '610__a': 'CORPORATE',
+        '711__a': 'MEETING',
+        '611__a': 'MEETING',
+        '730__a': 'UNIFORM',
+        '650__a': 'SUBJECT',
+        '751__a': 'GEOGRAPHICAL',
+        '651__a': 'GEOGRAPHICAL',
+    }
 
 # CFG_BIBAUTHORITY_CONTROLLED_FIELDS_AUTHORITY
 # Tells us which authority record subfields are under authority control
 # used by autosuggest feature in BibEdit
 # authority record subfields use the $4 field for the control_no (not $0)
-CFG_BIBAUTHORITY_CONTROLLED_FIELDS_AUTHORITY = {
-    '500__a': 'AUTHOR',
-    '510__a': 'CORPORATE',
-    '511__a': 'MEETING',
-    '530__a': 'UNIFORM',
-    '550__a': 'SUBJECT',
-    '551__a': 'GEOGRAPHICAL',
-    '909C1u': 'INSTITUTE',  # used in bfe_affiliation
-    '920__v': 'INSTITUTE',  # used by FZ Juelich demo data
-}
+try:
+    from invenio.config import CFG_BIBAUTHORITY_CONTROLLED_FIELDS_AUTHORITY
+except ImportError:
+    CFG_BIBAUTHORITY_CONTROLLED_FIELDS_AUTHORITY = {
+        '500__a': 'AUTHOR',
+        '510__a': 'CORPORATE',
+        '511__a': 'MEETING',
+        '530__a': 'UNIFORM',
+        '550__a': 'SUBJECT',
+        '551__a': 'GEOGRAPHICAL',
+        '909C1u': 'INSTITUTE',  # used in bfe_affiliation
+        '920__v': 'INSTITUTE',  # used by FZ Juelich demo data
+    }
 
 # constants for CFG_BIBEDIT_AUTOSUGGEST_TAGS
 # CFG_BIBAUTHORITY_AUTOSUGGEST_SORT_ALPHA for alphabetical sorting
 # ... of drop-down suggestions
 # CFG_BIBAUTHORITY_AUTOSUGGEST_SORT_POPULAR for sorting of drop-down
 # ... suggestions according to a popularity ranking
-CFG_BIBAUTHORITY_AUTOSUGGEST_SORT_ALPHA = 'alphabetical'
-CFG_BIBAUTHORITY_AUTOSUGGEST_SORT_POPULAR = 'by popularity'
+try:
+    from invenio.config import CFG_BIBAUTHORITY_AUTOSUGGEST_SORT_ALPHA
+except ImportError:
+    CFG_BIBAUTHORITY_AUTOSUGGEST_SORT_ALPHA = 'alphabetical'
+try:
+    from invenio.config import CFG_BIBAUTHORITY_AUTOSUGGEST_SORT_POPULAR
+except ImportError:
+    CFG_BIBAUTHORITY_AUTOSUGGEST_SORT_POPULAR = 'by popularity'
 
 # CFG_BIBAUTHORITY_AUTOSUGGEST_CONFIG
 # some additional configuration for auto-suggest drop-down
@@ -140,80 +177,92 @@ CFG_BIBAUTHORITY_AUTOSUGGEST_SORT_POPULAR = 'by popularity'
 # 'disambiguation_fields': an ordered list of fields to use
 # ... in case multiple suggestions have the same 'insert_here_field' values
 # TODO: 'sort_by'. This has not been implemented yet !
-CFG_BIBAUTHORITY_AUTOSUGGEST_CONFIG = {
-    'AUTHOR': {
-        'field': 'authorityauthor',
-        'insert_here_field': '100__a',
-        'sort_by': CFG_BIBAUTHORITY_AUTOSUGGEST_SORT_POPULAR,
-        'disambiguation_fields': ['100__d', '270__m'],
-    },
-    'CORPORATE': {
-        'field': 'authoritycorporate',
-        'insert_here_field': '110__a',
-        'sort_by': CFG_BIBAUTHORITY_AUTOSUGGEST_SORT_ALPHA,
-    },
-    'MEETING': {
-        'field': 'authoritymeeting',
-        'insert_here_field': '111__a',
-        'sort_by': CFG_BIBAUTHORITY_AUTOSUGGEST_SORT_POPULAR,
-    },
-    'UNIFORM': {
-        'field': 'authorityuniform',
-        'insert_here_field': '130__a',
-        'sort_by': CFG_BIBAUTHORITY_AUTOSUGGEST_SORT_ALPHA,
-    },
-    'SUBJECT': {
-        'field': 'authoritysubject',
-        'insert_here_field': '150__a',
-        'sort_by': CFG_BIBAUTHORITY_AUTOSUGGEST_SORT_ALPHA,
-    },
-    'GEOGRAPHICAL': {
-        'field': 'authoritygeopgrahical',
-        'insert_here_field': '151__a',
-        'sort_by': CFG_BIBAUTHORITY_AUTOSUGGEST_SORT_ALPHA,
-    },
-}
+try:
+    from invenio.config import CFG_BIBAUTHORITY_AUTOSUGGEST_CONFIG
+except ImportError:
+    CFG_BIBAUTHORITY_AUTOSUGGEST_CONFIG = {
+        'AUTHOR': {
+            'field': 'authorityauthor',
+            'insert_here_field': '100__a',
+            'sort_by': CFG_BIBAUTHORITY_AUTOSUGGEST_SORT_POPULAR,
+            'disambiguation_fields': ['100__d', '270__m'],
+        },
+        'CORPORATE': {
+            'field': 'authoritycorporate',
+            'insert_here_field': '110__a',
+            'sort_by': CFG_BIBAUTHORITY_AUTOSUGGEST_SORT_ALPHA,
+        },
+        'MEETING': {
+            'field': 'authoritymeeting',
+            'insert_here_field': '111__a',
+            'sort_by': CFG_BIBAUTHORITY_AUTOSUGGEST_SORT_POPULAR,
+        },
+        'UNIFORM': {
+            'field': 'authorityuniform',
+            'insert_here_field': '130__a',
+            'sort_by': CFG_BIBAUTHORITY_AUTOSUGGEST_SORT_ALPHA,
+        },
+        'SUBJECT': {
+            'field': 'authoritysubject',
+            'insert_here_field': '150__a',
+            'sort_by': CFG_BIBAUTHORITY_AUTOSUGGEST_SORT_ALPHA,
+        },
+        'GEOGRAPHICAL': {
+            'field': 'authoritygeopgrahical',
+            'insert_here_field': '151__a',
+            'sort_by': CFG_BIBAUTHORITY_AUTOSUGGEST_SORT_ALPHA,
+        },
+    }
 
 # list of authority record fields to index for each authority record type
 # R stands for 'repeatable'
 # NR stands for 'non-repeatable'
-CFG_BIBAUTHORITY_AUTHORITY_SUBFIELDS_TO_INDEX = {
-    'AUTHOR': [
-        '100__a',  # Personal Name (NR, NR)
-        '100__d',  # Year of birth or other dates (NR, NR)
-        '100__q',  # Fuller form of name (NR, NR)
-        '400__a',  #(See From Tracing) (R, NR)
-        '400__d',  #(See From Tracing) (R, NR)
-        '400__q',  #(See From Tracing) (R, NR)
-    ],
-    'CORPORATE': [
-        '110__a',  # (NR, NR)
-        '410__a',  # (R, NR)
-    ],
-    'MEETING': [
-        '111__a',  # (NR, NR)
-        '111__f',  # (NR, NR)
-        '111__l',  # (NR, NR)
-        '411__a',  #(R, NR)
-    ],
-    'UNIFORM': [
-        '130__a',  # (NR, NR)
-        '430__a',  # (R, NR)
-    ],
-    'SUBJECT': [
-        '150__a',  # (NR, NR)
-        '450__a',  # (R, NR)
-    ],
-    'GEOGRAPHICAL': [
-        '151__a',  # (NR, NR)
-        '451__a',  # (R, NR)
-    ],
-}
+try:
+    from invenio.config import CFG_BIBAUTHORITY_AUTHORITY_SUBFIELDS_TO_INDEX
+except ImportError:
+    CFG_BIBAUTHORITY_AUTHORITY_SUBFIELDS_TO_INDEX = {
+        'AUTHOR': [
+            '100__a',  # Personal Name (NR, NR)
+            '100__d',  # Year of birth or other dates (NR, NR)
+            '100__q',  # Fuller form of name (NR, NR)
+            '400__a',  # (See From Tracing) (R, NR)
+            '400__d',  #(See From Tracing) (R, NR)
+            '400__q',  #(See From Tracing) (R, NR)
+        ],
+        'CORPORATE': [
+            '110__a',  # (NR, NR)
+            '410__a',  # (R, NR)
+        ],
+        'MEETING': [
+            '111__a',  # (NR, NR)
+            '111__f',  # (NR, NR)
+            '111__l',  # (NR, NR)
+            '411__a',  # (R, NR)
+        ],
+        'UNIFORM': [
+            '130__a',  # (NR, NR)
+            '430__a',  # (R, NR)
+        ],
+        'SUBJECT': [
+            '150__a',  # (NR, NR)
+            '450__a',  # (R, NR)
+        ],
+        'GEOGRAPHICAL': [
+            '151__a',  # (NR, NR)
+            '451__a',  # (R, NR)
+        ],
+    }
 
-CFG_AUTHORITY_COPY_NATIVE_FIELD = True
+try:
+    from invenio.config import CFG_AUTHORITY_COPY_NATIVE_FIELD
+except ImportError:
+    CFG_AUTHORITY_COPY_NATIVE_FIELD = True
 
-CFG_ARBITRARY_AUTOSUGGEST_FIELD = {
-    "962__t": {"main": {"245": "t"},
-               "sub": [{"001": "w"}],
-               "name": "Cross Reserves"}
-}
+try:
+    from invenio.config import CFG_ARBITRARY_AUTOSUGGEST_FIELD
+except ImportError:
+    CFG_ARBITRARY_AUTOSUGGEST_FIELD = {
+        "962__t": {"main": {"245": "t"},
+                   "sub": [{"001": "w"}],
+                   "name": "Cross Reserves"}
+    }

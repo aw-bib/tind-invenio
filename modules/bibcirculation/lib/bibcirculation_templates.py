@@ -2254,10 +2254,11 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
         @param ln: language of the page
         """
         user_info = db.get_borrower_details(user_id)
-        (borrower_id, ccid, name, email, phone, address, mailbox) = user_info
+        (borrower_id, ccid, name, email, phone, address, mailbox, p_id) = user_info
 
         _ = gettext_set_language(ln)
 
+        patron_type = db.get_patron_type_name(p_id) if p_id else None
         display_id = borrower_id
 
         display_id = ccid
@@ -2308,6 +2309,10 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                   <th width="70">%s</th>
                   <td>%s</td>
                 </tr>
+                <tr>
+                  <th width="70">%s</th>
+                  <td>%s</td>
+                </tr>
                 </table>
                 <br />
                 <table class="bibcirctable">
@@ -2337,6 +2342,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                                           _("Mailbox"), mailbox,
                                           _("Email"), email,
                                           _("Phone"), phone,
+                                          _("Patron type"), patron_type,
                                           _("Enter the barcode"), _("Back"),
                                           _("Continue"))
 

@@ -3226,7 +3226,7 @@ def get_loan_period_from_loan_rule(user_id, barcode):
     return returndict
 
 def get_patron_type_from_user_id(id):
-    res = run_sql("SELECT patrontype_id FROM crPATRONTYPES_BORROWER WHERE borrower_id = %s" % id)
+    res = run_sql("SELECT patrontype_id FROM crcPATRONTYPE_BORROWER WHERE borrower_id = %s" % id)
     if res:
         return res[0][0]
     else:

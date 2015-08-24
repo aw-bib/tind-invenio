@@ -2860,10 +2860,19 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
 
         (borrower_id, ccid, name, email, phone, address, mailbox, p_id) = borrower
 
+<<<<<<< HEAD
         display_id = ccid
         id_string = "UID"
 
         patron_type = db.get_patron_type_name(p_id)
+=======
+        display_id = borrower_id
+        id_string = _("ID")
+        patron_type = db.get_patron_type_name(p_id) if p_id else None
+        if CFG_CERN_SITE == 1:
+            display_id = ccid
+            id_string = _("CCID")
+>>>>>>> Adds if clause to fail gracefully for users with no patron type
 
         out += """
             <style type="text/css"> @import url("/img/tablesorter.css"); </style>
@@ -3507,7 +3516,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
 
         _ = gettext_set_language(ln)
 
-        patron_type = db.get_patron_type_name(p_id)
+        patron_type = db.get_patron_type_name(p_id) if p_id else None
         item_type = db.get_item_type_name_from_barcode(barcode)
 
         out = self.tmpl_infobox(infos, ln)
@@ -7628,8 +7637,18 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
         (borrower_id, ccid, name, email, phone, address, mailbox, p_id) = borrower
 
+<<<<<<< HEAD
         display_id = ccid
         id_string = "UID"
+=======
+        display_id = borrower_id
+        id_string = _("ID")
+        patron_type = db.get_patron_type_name(p_id) if p_id else None
+
+        if CFG_CERN_SITE == 1:
+            display_id = ccid
+            id_string = _("CCID")
+>>>>>>> Adds if clause to fail gracefully for users with no patron type
 
         patron_type = db.get_patron_type_name(p_id)
 
@@ -7780,7 +7799,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
         display_id = borrower_id
         id_string = _("ID")
-        patron_type = db.get_patron_type_name(p_id)
+        patron_type = db.get_patron_type_name(p_id) if p_id else None
         if CFG_CERN_SITE == 1:
             display_id = ccid
             id_string = _("CCID")
@@ -9926,10 +9945,10 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
         display_id = ccid
         id_string = _("UID")
-        patron_type = db.get_patron_type_name(p_id)
+        patron_type = db.get_patron_type_name(p_id) if p_id else None
 
         (budget_code, period_of_interest_from, period_of_interest_to,
-         additional_comments, only_edition)= request_details
+         additional_comments<<, only_edition)= request_details
 
         out = ""
         if admin:

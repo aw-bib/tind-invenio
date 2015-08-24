@@ -309,8 +309,15 @@ def loan_on_desk_step2(req, user_id, ln=CFG_SITE_LANG):
     (auth_code, auth_message) = is_adminuser(req)
     if auth_code != 0:
         return mustloginpage(req, auth_message)
-
     infos = []
+
+    p_id = get_patron_type_from_user_id(user_id)
+    if not p_id:
+        infos.append(_("This user needs to have a patron type before any loan can be registered. %(link_start)sClick here to update borrower%(link_end)s" %
+                       {
+                           'link_start': '<a href="' + CFG_SITE_SECURE_URL + '/admin2/bibcirculation/update_borrower_info_step1?borrower_id=' + user_id + '">',
+                           'link_end': '</a>'
+                       }))
 
     body = bc_templates.tmpl_loan_on_desk_step2(user_id=user_id,
                                                 infos=infos,

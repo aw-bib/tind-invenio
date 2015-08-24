@@ -311,7 +311,7 @@ def loan_on_desk_step2(req, user_id, ln=CFG_SITE_LANG):
         return mustloginpage(req, auth_message)
     infos = []
 
-    p_id = get_patron_type_from_user_id(user_id)
+    p_id = db.get_patron_type_from_user_id(user_id)
     if not p_id:
         infos.append(_("This user needs to have a patron type before any loan can be registered. %(link_start)sClick here to update borrower%(link_end)s" %
                        {

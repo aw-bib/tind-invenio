@@ -8766,6 +8766,10 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
         if tup_infos:
             (name, email, phone, address, mailbox, notes, p_id) = tup_infos
+            try:
+                p_id = int(p_id)
+            except TypeError:
+                pass
         else:
             (name, email, phone, address, mailbox, notes, p_id) = ('', '', '', '', '', '', None)
 
@@ -9001,6 +9005,10 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
         _ = gettext_set_language(ln)
 
         (borrower_id, name, email, phone, address, mailbox, p_id) = tup_infos
+        try:
+            p_id = int(p_id)
+        except TypeError:
+            pass
 
         display_id = borrower_id
         id_string = _("UID")
@@ -9079,7 +9087,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                        borrower_id,
                        _("Patron type"))
         for id, patrontype in patron_types:
-            if id == int(p_id):
+            if id == p_id:
                 out += """
                             <option selected="selected" value="%s">%s</option>
                 """ % (id, patrontype)

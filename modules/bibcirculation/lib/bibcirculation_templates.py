@@ -5294,12 +5294,12 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
             if code == CFG_BIBCIRCULATION_LOAN_RULE_CODE_NON_CIRC:
                 loan_period_text = "Non circulating"
             elif code == CFG_BIBCIRCULATION_LOAN_RULE_CODE_REGULAR:
-                loan_period_text = loan_period + " days"
+                loan_period_text = str(loan_period) + " days"
             elif code in (CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_OVERNIGHT,
                           CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS,
                           CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_MINUTE_OVERNIGHT,
                           CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_MINUTE):
-                loan_period_text = loan_period + " hours"
+                loan_period_text = str(loan_period) + " hours"
             elif code == CFG_BIBCIRCULATION_LOAN_RULE_CODE_ABSOLUTE:
                 loan_period_text = generate_new_due_date(loan_period, absolute=True)
             else:

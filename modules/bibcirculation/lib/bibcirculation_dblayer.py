@@ -1394,7 +1394,7 @@ def get_item_copies_details(recid, patrontype=None):
         qry = """SELECT DISTINCT it.barcode, lrv.loan_period, lib.name,
                                     lib.id, it.location, it.number_of_requests,
                                     it.status, it.collection, it.description,
-                                    DATE_FORMAT(ln.due_date,'%d-%m-%Y'), lrv.code,
+                                    DATE_FORMAT(ln.due_date,'%%d-%%m-%%Y'), lrv.code,
                                     itt.name as itemtype
                              FROM crcITEM it
                                     left join crcLOAN ln
@@ -1407,8 +1407,6 @@ def get_item_copies_details(recid, patrontype=None):
                                     on itt_it.itemtype_id = itt.id
                                     left join crcLOANRULES_MATCH_VIEW lrv
                                     on it.barcode = lrv.barcode
-                                    LEFT JOIN crcPATRONTYPES pt
-                                    ON lrv.patrontype_id = pt.id
                              WHERE it.id_bibrec=%(recid)s
                              AND lrv.`patrontype_id` = %(patrontype)s
                              GROUP BY it.barcode
@@ -1417,7 +1415,7 @@ def get_item_copies_details(recid, patrontype=None):
                 		SELECT DISTINCT it.barcode, NULL AS loan_period, lib.name,
                                     lib.id, it.location, it.number_of_requests,
                                     it.status, it.collection, it.description,
-                                    DATE_FORMAT(ln.due_date,'%d-%m-%Y'), lrv.code,
+                                    DATE_FORMAT(ln.due_date,'%%d-%%m-%%Y'), lrv.code,
                                     itt.name as itemtype
                             FROM crcITEM it
                                     LEFT JOIN crcLOAN ln

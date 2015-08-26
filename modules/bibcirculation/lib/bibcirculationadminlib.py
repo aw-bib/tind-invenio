@@ -47,6 +47,7 @@ from invenio.config import \
     CFG_SITE_SECURE_URL, \
     CFG_CERN_SITE, CFG_BIBCIRCULATION_LIBRARY_TYPE_INTERNAL
 import invenio.access_control_engine as acce
+from bibcirculation_config import CFG_BIBCIRCULATION_COLLECTION_SEARCH
 from invenio.webpage import page
 from invenio.webuser import getUid, page_not_authorized
 from invenio.webstat import register_customevent
@@ -157,23 +158,11 @@ def load_template(template):
     elif template == "claim_return":
         output = CFG_BIBCIRCULATION_TEMPLATES['SEND_RECALL']
 
-    elif template == "proposal_notification":
-        output = CFG_BIBCIRCULATION_TEMPLATES['PROPOSAL_NOTIFICATION']
-
-    elif template == "proposal_acceptance":
-        output = CFG_BIBCIRCULATION_TEMPLATES['PROPOSAL_ACCEPTANCE_NOTIFICATION']
-
-    elif template == "proposal_refusal":
-        output = CFG_BIBCIRCULATION_TEMPLATES['PROPOSAL_REFUSAL_NOTIFICATION']
-
     elif template == "purchase_notification":
         output = CFG_BIBCIRCULATION_TEMPLATES['PURCHASE_NOTIFICATION']
 
-    elif template == "purchase_received_tid":
-        output = CFG_BIBCIRCULATION_TEMPLATES['PURCHASE_RECEIVED_TID']
-
-    elif template == "purchase_received_cash":
-        output = CFG_BIBCIRCULATION_TEMPLATES['PURCHASE_RECEIVED_CASH']
+    elif template == "purchase_received":
+        output = CFG_BIBCIRCULATION_TEMPLATES['PURCHASE_RECEIVED']
 
     else:
         output = CFG_BIBCIRCULATION_TEMPLATES['EMPTY']
@@ -1081,18 +1070,6 @@ def place_new_request_step1(req, barcode, recid, key, string, ln=CFG_SITE_LANG):
     recid = db.get_id_bibrec(barcode)
     infos = []
 
-
-    navtrail_previous_links = '<a class="navtrail" ' \
-                          'href="%s/help/admin">Admin Area' \
-                          '</a>' % (CFG_SITE_SECURE_URL,)
-    if not barcode:
-        return page(title=_("Item search"),
-                    req=req,
-                    body=bc_templates.tmpl_item_search(infos=[], ln=ln),
-                    language=ln,
-                    navtrail=navtrail_previous_links,
-                    lastupdated=__lastupdated__)
-
     if key and not string:
         infos.append(_('Empty string.') + ' ' + _('Please, try again.'))
         body = bc_templates.tmpl_place_new_request_step1(result=None,
@@ -1102,6 +1079,10 @@ def place_new_request_step1(req, barcode, recid, key, string, ln=CFG_SITE_LANG):
                                                          recid=recid,
                                                          infos=infos,
                                                          ln=ln)
+
+        navtrail_previous_links = '<a class="navtrail" ' \
+                              'href="%s/help/admin">Admin Area' \
+                              '</a>' % (CFG_SITE_SECURE_URL,)
 
         return page(title=_("New request"),
                     uid=id_user,
@@ -1151,7 +1132,6 @@ def place_new_request_step1(req, barcode, recid, key, string, ln=CFG_SITE_LANG):
                 navtrail=navtrail_previous_links,
                 lastupdated=__lastupdated__)
 
-
 def place_new_request_step2(req, barcode, recid, user_info, ln=CFG_SITE_LANG):
     """
     Place a new request from the item's page, step2.
@@ -1175,49 +1155,25 @@ def place_new_request_step2(req, barcode, recid, user_info, ln=CFG_SITE_LANG):
 
     _ = gettext_set_language(ln)
 
-    navtrail_previous_links = '<a class="navtrail" ' \
-                              'href="%s/help/admin">Admin Area' \
-                              '</a>' % (CFG_SITE_SECURE_URL,)
-
-    if not user_info:
-        # Case someone try directly to access to step2 without passing by previous step
-        if barcode:
-            return page(title=_("New request"),
-                        uid=id_user,
-                        req=req,
-                        body=bc_templates.tmpl_place_new_request_step1(result=None,
-                                                                       key=None,
-                                                                       string=None,
-                                                                       barcode=barcode,
-                                                                       recid=recid,
-                                                                       infos=[],
-                                                                       ln=ln),
-                        language=ln,
-                        navtrail=navtrail_previous_links,
-                        lastupdated=__lastupdated__)
-        else:
-            return page(title=_("Item search"),
-                        req=req,
-                        body=bc_templates.tmpl_item_search(infos=[], ln=ln),
-                        language=ln,
-                        navtrail=navtrail_previous_links,
-                        lastupdated=__lastupdated__)
-
+    infos = []
 
     body = bc_templates.tmpl_place_new_request_step2(barcode=barcode,
                                                      recid=recid,
                                                      user_info=user_info,
-                                                     infos=[],
+                                                     infos=infos,
                                                      ln=ln)
+
+    navtrail_previous_links = '<a class="navtrail" ' \
+                              'href="%s/help/admin">Admin Area' \
+                              '</a>' % (CFG_SITE_SECURE_URL,)
 
     return page(title=_("New request"),
                 uid=id_user,
                 req=req,
                 body=body,
-                metaheaderadd="<link rel=\"stylesheet\" href=\"%s/img/jquery-ui.css\" type=\"text/css\" />" % CFG_SITE_SECURE_URL,
+                metaheaderadd = "<link rel=\"stylesheet\" href=\"%s/img/jquery-ui.css\" type=\"text/css\" />" % CFG_SITE_SECURE_URL,
                 navtrail=navtrail_previous_links,
                 lastupdated=__lastupdated__)
-
 
 def place_new_request_step3(req, barcode, recid, user_info,
                             period_from, period_to, ln=CFG_SITE_LANG):
@@ -1245,35 +1201,11 @@ def place_new_request_step3(req, barcode, recid, user_info,
         return mustloginpage(req, auth_message)
 
     _ = gettext_set_language(ln)
-    if user_info:
-        (_id, ccid, name, email, phone, address, mailbox) = user_info
-    else:
-        # Case someone try directly to access to step3 without passing by previous step
-        if barcode:
-            return page(title=_("New request"),
-                        uid=id_user,
-                        req=req,
-                        body=bc_templates.tmpl_place_new_request_step1(result=None,
-                                                                       key="",
-                                                                       string="",
-                                                                       barcode=barcode,
-                                                                       recid=recid,
-                                                                       infos=[],
-                                                                       ln=ln),
-                        language=ln,
-                        navtrail=navtrail_previous_links,
-                        lastupdated=__lastupdated__)
-        else:
 
-            return page(title=_("Item search"),
-                        req=req,
-                        body=bc_templates.tmpl_item_search(infos=[], ln=ln),
-                        language=ln,
-                        navtrail=navtrail_previous_links,
-                        lastupdated=__lastupdated__)
+    (_id, ccid, name, email, phone, address, mailbox) = user_info
 
     # validate the period of interest given by the admin
-    if not period_from or validate_date_format(period_from) is False:
+    if validate_date_format(period_from) is False:
         infos = []
         infos.append(_("The period of interest %(x_strong_tag_open)sFrom: %(x_date)s%(x_strong_tag_close)s is not a valid date or date format") % {'x_date': period_from, 'x_strong_tag_open': '<strong>', 'x_strong_tag_close': '</strong>'})
 
@@ -1291,7 +1223,7 @@ def place_new_request_step3(req, barcode, recid, user_info,
                     navtrail=navtrail_previous_links,
                     lastupdated=__lastupdated__)
 
-    elif not period_to or validate_date_format(period_to) is False:
+    elif validate_date_format(period_to) is False:
         infos = []
         infos.append(_("The period of interest %(x_strong_tag_open)sTo: %(x_date)s%(x_strong_tag_close)s is not a valid date or date format") % {'x_date': period_to, 'x_strong_tag_open': '<strong>', 'x_strong_tag_close': '</strong>'})
 
@@ -1304,7 +1236,7 @@ def place_new_request_step3(req, barcode, recid, user_info,
     # Register request
     borrower_id = db.get_borrower_id_by_email(email)
 
-    if borrower_id is None:
+    if borrower_id == None:
         db.new_borrower(ccid, name, email, phone, address, mailbox, '')
         borrower_id = db.get_borrower_id_by_email(email)
 
@@ -1333,9 +1265,14 @@ def place_new_request_step3(req, barcode, recid, user_info,
         subject = _('New request')
         message = load_template('notification')
 
+        holding_library = db.get_library_holding_barcode(barcode)
+        (l_id, l_name, l_address, library_email,
+         l_phone, l_type, l_notes) = db.get_library_details(holding_library)
+
         message = message % (name, ccid, email, address, mailbox, title,
                              author, publisher, year, isbn, location, library,
-                             link_to_holdings_details, request_date)
+                             link_to_holdings_details, request_date, l_name,
+                             l_phone, library_email)
 
 
         send_email(fromaddr = CFG_BIBCIRCULATION_LIBRARIAN_EMAIL,
@@ -1652,7 +1589,8 @@ def create_new_request_step1(req, borrower_id, p="", f="", search=None,
             result = has_recid
 
     elif search:
-        result = perform_request_search(cc="Books", sc="1", p=p, f=f)
+
+        result = perform_request_search(c=CFG_BIBCIRCULATION_COLLECTION_SEARCH, sc="1", p=p, f=f)
 
     else:
         result = ''
@@ -2652,7 +2590,7 @@ def add_new_copy_step2(req, p, f, ln=CFG_SITE_LANG):
 
     _ = gettext_set_language(ln)
 
-    result = perform_request_search(cc="Books", sc="1", p=p, f=f)
+    result = perform_request_search(c=CFG_BIBCIRCULATION_COLLECTION_SEARCH, sc="1", p=p, f=f)
 
     navtrail_previous_links = '<a class="navtrail" ' \
                               'href="%s/help/admin">Admin Area' \
@@ -2961,7 +2899,7 @@ def update_item_info_step2(req, p, f, ln=CFG_SITE_LANG):
 
     _ = gettext_set_language(ln)
 
-    result = perform_request_search(cc="Books", sc="1", p=p, f=f)
+    result = perform_request_search(c=CFG_BIBCIRCULATION_COLLECTION_SEARCH, sc="1", p=p, f=f)
 
     body = bc_templates.tmpl_update_item_info_step2(result=result, ln=ln)
 
@@ -3228,7 +3166,7 @@ def item_search_result(req, p, f, ln=CFG_SITE_LANG):
             return get_item_details(req, recid, ln=ln)
 
     else:
-        result = perform_request_search(cc="Books", sc="1", p=p, f=f)
+        result = perform_request_search(c=CFG_BIBCIRCULATION_COLLECTION_SEARCH, sc="1", p=p, f=f)
         body = bc_templates.tmpl_item_search_result(result=result, ln=ln)
 
     navtrail_previous_links = '<a class="navtrail" ' \
@@ -4298,15 +4236,13 @@ def register_ill_request_with_no_recid_step2(req, title, authors, place,
 
     else:
         user_info = db.get_borrower_data_by_id(borrower_id)
-
-
         return register_ill_request_with_no_recid_step3(req, title, authors,
-                                                        place, publisher,year, edition,
-                                                        isbn, user_info, budget_code,
-                                                        period_of_interest_from,
-                                                        period_of_interest_to,
-                                                        additional_comments, only_edition,
-                                                        ln)
+                                            place, publisher,year, edition,
+                                            isbn, user_info, budget_code,
+                                            period_of_interest_from,
+                                            period_of_interest_to,
+                                            additional_comments, only_edition,
+                                            ln)
 
 
     navtrail_previous_links = '<a class="navtrail" ' \
@@ -4507,7 +4443,7 @@ def register_ill_book_request_result(req, borrower_id, p, f,  ln=CFG_SITE_LANG):
                                                         borrower_id=borrower_id,
                                                         ln=ln)
         else:
-            result = perform_request_search(cc="Books", sc="1", p=p, f=f)
+            result = perform_request_search(c=CFG_BIBCIRCULATION_COLLECTION_SEARCH, sc="1", p=p, f=f)
             if len(result) == 0:
                 return register_ill_request_with_no_recid_step1(req,
                                                                 borrower_id, ln)

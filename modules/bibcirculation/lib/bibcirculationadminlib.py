@@ -707,6 +707,7 @@ def register_new_loan(req, barcode, borrower_id,
         return page(title=title,
                     uid=id_user,
                     req=req,
+
                     body=body, language=ln,
                     navtrail=navtrail_previous_links,
                     lastupdated=__lastupdated__)
@@ -1926,7 +1927,7 @@ def all_loans(req, msg=None, ln=CFG_SITE_LANG, library=(), loans_per_page=0, nb_
                     'Circulation Management' \
                     '</a> ' % (CFG_SITE_SECURE_URL, CFG_SITE_SECURE_URL, ln)
 
-    body = bc_templates.tmpl_all_loans(result=result,
+    body, head = bc_templates.tmpl_all_loans(result=result,
                                        infos=infos,
                                        ln=ln,
                                        libraries=db.get_internal_and_main_libraries())
@@ -1934,6 +1935,7 @@ def all_loans(req, msg=None, ln=CFG_SITE_LANG, library=(), loans_per_page=0, nb_
     return page(title=_("Current loans"),
                 uid=id_user,
                 req=req,
+                metaheaderadd=head,
                 body=body, language=ln,
                 navtrail=navtrail_previous_links,
                 lastupdated=__lastupdated__)
@@ -2094,7 +2096,7 @@ def all_expired_loans(req, ln=CFG_SITE_LANG, library=(), loans_per_page=0, nb_pa
                     'Circulation Management' \
                     '</a> ' % (CFG_SITE_SECURE_URL, CFG_SITE_SECURE_URL, ln)
 
-    body = bc_templates.tmpl_all_expired_loans(result=result,
+    body, head= bc_templates.tmpl_all_expired_loans(result=result,
                                                infos=infos,
                                                ln=ln,
                                                libraries=db.get_internal_and_main_libraries())
@@ -2104,6 +2106,7 @@ def all_expired_loans(req, ln=CFG_SITE_LANG, library=(), loans_per_page=0, nb_pa
                 req=req,
                 body=body, language=ln,
                 navtrail=navtrail_previous_links,
+                metaheaderadd=head,
                 lastupdated=__lastupdated__)
 
 def get_pending_requests(req, request_id, print_data, ln=CFG_SITE_LANG):

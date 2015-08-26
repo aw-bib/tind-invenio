@@ -4616,80 +4616,11 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
         out += load_menu(ln)
 
         out += """
-            <style type="text/css"> @import url("/js/tablesorter/themes/blue/style.css"); </style>
-            <script src="/js/jquery.dataTables.min.js" type="text/javascript"></script>
-            <script type="text/javascript">
-            function changepage(type) {
-                    var oTable = $('#table_all_loans').dataTable();
-                    var Table = $('#table_all_loans').DataTable();
-                    oTable.fnPageChange(type);
-                    pg_info = Table.page.info();
-                    $('.pagedisplay')[0].value = (pg_info.page + 1) + "/" + pg_info.pages
-            }
-
-            function changelength() {
-                    var oTable = $('#table_all_loans').dataTable();
-                    oTable._fnLengthChange(parseInt($('.pagesize').val()));
-                    oTable.fnDraw();
-            }
-
-
-            $(document).ready(function(){
-                 $("#table_all_loans").DataTable({
-                  "processing": true,
-                  "serverSide": true,
-                  "searching": false,
-                  "bInfo" : false,
-                  "dom": 'rt<"bottom"iflp<"clear">>',
-                  "ajax": {
-                    url: "%s/admin2/bibcirculation/all_loans",
-                    data: function ( d ) {
-                        return $.extend( {}, d, {
-                        "library" :$("input:checkbox:checked").map(function(){
-                                      return $(this).val();
-                                    }).get()
-                        })
-                  },
-
-        }});
-
-
-                $("input[type='checkbox']").on("change", function() {
-                    $("#table_all_loans").DataTable().ajax.reload();
-                });
-                $('.dataTables_paginate').hide();
-                $('#table_all_loans_length').hide();
-                $(".dataTables_processing").remove();
-
-
-
-                 $("#table_all_loans").on( 'draw.dt', function () {
-                    var Table = $('#table_all_loans').DataTable();
-                    pg_info = Table.page.info();
-                    $('.pagedisplay')[0].value = (pg_info.page + 1) + "/" + pg_info.pages
-                } );
-                 $('.pagedisplay')[0].onkeypress = function(e){
-                    if (!e) e = window.event;
-                    var keyCode = e.keyCode || e.which;
-                    if (keyCode == '13'){
-                      changepage(parseInt($('.pagedisplay')[0].value.split("/")[0] ) - 1 );
-                      e.preventDefault();
-
-                      return false;
-                    }
-                  }
-                  $('.pagesize').on('change', function() {
-                    changelength();
-                  });
-
-                });
-
-            </script>
 
             <br />
 
             <div class="bibcircbottom">
-            """ % (CFG_SITE_URL,)
+            """
         if len(result) == 0:
             out += """
               <br />
@@ -4720,7 +4651,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
             #out += "</select>"
                 out += "<form id='search_form'><p>"
                 for library in libraries:
-                   out += '<label class="checkboxes_exp_loan"><input type="checkbox" name="libraries" value="{0}">{0}</label> '.format(library[1])
+                   out += '<label class="checkboxes_exp_loan" for="{0}"></label><input id="{0}" type="checkbox" name="libraries" value="{0}"  class="js-switch" checked>{0}'.format(library[1])
                 out += "</p></form>"
             out += """
 
@@ -4728,7 +4659,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                   action="%s/admin2/bibcirculation/all_loans"
                   method="get" >
             <br />
-            <table id="table_all_loans" class="tablesorter"
+            <table id="table_all_loans"
                     border="0" cellpadding="0" cellspacing="1">
                <thead>
                     <tr>
@@ -4748,10 +4679,10 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                           _("Borrower"),
                           _("Item"),
                           _("Barcode"),
-                          _("Loaned on"),
-                          _("Due date"),
+                          _("Loaned"),
+                          _("Due"),
                           _("Renewals"),
-                          _("Overdue letters"),
+                          _("Reminders"),
                           _("Library"),
                           _("Location"))
 
@@ -4794,8 +4725,18 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
 
                     </div>
                     """ % (_("Back"))
+        head = """
+            <link rel="stylesheet" type="text/css" href="/img/bibcirculation.css" />
+            <link rel="stylesheet" type="text/css" href="/img/switchery.min.css" />
+            <script type="text/javascript">
+            var ajax_url = "/admin2/bibcirculation/all_loans"
+            </script>
+            <script src="/js/jquery.dataTables.min.js" type="text/javascript"></script>
+            <script src="/js/bibcirculation.js" type="text/javascript"></script>
+            <script src="/js/switchery.min.js" type="text/javascript"></script>
+            """
+        return out, head
 
-        return out
 
     def tmpl_all_expired_loans(self, result, infos, ln=CFG_SITE_LANG, libraries=()):
         """
@@ -4809,80 +4750,10 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
         out += load_menu(ln)
 
         out += """
-            <style type="text/css"> @import url("/js/tablesorter/themes/blue/style.css"); </style>
-            <script src="/js/jquery.dataTables.min.js" type="text/javascript"></script>
-            <script type="text/javascript">
-            function changepage(type) {
-                    var oTable = $('#table_all_loans').dataTable();
-                    var Table = $('#table_all_loans').DataTable();
-                    oTable.fnPageChange(type);
-                    pg_info = Table.page.info();
-                    $('.pagedisplay')[0].value = (pg_info.page + 1) + "/" + pg_info.pages
-            }
-
-            function changelength() {
-                    var oTable = $('#table_all_loans').dataTable();
-                    oTable._fnLengthChange(parseInt($('.pagesize').val()));
-                    oTable.fnDraw();
-            }
-
-
-            $(document).ready(function(){
-                 $("#table_all_loans").DataTable({
-                  "processing": true,
-                  "serverSide": true,
-                  "searching": false,
-                  "bInfo" : false,
-                  "dom": 'rt<"bottom"iflp<"clear">>',
-                  "ajax": {
-                    url: "%s/admin2/bibcirculation/all_expired_loans",
-                    data: function ( d ) {
-                        return $.extend( {}, d, {
-                        "library" :$("input:checkbox:checked").map(function(){
-                                      return $(this).val();
-                                    }).get()
-                        })
-                  },
-
-        }});
-
-
-                $("input[type='checkbox']").on("change", function() {
-                    $("#table_all_loans").DataTable().ajax.reload();
-                });
-                $('.dataTables_paginate').hide();
-                $('#table_all_loans_length').hide();
-                $(".dataTables_processing").remove();
-
-
-
-                 $("#table_all_loans").on( 'draw.dt', function () {
-                    var Table = $('#table_all_loans').DataTable();
-                    pg_info = Table.page.info();
-                    $('.pagedisplay')[0].value = (pg_info.page + 1) + "/" + pg_info.pages
-                } );
-                 $('.pagedisplay')[0].onkeypress = function(e){
-                    if (!e) e = window.event;
-                    var keyCode = e.keyCode || e.which;
-                    if (keyCode == '13'){
-                      changepage(parseInt($('.pagedisplay')[0].value.split("/")[0] ) - 1 );
-                      e.preventDefault();
-
-                      return false;
-                    }
-                  }
-                  $('.pagesize').on('change', function() {
-                    changelength();
-                  });
-
-                });
-
-            </script>
-
             <br />
 
             <div class="bibcircbottom">
-            """ % (CFG_SITE_URL,)
+            """
         if len(result) == 0:
             out += """
               <br />
@@ -4914,7 +4785,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
             #out += "</select>"
                 out += "<form id='search_form'><p>"
                 for library in libraries:
-                   out += '<label class="checkboxes_exp_loan"><input type="checkbox" name="libraries" value="{0}">{0}</label> '.format(library[1])
+                   out += '<label class="checkboxes_exp_loan" for="{0}"></label><input id="{0}" type="checkbox" name="libraries" value="{0}"  class="js-switch" checked>{0} '.format(library[1])
                 out += "</p></form>"
             out += """
 
@@ -4922,7 +4793,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                   action="%s/admin2/bibcirculation/all_loans"
                   method="get" >
             <br />
-            <table id="table_all_loans" class="tablesorter"
+            <table id="table_all_loans"
                     border="0" cellpadding="0" cellspacing="1">
                <thead>
                     <tr>
@@ -4942,10 +4813,10 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                           _("Borrower"),
                           _("Item"),
                           _("Barcode"),
-                          _("Loaned on"),
-                          _("Due date"),
+                          _("Loaned"),
+                          _("Due"),
                           _("Renewals"),
-                          _("Overdue letters"),
+                          _("Reminders"),
                           _("Library"),
                           _("Location"))
 
@@ -4988,9 +4859,20 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                     </div>
 
                     </div>
+
                     """ % (_("Back"))
 
-        return out
+        head = """
+            <link rel="stylesheet" type="text/css" href="/img/bibcirculation.css" />
+            <link rel="stylesheet" type="text/css" href="/img/switchery.min.css" />
+            <script type="text/javascript">
+            var ajax_url = "/admin2/bibcirculation/all_expired_loans"
+            </script>
+            <script src="/js/jquery.dataTables.min.js" type="text/javascript"></script>
+            <script src="/js/bibcirculation.js" type="text/javascript"></script>
+            <script type="text/javascript" src="/js/switchery.min.js"></script>
+            """
+        return out, head
 
     def tmpl_get_expired_loans_with_waiting_requests(self, result, ln=CFG_SITE_LANG):
         """

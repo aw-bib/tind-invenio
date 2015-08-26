@@ -1,0 +1,47 @@
+.centered {
+    text-align:center;
+}
+
+.pagebody table {
+    border-collapse: collapse;
+}
+
+table {
+    font-family:arial;
+    font-size: 8pt;
+    text-align: left;
+}
+
+table tr th{
+    font-size: 1.2em;
+    font-weight: normal;
+    text-align: left;
+}
+
+table thead tr .header{
+    cursor:pointer;
+    padding:10px;
+}
+
+.headerbox tr:first-child {
+    visibility:hidden;
+}
+
+table tfoot tr th{
+    border: 1px solid #FFF;
+}
+
+table tbody td{
+    color: #3D3D3D;
+}
+
+table td{
+    border-bottom: 1px solid #DCDCDC;
+    padding:7px;
+    text-align:left:
+    vertical-align: middle;
+}
+
+.switchery {
+    margin-right:5px!important;
+}

@@ -1391,30 +1391,33 @@ def get_nb_copies_on_loan(recid):
 
 def get_item_copies_details(recid, patrontype=None):
     if type(patrontype) is int:
-        qry = """SELECT DISTINCT it.barcode, GROUP_CONCAT(lrv.loan_period), lib.name,
+        qry = """SELECT DISTINCT it.barcode, lrv.loan_period, lib.name,
                                     lib.id, it.location, it.number_of_requests,
                                     it.status, it.collection, it.description,
-                                    DATE_FORMAT(ln.due_date,'%%d-%%m-%%Y'), GROUP_CONCAT(lrv.code),
+                                    DATE_FORMAT(ln.due_date,'%d-%m-%Y'), lrv.code,
                                     itt.name as itemtype
                              FROM crcITEM it
                                     left join crcLOAN ln
                                     on it.barcode = ln.barcode and ln.status != "%(returncode)s"
                                     left join crcLIBRARY lib
                                     on lib.id = it.id_crcLIBRARY
-                                    left join crcLOANRULES_MATCH_VIEW lrv
-                                    on it.barcode = lrv.barcode
                                     left join crcITEMTYPE_ITEM itt_it
                                     on it.barcode = itt_it.barcode
                                     left join crcITEMTYPES itt
                                     on itt_it.itemtype_id = itt.id
+                                    left join crcLOANRULES_MATCH_VIEW lrv
+                                    on it.barcode = lrv.barcode
+                                    LEFT JOIN crcPATRONTYPES pt
+                                    ON lrv.patrontype_id = pt.id
                              WHERE it.id_bibrec=%(recid)s
                              AND lrv.`patrontype_id` = %(patrontype)s
                              GROUP BY it.barcode
                 UNION ALL
-                SELECT DISTINCT it.barcode, NULL, lib.name,
+                SELECT * FROM(
+                		SELECT DISTINCT it.barcode, NULL AS loan_period, lib.name,
                                     lib.id, it.location, it.number_of_requests,
                                     it.status, it.collection, it.description,
-                                    DATE_FORMAT(ln.due_date,'%%d-%%m-%%Y'), NULL,
+                                    DATE_FORMAT(ln.due_date,'%d-%m-%Y'), lrv.code,
                                     itt.name as itemtype
                             FROM crcITEM it
                                     LEFT JOIN crcLOAN ln
@@ -1430,6 +1433,8 @@ def get_item_copies_details(recid, patrontype=None):
                             WHERE it.id_bibrec=%(recid)s
                             AND (lrv.`patrontype_id` != %(patrontype)s OR lrv.patrontype_id IS NULL)
                             GROUP BY it.barcode
+                         ) AS temp
+                         WHERE temp.code IS null
                 ORDER BY barcode
               """ % {
             'returncode': CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED,

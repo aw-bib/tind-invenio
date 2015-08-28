@@ -1959,14 +1959,23 @@ def all_loans_data(req, msg=None, ln=CFG_SITE_LANG, library=(), loans_per_page=0
 
     if "library[]" in args:
         library = args["library[]"]
-    else:
-        library = ()
-
-    result = db.get_all_loans(libraries=library,
+        result = db.get_all_loans(libraries=library,
                               sort_by=args["order[0][column]"][0],
                               sort_dir=args["order[0][dir]"][0],
                               type_l=[CFG_BIBCIRCULATION_LIBRARY_TYPE_MAIN,
                                       CFG_BIBCIRCULATION_LIBRARY_TYPE_INTERNAL])
+
+    else:
+        libraries = db.get_internal_and_main_libraries()
+        if len(libraries) == 1:
+            result = db.get_all_loans(libraries=libraries[0][1],
+                              sort_by=args["order[0][column]"][0],
+                              sort_dir=args["order[0][dir]"][0],
+                              type_l=[CFG_BIBCIRCULATION_LIBRARY_TYPE_MAIN,
+                                CFG_BIBCIRCULATION_LIBRARY_TYPE_INTERNAL])
+        else:
+            result = ()
+
 
     ajax_answer = {"draw": args["draw"][0], "recordsTotal": len(result), "recordsFiltered": len(result)}
     start = int(args["start"][0])
@@ -2030,16 +2039,21 @@ def all_expired_loans_data(req, ln=CFG_SITE_LANG):
 
     if "library[]" in args:
         library = args["library[]"]
+        result = db.get_expired_loans_with_parameters(libraries=library,
+                                                      sort_by=args["order[0][column]"][0],
+                                                      sort_dir=args["order[0][dir]"][0],
+                                                      type_l=[CFG_BIBCIRCULATION_LIBRARY_TYPE_MAIN,
+                                                            CFG_BIBCIRCULATION_LIBRARY_TYPE_INTERNAL])
     else:
-        library = ()
-
-
-    result = db.get_expired_loans_with_parameters(libraries=library,
-                                                  sort_by=args["order[0][column]"][0],
-                                                  sort_dir=args["order[0][dir]"][0],
-                                                  type_l=[CFG_BIBCIRCULATION_LIBRARY_TYPE_MAIN,
-                                                        CFG_BIBCIRCULATION_LIBRARY_TYPE_INTERNAL])
-
+        libraries = db.get_internal_and_main_libraries()
+        if len(libraries) == 1:
+            result = db.get_expired_loans_with_parameters(libraries=libraries[0][1],
+                                                          sort_by=args["order[0][column]"][0],
+                                                          sort_dir=args["order[0][dir]"][0],
+                                                          type_l=[CFG_BIBCIRCULATION_LIBRARY_TYPE_MAIN,
+                                                            CFG_BIBCIRCULATION_LIBRARY_TYPE_INTERNAL])
+        else:
+            result = ()
     ajax_answer = {"draw": args["draw"][0], "recordsTotal": len(result), "recordsFiltered": len(result)}
     start = int(args["start"][0])
     amount = int(args["length"][0])

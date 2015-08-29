@@ -23,8 +23,8 @@ table thead tr .header{
     padding:10px;
 }
 
-.headerbox tr:first-child {
-    visibility:hidden;
+.headerbox {
+    border: 0px solid!important;
 }
 
 table tfoot tr th{
@@ -35,7 +35,7 @@ table tbody td{
     color: #3D3D3D;
 }
 
-table td{
+.pagebody table td{
     border-bottom: 1px solid #DCDCDC;
     padding:7px;
     text-align:left:

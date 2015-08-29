@@ -1,4 +1,7 @@
+var scrollPos = 0;
+
 function changepage(type) {
+            scrollPos =  $(window).scrollTop();
             var oTable = $('#table_all_loans').dataTable();
             var Table = $('#table_all_loans').DataTable();
             oTable.fnPageChange(type);
@@ -7,9 +10,11 @@ function changepage(type) {
 }
 
 function changelength() {
+        scrollPos =  $(window).scrollTop();
         var oTable = $('#table_all_loans').dataTable();
         oTable._fnLengthChange(parseInt($('.pagesize').val()));
         oTable.fnDraw();
+
 }
 
 
@@ -52,7 +57,9 @@ $(document).ready(function(){
 
 
     $("input[type='checkbox']").on("change", function() {
-    $("#table_all_loans").DataTable().ajax.reload();
+        scrollPos =  $(window).scrollTop();
+        $("#table_all_loans").DataTable().ajax.reload(function () {$(window).scrollTop(scrollPos)});
+
     });
     $('.dataTables_paginate').hide();
     $('#table_all_loans_length').hide();
@@ -64,6 +71,7 @@ $(document).ready(function(){
         var Table = $('#table_all_loans').DataTable();
         pg_info = Table.page.info();
         $('.pagedisplay')[0].value = (pg_info.page + 1) + "/" + pg_info.pages
+        $(window).scrollTop(scrollPos);
     } );
      $('.pagedisplay')[0].onkeypress = function(e){
         if (!e) e = window.event;

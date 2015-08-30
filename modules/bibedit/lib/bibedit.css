@@ -748,7 +748,7 @@ div.refextracted {
 
 .ui-menu .ui-menu-item a {
     display: block;
-    line-height: .8;
+    line-height: 1;
     padding: 0.2em 0.4em;
     text-decoration: none;
     background-color: white;

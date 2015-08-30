@@ -707,6 +707,7 @@ def register_new_loan(req, barcode, borrower_id,
         return page(title=title,
                     uid=id_user,
                     req=req,
+
                     body=body, language=ln,
                     navtrail=navtrail_previous_links,
                     lastupdated=__lastupdated__)
@@ -1892,7 +1893,8 @@ def all_requests(req, request_id, ln=CFG_SITE_LANG):
                 navtrail=navtrail_previous_links,
                 lastupdated=__lastupdated__)
 
-def all_loans(req, msg=None, ln=CFG_SITE_LANG):
+
+def all_loans(req, msg=None, ln=CFG_SITE_LANG, library=(), loans_per_page=0, nb_page=0):
     """
     Display all loans.
 
@@ -1925,14 +1927,97 @@ def all_loans(req, msg=None, ln=CFG_SITE_LANG):
                     'Circulation Management' \
                     '</a> ' % (CFG_SITE_SECURE_URL, CFG_SITE_SECURE_URL, ln)
 
-    body = bc_templates.tmpl_all_loans(result=result, infos=infos, ln=ln)
+    body, head = bc_templates.tmpl_all_loans(result=result,
+                                       infos=infos,
+                                       ln=ln,
+                                       libraries=db.get_internal_and_main_libraries())
 
     return page(title=_("Current loans"),
                 uid=id_user,
                 req=req,
+                metaheaderadd=head,
                 body=body, language=ln,
                 navtrail=navtrail_previous_links,
                 lastupdated=__lastupdated__)
+
+def all_loans_data(req, msg=None, ln=CFG_SITE_LANG, library=(), loans_per_page=0, nb_page=0):
+    """
+    Display all loans.
+
+    @type loans_per_page:   integer.
+    @param loans_per_page:  number of loans per page.
+
+    @return:                list with all expired loans (overdue loans).
+    """
+    id_user = getUid(req)
+    (auth_code, auth_message) = is_adminuser(req)
+    if auth_code != 0:
+        return mustloginpage(req, auth_message)
+
+    _ = gettext_set_language(ln)
+    args = parse_qs(req.args)
+
+    if "library[]" in args:
+        library = args["library[]"]
+        result = db.get_all_loans(libraries=library,
+                              sort_by=args["order[0][column]"][0],
+                              sort_dir=args["order[0][dir]"][0],
+                              type_l=[CFG_BIBCIRCULATION_LIBRARY_TYPE_MAIN,
+                                      CFG_BIBCIRCULATION_LIBRARY_TYPE_INTERNAL])
+
+    else:
+        libraries = db.get_internal_and_main_libraries()
+        if len(libraries) == 1:
+            result = db.get_all_loans(libraries=libraries[0][1],
+                              sort_by=args["order[0][column]"][0],
+                              sort_dir=args["order[0][dir]"][0],
+                              type_l=[CFG_BIBCIRCULATION_LIBRARY_TYPE_MAIN,
+                                CFG_BIBCIRCULATION_LIBRARY_TYPE_INTERNAL])
+        else:
+            result = ()
+
+
+    ajax_answer = {"draw": args["draw"][0], "recordsTotal": len(result), "recordsFiltered": len(result)}
+    start = int(args["start"][0])
+    amount = int(args["length"][0])
+    result = result[start: start + amount]
+
+    data = []
+    for (borrower_id, borrower_name, recid, title , barcode,
+             loaned_on, due_date, nb_renewal, nb_overdue,
+             date_overdue, notes, loan_id, library, location) in result:
+
+        borrower_link = create_html_link(CFG_SITE_URL +
+                        '/admin2/bibcirculation/get_borrower_details',
+                        {'borrower_id': borrower_id, 'ln': ln},
+                        (borrower_name))
+
+        see_notes_link = create_html_link(CFG_SITE_URL +
+                       '/admin2/bibcirculation/get_loans_notes',
+                       {'loan_id': loan_id, 'ln': ln}, (_("see notes")))
+
+        no_notes_link = create_html_link(CFG_SITE_URL +
+                        '/admin2/bibcirculation/get_loans_notes',
+                        {'loan_id': loan_id, 'ln': ln}, (_("no notes")))
+
+
+        if notes == "" or str(notes) == '{}':
+            check_notes = no_notes_link
+        else:
+            check_notes = see_notes_link
+
+        title_link = create_html_link(CFG_SITE_URL +
+                            '/admin2/bibcirculation/get_item_details',
+                            {'recid': recid, 'ln': ln},
+                            (title))
+
+        data.append([borrower_link, title_link, barcode,
+                       loaned_on, due_date,
+                       nb_renewal, nb_overdue, library, location, CFG_SITE_URL,
+                       borrower_id, recid, loan_id, _("Send recall")])
+    ajax_answer["data"] = data
+
+    return simplejson.dumps(ajax_answer)
 
 
 def all_expired_loans_data(req, ln=CFG_SITE_LANG):
@@ -1954,16 +2039,21 @@ def all_expired_loans_data(req, ln=CFG_SITE_LANG):
 
     if "library[]" in args:
         library = args["library[]"]
+        result = db.get_expired_loans_with_parameters(libraries=library,
+                                                      sort_by=args["order[0][column]"][0],
+                                                      sort_dir=args["order[0][dir]"][0],
+                                                      type_l=[CFG_BIBCIRCULATION_LIBRARY_TYPE_MAIN,
+                                                            CFG_BIBCIRCULATION_LIBRARY_TYPE_INTERNAL])
     else:
-        library = ()
-
-
-    result = db.get_expired_loans_with_parameters(libraries=library,
-                                                  sort_by=args["order[0][column]"][0],
-                                                  sort_dir=args["order[0][dir]"][0],
-                                                  type_l=[CFG_BIBCIRCULATION_LIBRARY_TYPE_MAIN,
-                                                        CFG_BIBCIRCULATION_LIBRARY_TYPE_INTERNAL])
-
+        libraries = db.get_internal_and_main_libraries()
+        if len(libraries) == 1:
+            result = db.get_expired_loans_with_parameters(libraries=libraries[0][1],
+                                                          sort_by=args["order[0][column]"][0],
+                                                          sort_dir=args["order[0][dir]"][0],
+                                                          type_l=[CFG_BIBCIRCULATION_LIBRARY_TYPE_MAIN,
+                                                            CFG_BIBCIRCULATION_LIBRARY_TYPE_INTERNAL])
+        else:
+            result = ()
     ajax_answer = {"draw": args["draw"][0], "recordsTotal": len(result), "recordsFiltered": len(result)}
     start = int(args["start"][0])
     amount = int(args["length"][0])
@@ -1979,22 +2069,6 @@ def all_expired_loans_data(req, ln=CFG_SITE_LANG):
                                 '/admin2/bibcirculation/get_borrower_details',
                                 {'borrower_id': borrower_id, 'ln': ln},
                                 (borrower_name))
-
-                # see_notes_link = create_html_link(CFG_SITE_URL +
-                #                 '/admin2/bibcirculation/get_loans_notes',
-                #                 {'loan_id': loan_id, 'ln': ln},
-                #                 (_("see notes")))
-                #
-                # no_notes_link = create_html_link(CFG_SITE_URL +
-                #                 '/admin2/bibcirculation/get_loans_notes',
-                #                 {'loan_id': loan_id, 'ln': ln},
-                #                  (_("no notes")))
-                #
-                #
-                # if notes == "" or str(notes) == '{}':
-                #     check_notes = no_notes_link
-                # else:
-                #     check_notes = see_notes_link
 
                 title_link = create_html_link(CFG_SITE_URL +
                                     '/admin2/bibcirculation/get_item_details',
@@ -2036,7 +2110,7 @@ def all_expired_loans(req, ln=CFG_SITE_LANG, library=(), loans_per_page=0, nb_pa
                     'Circulation Management' \
                     '</a> ' % (CFG_SITE_SECURE_URL, CFG_SITE_SECURE_URL, ln)
 
-    body = bc_templates.tmpl_all_expired_loans(result=result,
+    body, head= bc_templates.tmpl_all_expired_loans(result=result,
                                                infos=infos,
                                                ln=ln,
                                                libraries=db.get_internal_and_main_libraries())
@@ -2046,6 +2120,7 @@ def all_expired_loans(req, ln=CFG_SITE_LANG, library=(), loans_per_page=0, nb_pa
                 req=req,
                 body=body, language=ln,
                 navtrail=navtrail_previous_links,
+                metaheaderadd=head,
                 lastupdated=__lastupdated__)
 
 def get_pending_requests(req, request_id, print_data, ln=CFG_SITE_LANG):

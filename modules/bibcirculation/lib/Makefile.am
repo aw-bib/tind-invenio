@@ -18,6 +18,8 @@
 # 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 pylibdir = $(libdir)/python/invenio
+webdir=$(localstatedir)/www/img
+jsdir=$(localstatedir)/www/js
 
 pylib_DATA = bibcirculation.py \
              bibcirculationadminlib.py \
@@ -32,6 +34,14 @@ pylib_DATA = bibcirculation.py \
              bibcirculation_regression_tests.py \
              bibcirculation_web_tests.py
 
-EXTRA_DIST = $(pylib_DATA)
+js_DATA = bibcirculation.js
+
+web_DATA = bibcirculation.css
+
+EXTRA_DIST = $(pylib_DATA) \
+             $(js_DATA) \
+             $(web_DATA)
+
 
 CLEANFILES = *~ *.tmp *.pyc
+

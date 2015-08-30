@@ -41,11 +41,15 @@ function initInputHotkeys(inputElement, original) {
     var originalId = original.id;
     if ((originalId.indexOf("subfieldTag") === -1) && (originalId.indexOf("fieldTag") === -1)) {
       var tag = originalId.replace("content_", "");
-      var subfieldValue = $("#subfieldTag_" + tag)[0].innerHTML;
-      if ((tag.lastIndexOf("020", 0) === 0) && (subfieldValue === "a")) {
-        element.keyup(function (event) {
-          checkISBN(event.target.value, event.target);
-        });
+      var subfieldValue = $("#subfieldTag_" + tag)
+      if( subfieldValue.length > 0) {
+          var subfieldValue= subfieldValue[0].innerHTML;
+
+          if ((tag.lastIndexOf("020", 0) === 0) && (subfieldValue === "a")) {
+            element.keyup(function (event) {
+              checkISBN(event.target.value, event.target);
+            });
+          }
       }
     }
   } else if (inputElement.lastIndexOf("#content", 0) === 0) {

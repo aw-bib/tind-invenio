@@ -1391,49 +1391,47 @@ def get_nb_copies_on_loan(recid):
 
 def get_item_copies_details(recid, patrontype=None):
     if type(patrontype) is int:
-        qry = """SELECT DISTINCT it.barcode, lrv.loan_period, lib.name,
+        qry = """SELECT it.barcode, lrv.loan_period, lib.name,
                                     lib.id, it.location, it.number_of_requests,
                                     it.status, it.collection, it.description,
                                     DATE_FORMAT(ln.due_date,'%%d-%%m-%%Y'), lrv.code,
-                                    itt.name as itemtype
+                                    itt.name AS itemtype
                              FROM crcITEM it
-                                    left join crcLOAN ln
-                                    on it.barcode = ln.barcode and ln.status != "%(returncode)s"
-                                    left join crcLIBRARY lib
-                                    on lib.id = it.id_crcLIBRARY
-                                    left join crcITEMTYPE_ITEM itt_it
-                                    on it.barcode = itt_it.barcode
-                                    left join crcITEMTYPES itt
-                                    on itt_it.itemtype_id = itt.id
-                                    left join crcLOANRULES_MATCH_VIEW lrv
-                                    on it.barcode = lrv.barcode
+                                    LEFT JOIN crcLOAN ln
+                                    ON it.barcode = ln.barcode AND ln.status != "%(returncode)s"
+                                    LEFT JOIN crcLIBRARY lib
+                                    ON lib.id = it.id_crcLIBRARY
+                                    LEFT JOIN crcITEMTYPE_ITEM itt_it
+                                    ON it.barcode = itt_it.barcode
+                                    LEFT JOIN crcITEMTYPES itt
+                                    ON itt_it.itemtype_id = itt.id
+                                    LEFT JOIN crcLOANRULES_MATCH_VIEW lrv
+                                    ON it.barcode = lrv.barcode
                              WHERE it.id_bibrec=%(recid)s
                              AND lrv.`patrontype_id` = %(patrontype)s
                              GROUP BY it.barcode
                 UNION ALL
-                SELECT * FROM(
-                		SELECT DISTINCT it.barcode, NULL AS loan_period, lib.name,
+                SELECT it.barcode, NULL AS loan_period, lib.name,
                                     lib.id, it.location, it.number_of_requests,
                                     it.status, it.collection, it.description,
-                                    DATE_FORMAT(ln.due_date,'%%d-%%m-%%Y'), lrv.code,
-                                    itt.name as itemtype
+                                    DATE_FORMAT(ln.due_date,'%%d-%%m-%%Y'), NULL,
+                                    itt.name AS itemtype
                             FROM crcITEM it
                                     LEFT JOIN crcLOAN ln
                                     ON it.barcode = ln.barcode AND ln.status != "%(returncode)s"
                                     LEFT JOIN crcLIBRARY lib
                                     ON lib.id = it.id_crcLIBRARY
-                                    LEFT JOIN crcLOANRULES_MATCH_VIEW lrv
-                                    ON it.barcode = lrv.barcode
-                                    left join crcITEMTYPE_ITEM itt_it
-                                    on it.barcode = itt_it.barcode
-                                    left join crcITEMTYPES itt
-                                    on itt_it.itemtype_id = itt.id
+                                    LEFT JOIN crcITEMTYPE_ITEM itt_it
+                                    ON it.barcode = itt_it.barcode
+                                    LEFT JOIN crcITEMTYPES itt
+                                    ON itt_it.itemtype_id = itt.id
                             WHERE it.id_bibrec=%(recid)s
-                            AND (lrv.`patrontype_id` != %(patrontype)s OR lrv.patrontype_id IS NULL)
-                            GROUP BY it.barcode
-                         ) AS temp
-                         WHERE temp.code IS null
-                ORDER BY barcode
+                            AND it.barcode NOT IN (SELECT it.barcode FROM crcITEM AS it
+                            					JOIN crcLOANRULES_MATCH_VIEW AS lrv
+                            					ON it.barcode = lrv.barcode
+                            					WHERE patrontype_id = %(patrontype)s
+                            					)
+                            GROUP BY it.barcode;
               """ % {
             'returncode': CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED,
             'recid': recid,

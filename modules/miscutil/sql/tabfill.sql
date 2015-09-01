@@ -701,7 +701,7 @@ INSERT INTO idxINDEX VALUES (6,'subjects','','2015-09-01 09:38:37','','native','
 INSERT INTO idxINDEX VALUES (7,'reportnumber','This index contains words/phrases from report numbers fields.','2015-09-01 09:38:37','','native','','No','No','No','BibIndexDefaultTokenizer');
 INSERT INTO idxINDEX VALUES (8,'title','This index contains words/phrases from title fields.','2015-09-01 09:38:37','','native','INDEX-SYNONYM-TITLE,exact','No','No','No','BibIndexDefaultTokenizer');
 INSERT INTO idxINDEX VALUES (9,'fulltext','This index contains words/phrases from fulltext fields.','2015-09-01 09:38:37','','native','','No','No','No','BibIndexFulltextTokenizer');
-INSERT INTO idxINDEX VALUES (10,'year','This index contains words/phrases from year fields.','2015-09-01 09:38:37','','native','','No','No','No','BibIndexYearLeaderTokenizer');
+INSERT INTO idxINDEX VALUES (10,'year','This index contains words/phrases from year fields.','2015-09-01 09:38:37','','native','','No','No','No','BibIndexYear008Tokenizer');
 INSERT INTO idxINDEX VALUES (11,'journal','This index contains words/phrases from journal publication information fields.','2015-09-01 09:38:37','','native','','No','No','No','BibIndexDefaultTokenizer');
 INSERT INTO idxINDEX VALUES (14,'exactauthor','This index contains exact words/phrases from author fields.','2015-09-01 09:38:37','','native','','No','No','No','BibIndexExactAuthorTokenizer');
 INSERT INTO idxINDEX VALUES (16,'firstauthor','This index contains fuzzy words/phrases from first author field.','2015-09-01 09:38:37','','native','','No','No','No','BibIndexAuthorTokenizer');

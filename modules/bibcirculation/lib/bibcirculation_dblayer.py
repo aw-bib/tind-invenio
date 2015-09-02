@@ -3226,7 +3226,7 @@ def get_loan_period_from_loan_rule(user_id, barcode):
     else:
         returndict['type'] = 'days'
 
-    returndict['value'] = res[0][4]
+    returndict['value'] = res[0][5]
 
     return returndict
 

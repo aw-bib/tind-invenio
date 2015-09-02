@@ -3187,7 +3187,7 @@ def get_matching_loan_rule(user_id, barcode):
     res = run_sql("""
         SELECT user_id, name, code, loan_period, holdable, homepickup, renewable FROM crcLOANRULES_MATCH_VIEW
         WHERE user_id = %(user_id)s
-        AND barcode = %(barcode)s
+        AND barcode = '%(barcode)s'
     """ % {
         'user_id': user_id,
         'barcode': barcode
@@ -3206,7 +3206,7 @@ def get_loan_period_from_loan_rule(user_id, barcode):
     res = run_sql("""
         SELECT * FROM crcLOANRULES_MATCH_VIEW
         WHERE user_id = %(user_id)s
-        AND barcode = %(barcode)s
+        AND barcode = '%(barcode)s'
     """ % {
         'user_id': user_id,
         'barcode': barcode

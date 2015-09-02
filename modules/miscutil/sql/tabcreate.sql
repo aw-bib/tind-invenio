@@ -5186,13 +5186,12 @@ CREATE TABLE IF NOT EXISTS `crcPATRONTYPES` (
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `crcPATRONTYPE_BORROWER` (
-  `borrower_id` int(15) unsigned NOT NULL,
-  `patrontype_id` int(11) unsigned DEFAULT NULL,
-  KEY `borrower_fk` (`borrower_id`),
-  KEY `patrontype_fk` (`patrontype_id`),
-  CONSTRAINT `borrower_fk` FOREIGN KEY (`borrower_id`) REFERENCES `crcBORROWER` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE `crcPATRONTYPE_BORROWER` (
+  `borrower_id` INT(15) UNSIGNED NOT NULL,
+  `patrontype_id` INT(11) UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`borrower_id`),
+  CONSTRAINT `borrower_fk` FOREIGN KEY (`borrower_id`) REFERENCES `crcBORROWER` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `crcLOANRULES` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -5226,9 +5225,8 @@ JOIN crcRULES_SELECTION AS r_s ON pt.id = r_s.patrontype_id
 JOIN crcITEMTYPES AS it ON r_s.itemtype_id = it.id
 JOIN crcITEMTYPE_ITEM AS it_i ON it_i.itemtype_id = it.id
 JOIN crcITEM AS i ON it_i.barcode = i.barcode
-JOIN crcLIBRARY AS l ON i.id_crcLIBRARY = l.id
 JOIN crcLOANRULES AS lr ON r_s.rule_id = lr.id
-WHERE (l.name LIKE r_s.location OR r_s.location = '')
+WHERE (i.location LIKE r_s.location OR r_s.location = '')
 AND UCASE(r_s.active) = "Y";
 
 -- tables for invenio_upgrader

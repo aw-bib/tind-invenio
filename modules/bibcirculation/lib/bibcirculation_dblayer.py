@@ -1770,10 +1770,14 @@ def update_borrower_info(borrower_id, name, email, phone, address, mailbox, p_id
                                  mailbox=%s
                           WHERE  id=%s""",
                        (name, email, phone, address, mailbox, borrower_id))
-    run_sql("""UPDATE crcPATRONTYPE_BORROWER
-                  SET patrontype_id=%s
-                WHERE borrower_id=%s
-            """ % (p_id, borrower_id))
+    run_sql("""INSERT INTO crcPATRONTYPE_BORROWER(patrontype_id, borrower_id)
+			   VALUES (%(p_id)s, %(b_id)s)
+			   ON DUPLICATE KEY
+               UPDATE patrontype_id=%(p_id)s;
+            """ % {
+                    'p_id': p_id,
+                    'b_id': borrower_id
+                })
 
 def get_borrower_data(borrower_id):
     """

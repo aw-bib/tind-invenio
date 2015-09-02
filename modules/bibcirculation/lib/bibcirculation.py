@@ -342,7 +342,7 @@ def perform_new_request_send_message(uid, recid, period_from, period_to, barcode
             return bc_templates.tmpl_new_request_send(message=message, ln=ln)
 
         borrower_details = db.get_borrower_details(borrower_id)
-        (_id, ccid, name, email, _phone, address, mailbox) = borrower_details
+        (_id, ccid, name, email, _phone, address, mailbox, p_id) = borrower_details
 
         (title, year, author,
          isbn, publisher) = book_information_from_MARC(recid)

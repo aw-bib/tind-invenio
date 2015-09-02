@@ -2372,13 +2372,14 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
         _ = gettext_set_language(ln)
 
         user_info = db.get_borrower_details(user_id)
-        (borrower_id, ccid, name, email, phone, address, mailbox) = user_info
+        (borrower_id, ccid, name, email, phone, address, mailbox, p_id) = user_info
 
         list_of_barcodes = []
 
         for book in list_of_books:
             list_of_barcodes.append(book[1])
 
+        patron_type = db.get_patron_type_name(p_id) if p_id else None
         display_id = ccid
         id_string = _("UID")
 
@@ -2440,6 +2441,10 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                   <th width="70">%s</th>
                   <td>%s</td>
                 </tr>
+                <tr>
+                  <th width="70">%s</th>
+                  <td>%s</td>
+                </tr>
                 </table>
                 <br />
                 <table class="bibcirctable">
@@ -2470,6 +2475,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                         _("Mailbox"), mailbox,
                         _("Email"), email,
                         _("Phone"), phone,
+                        _("Patron type"), patron_type,
                         _("List of borrowed books"),
                         CFG_SITE_URL,
                         _("Item"), _("Barcode"),
@@ -16044,7 +16050,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                        """% (CFG_SITE_URL,
                           _("Name"),
                           _("Type"),
-                          _("Loan period"),
+                          _("Loan period (days or hours)"),
                           _("Holdable"),
                           _("Home pickup"),
                           _("Renewable"))

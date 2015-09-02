@@ -566,7 +566,7 @@ def get_index_strings_by_control_no(control_no):
     #2. concatenate and return all the info from the interesting fields for this record
     for rec_id in rec_IDs:  # in case we get multiple authority records
         for tag in CFG_BIBAUTHORITY_AUTHORITY_SUBFIELDS_TO_INDEX.get(
-                get_type_from_control_no(control_no)):
+                get_type_from_control_no(control_no), []):
             new_strings = get_fieldvalues(rec_id, tag)
             string_list = list_union(new_strings, string_list)
     #return

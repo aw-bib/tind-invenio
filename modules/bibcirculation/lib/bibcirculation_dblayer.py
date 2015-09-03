@@ -3183,51 +3183,44 @@ def delete_brief_format_cache(recid):
                   AND id_bibrec=%s""", (recid,))
 
 def get_matching_loan_rule(user_id, barcode):
-
     res = run_sql("""
-        SELECT user_id, name, code, loan_period, holdable, homepickup, renewable FROM crcLOANRULES_MATCH_VIEW
+        SELECT user_id, name, code, loan_period, holdable, homepickup, renewable, location FROM crcLOANRULES_MATCH_VIEW
         WHERE user_id = %(user_id)s
         AND barcode = '%(barcode)s'
     """ % {
         'user_id': user_id,
         'barcode': barcode
     })
-
     if len(res) > 1:
-        raise DatabaseError("More than one matching loan rule. Check item->itemtype and borrower->patrontype tables")
-
-    if res:
+        nof_location = 0
+        location_row = 0
+        for i, row in enumerate(res):
+            if row[7] != '':
+                nof_location += 1
+                location_row = i
+        if nof_location != 1:
+            raise DatabaseError("More than one matching loan rule")
+        return res[location_row]
+    elif res:
         return res[0]
     else:
         return None
 
 def get_loan_period_from_loan_rule(user_id, barcode):
-
-    res = run_sql("""
-        SELECT * FROM crcLOANRULES_MATCH_VIEW
-        WHERE user_id = %(user_id)s
-        AND barcode = '%(barcode)s'
-    """ % {
-        'user_id': user_id,
-        'barcode': barcode
-    })
-
+    rule = get_matching_loan_rule(user_id, barcode)
     returndict = {
         'type': '',
         'value': 0,
-        'code': res[0][3].upper()
+        'code': rule[2]
     }
-
-    if res[0][3].upper() in (CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_OVERNIGHT,
-                             CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS,
-                             CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_MINUTE_OVERNIGHT,
-                             CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_MINUTE):
+    if rule[2] in (CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_OVERNIGHT,
+                   CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS,
+                   CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_MINUTE_OVERNIGHT,
+                   CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_MINUTE):
         returndict['type'] = 'hours'
     else:
         returndict['type'] = 'days'
-
-    returndict['value'] = res[0][5]
-
+    returndict['value'] = rule[3]
     return returndict
 
 def get_patron_type_from_user_id(id):

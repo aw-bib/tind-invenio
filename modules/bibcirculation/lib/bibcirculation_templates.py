@@ -5299,7 +5299,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
 
             loan_period = db.get_loan_period_from_loan_rule(barcode, patrontype_id=patrontype)
             if loan_period:
-                loan_period_text = loan_period['value'] + " " + loan_period['type']
+                loan_period_text = str(loan_period['value']) + " " + loan_period['type']
             else:
                 loan_period_text = "No loan rule"
 

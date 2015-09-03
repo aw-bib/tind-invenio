@@ -5297,19 +5297,14 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                 if expected_arrival_date != '':
                     status = status + ' - ' + expected_arrival_date
 
-            if code == CFG_BIBCIRCULATION_LOAN_RULE_CODE_NON_CIRC:
-                loan_period_text = "Non circulating"
-            elif code == CFG_BIBCIRCULATION_LOAN_RULE_CODE_REGULAR:
-                loan_period_text = str(loan_period) + " days"
-            elif code in (CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_OVERNIGHT,
-                          CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS,
-                          CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_MINUTE_OVERNIGHT,
-                          CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_MINUTE):
-                loan_period_text = str(loan_period) + " hours"
-            elif code == CFG_BIBCIRCULATION_LOAN_RULE_CODE_ABSOLUTE:
-                loan_period_text = generate_new_due_date(loan_period, absolute=True)
+            loan_period = db.get_loan_period_from_loan_rule(barcode, patrontype_id=patrontype)
+            if loan_period:
+                loan_period_text = loan_period['value'] + " " + loan_period['type']
             else:
                 loan_period_text = "No loan rule"
+
+            if code == CFG_BIBCIRCULATION_LOAN_RULE_CODE_NON_CIRC:
+                loan_period_text = "Non circulating"
 
             library_link = create_html_link(CFG_SITE_URL +
                                 '/admin2/bibcirculation/get_library_details',

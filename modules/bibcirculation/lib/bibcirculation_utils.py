@@ -366,7 +366,7 @@ def renew_loan_for_X_days(barcode, borrower_id=None):
     if borrower_id == None:
         borrower_id = db.get_borrower_id(barcode)
 
-    loan_period = db.get_loan_period_from_loan_rule(borrower_id, barcode)
+    loan_period = db.get_loan_period_from_loan_rule(barcode, user_id=borrower_id)
 
     if loan_period['code'] in (CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_OVERNIGHT,
                                CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS):

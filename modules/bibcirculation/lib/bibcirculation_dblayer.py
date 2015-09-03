@@ -3182,15 +3182,28 @@ def delete_brief_format_cache(recid):
                 WHERE format='HB'
                   AND id_bibrec=%s""", (recid,))
 
-def get_matching_loan_rule(user_id, barcode):
-    res = run_sql("""
-        SELECT user_id, name, code, loan_period, holdable, homepickup, renewable, location FROM crcLOANRULES_MATCH_VIEW
-        WHERE user_id = %(user_id)s
-        AND barcode = '%(barcode)s'
-    """ % {
-        'user_id': user_id,
-        'barcode': barcode
-    })
+def get_matching_loan_rule(barcode, user_id=None, patrontype_id=None):
+    if user_id:
+        res = run_sql("""
+            SELECT user_id, name, code, loan_period, holdable, homepickup, renewable, location FROM crcLOANRULES_MATCH_VIEW
+            WHERE user_id = %(user_id)s
+            AND barcode = '%(barcode)s'
+        """ % {
+            'user_id': user_id,
+            'barcode': barcode
+        })
+    elif patrontype_id:
+        res = run_sql("""
+            SELECT DISTINCT NULL, name, code, loan_period, holdable, homepickup, renewable, location FROM crcLOANRULES_MATCH_VIEW
+            WHERE patrontype_id = %(patrontype_id)s
+            AND barcode = '%(barcode)s'
+        """ % {
+            'patrontype_id': patrontype_id,
+            'barcode': barcode
+        })
+    else:
+        return None
+
     if len(res) > 1:
         nof_location = 0
         location_row = 0
@@ -3206,8 +3219,11 @@ def get_matching_loan_rule(user_id, barcode):
     else:
         return None
 
-def get_loan_period_from_loan_rule(user_id, barcode):
-    rule = get_matching_loan_rule(user_id, barcode)
+def get_loan_period_from_loan_rule(barcode, user_id=None, patrontype_id=None):
+    rule = get_matching_loan_rule(barcode, user_id, patrontype_id)
+    if not rule:
+        return None
+
     returndict = {
         'type': '',
         'value': 0,

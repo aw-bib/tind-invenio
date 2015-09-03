@@ -370,7 +370,7 @@ def loan_on_desk_step3(req, user_id, list_of_barcodes, ln=CFG_SITE_LANG):
         recid = db.get_id_bibrec(value)
         loan_id = db.is_item_on_loan(value)
         item_description = db.get_item_description(value)
-        loan_rule = db.get_matching_loan_rule(user_id, value)
+        loan_rule = db.get_matching_loan_rule(value, user_id=user_id)
 
         if recid is None:
             infos.append(_('%(x_strong_tag_open)s%(x_barcode)s%(x_strong_tag_close)s Unknown barcode.') % {'x_barcode': value, 'x_strong_tag_open': '<strong>', 'x_strong_tag_close': '</strong>'} + ' ' + _('Please, try again.'))
@@ -568,6 +568,12 @@ def loan_on_desk_step4(req, list_of_barcodes, user_id,
         # tag_all_requests_as_done(barcode, user_id)
         db.update_item_status(CFG_BIBCIRCULATION_ITEM_STATUS_ON_LOAN, barcode)
         update_requests_statuses(barcode)
+
+        loan_rule = db.get_matching_loan_rule(barcode, user_id=user_id)
+
+        if loan_rule[3] in (CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS, CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_MINUTE):
+            message = _("%(x_strong_tag_open)sNote:%(x_strong_tag_close)s The item %(x_barcode)s is not for overnight loan." %  {'x_barcode': barcode, 'x_strong_tag_open': '<strong>', 'x_strong_tag_close': '</strong>'})
+            infos.append(message)
 
     item_url = "<a href=\"%s/admin2/bibcirculation/item_search_result?f=barcode&p=%s\" target=\"_blank\" >" % (CFG_SITE_SECURE_URL, barcode)
     infos.append(_("A loan for the item %(x_strong_tag_open)s%(x_title)s%(x_strong_tag_close)s, with barcode %(x_strong_tag_open)s%(a_href_open)s%(x_barcode)s%(a_href_close)s%(x_strong_tag_close)s, has been registered with success. Due date: %(due_date)s") % {'x_title': book_title_from_MARC(recid), 'x_barcode': barcode, 'x_strong_tag_open': '<strong>', 'x_strong_tag_close': '</strong>', 'a_href_open': item_url, 'a_href_close': '</a>', 'due_date': due_date[i]})
@@ -1263,7 +1269,7 @@ def place_new_request_step3(req, barcode, recid, user_info,
         else:
     (_id, ccid, name, email, phone, address, mailbox) = user_info
 
-    loan_rule = db.get_matching_loan_rule(_id, barcode)
+    loan_rule = db.get_matching_loan_rule(barcode, user_id=_id)
     infos = []
 
     # validate the period of interest given by the admin. Also check if barcode + borrower matches a loan rule

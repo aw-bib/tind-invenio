@@ -1468,7 +1468,7 @@ def get_status(barcode):
                        WHERE barcode='%s'
                   """, (barcode, ))
     if res:
-        return res[0]
+        return res[0][0]
     else:
         return None;
 

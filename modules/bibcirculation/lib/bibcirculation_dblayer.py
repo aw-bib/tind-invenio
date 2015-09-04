@@ -1465,7 +1465,7 @@ def get_item_copies_details(recid, patrontype=None):
 def get_status(barcode):
     res = run_sql(""" SELECT status
                         FROM crcITEM
-                       WHERE barcoe='%s'
+                       WHERE barcode='%s'
                   """, (barcode, ))
     if res:
         return res[0]

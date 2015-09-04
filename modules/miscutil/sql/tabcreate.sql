@@ -5163,6 +5163,13 @@ CREATE TABLE IF NOT EXISTS `aulAUTHOR_IDENTIFIERS` (
 ALTER TABLE crcITEM ENGINE = InnoDB;
 ALTER TABLE crcBORROWER ENGINE = InnoDB;
 
+CREATE TABLE `crcLOCATION` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `code` varchar(32) DEFAULT NULL,
+  `name` varchar(32) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `code` (`code`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS  `crcITEMTYPES` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -5218,15 +5225,14 @@ CREATE TABLE IF NOT EXISTS `crcRULES_SELECTION` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE VIEW crcLOANRULES_MATCH_VIEW AS
-SELECT b.id AS user_id, it_i.barcode, pt.id AS patrontype_id, lr.name, lr.code, lr.loan_period, lr.holdable, lr.homepickup, lr.renewable FROM crcBORROWER AS b
+SELECT b.id AS user_id, i.barcode, pt.id AS patrontype_id, lr.name, lr.code, lr.loan_period, lr.holdable, lr.homepickup, lr.renewable, r_s.location FROM crcBORROWER AS b
 JOIN crcPATRONTYPE_BORROWER AS p_b ON b.id = p_b.borrower_id
 JOIN crcPATRONTYPES AS pt ON p_b.patrontype_id = pt.id
 JOIN crcRULES_SELECTION AS r_s ON pt.id = r_s.patrontype_id
-JOIN crcITEMTYPES AS it ON r_s.itemtype_id = it.id
-JOIN crcITEMTYPE_ITEM AS it_i ON it_i.itemtype_id = it.id
-JOIN crcITEM AS i ON it_i.barcode = i.barcode
+JOIN crcITEM AS i ON r_s.itemtype_id = i.id_itemtype
 JOIN crcLOANRULES AS lr ON r_s.rule_id = lr.id
-WHERE (i.location LIKE r_s.location OR r_s.location = '')
+JOIN crcLOCATION loc ON i.id_location = loc.id
+WHERE (loc.code LIKE r_s.location OR r_s.location = '')
 AND UCASE(r_s.active) = "Y";
 
 -- tables for invenio_upgrader

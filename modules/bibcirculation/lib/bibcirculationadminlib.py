@@ -402,7 +402,7 @@ def loan_on_desk_step3(req, user_id, list_of_barcodes, ln=CFG_SITE_LANG):
             tup = (recid, value, library_id, location)
             list_of_books.append(tup)
             book_details = db.get_item_info(value)
-            item_status = book_details[7]
+            item_status = book_details[8]
 
             if item_status != CFG_BIBCIRCULATION_ITEM_STATUS_ON_SHELF:
                 message = _("%(x_strong_tag_open)sWARNING:%(x_strong_tag_close)s Note that item %(x_strong_tag_open)s%(x_barcode)s%(x_strong_tag_close)s status is %(x_strong_tag_open)s%(x_status)s%(x_strong_tag_close)s") % {'x_barcode': value, 'x_strong_tag_open': '<strong>', 'x_strong_tag_close': '</strong>', 'x_status': item_status}
@@ -1319,7 +1319,7 @@ def place_new_request_step3(req, barcode, recid, user_info,
         if details:
             library  = details[3]
             location = details[4]
-            request_date = details[7]
+            request_date = details[8]
         else:
             location = ''
             library  = ''
@@ -1752,8 +1752,9 @@ def create_new_request_step3(req, borrower_id, barcode, recid,
     _ = gettext_set_language(ln)
 
     item_info = db.get_item_info(barcode)
+    loan_rule = db.get_matching_loan_rule(barcode, user_id=borrower_id)
 
-    if item_info[6] == 'Reference':
+    if item_info[7] == 'Reference' or (loan_rule and loan_rule[4].upper() == 'N'):
         body = bc_templates.tmpl_book_not_for_loan(ln=ln)
     else:
         body = bc_templates.tmpl_create_new_request_step3(
@@ -2870,7 +2871,7 @@ def add_new_copy_step4(req, barcode, library, location, collection, description,
                 navtrail=navtrail_previous_links,
                 lastupdated=__lastupdated__)
 
-def add_new_copy_step5(req, barcode, library, location, collection, description,
+def add_new_copy_step5(req, barcode, library, call_no, collection, description,
                         item_type, status, expected_arrival_date, recid,
                         ln=CFG_SITE_LANG):
     """
@@ -2885,7 +2886,7 @@ def add_new_copy_step5(req, barcode, library, location, collection, description,
 
     infos = []
     if not db.barcode_in_use(barcode):
-        db.add_new_copy(barcode, recid, library, collection, location, description.strip() or '-',
+        db.add_new_copy(barcode, recid, library, collection, call_no, 0, description.strip() or '-',
                         item_type, status, expected_arrival_date)
         update_requests_statuses(barcode)
     else:
@@ -3176,7 +3177,7 @@ def update_item_info_step6(req, tup_infos, ln=CFG_SITE_LANG):
     infos = []
 
     # tuple containing information for the update process.
-    (barcode, old_barcode, library_id, location, collection,
+    (barcode, old_barcode, library_id, call_no, collection,
      description, item_type, status, expected_arrival_date, recid) = tup_infos
 
     is_on_loan = db.is_on_loan(old_barcode)
@@ -3192,8 +3193,8 @@ def update_item_info_step6(req, tup_infos, ln=CFG_SITE_LANG):
         status = db.get_status(barcode)
         infos.append(_("Item <strong>[%s]</strong> updated, but the <strong>status was not modified</strong>.") % (old_barcode))
 
-    # update item information.
-    db.update_item_info(old_barcode, library_id, collection, location, description.strip(),
+    # update item information. FIXME add functionality for adding locations
+    db.update_item_info(old_barcode, library_id, collection, call_no, 0, description.strip(),
                         item_type, status, expected_arrival_date)
     update_requests_statuses(old_barcode)
     navtrail_previous_links = '<a class="navtrail"' \

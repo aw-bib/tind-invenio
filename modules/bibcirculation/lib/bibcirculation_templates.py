@@ -403,14 +403,15 @@ class Template:
                             <th>%s</th>
                             <th>%s</th>
                             <th>%s</th>
+                            <th>%s</th>
                         </tr>
                     </thead>
                     <tbody>
-                """ % (_("Options"), _("Library"), _("Collection"),
+                """ % (_("Options"), _("Library"), _("Collection"), _("Call no"),
                        _("Location"), _("Description"), _("Item type"),
                        _("Status"), _("Due date"), _("Barcode"))
 
-        for (barcode, library, collection, location, description,
+        for (barcode, library, collection, call_no, location, description,
              item_type, status, due_date) in holdings_info:
 
             request_button = """
@@ -437,9 +438,10 @@ class Template:
                     <td>%s</td>
                     <td>%s</td>
                     <td>%s</td>
+                    <td>%s</td>
                     <td align='center'>%s</td>
                 </tr>
-                """ % (request_button, library, collection or '-', location,
+                """ % (request_button, library, collection or '-', call_no, location,
                        description, item_type or '-', status, due_date or '-', barcode)
 
         if auth_code != 0:
@@ -1172,6 +1174,7 @@ class Template:
                        <th>%s</th>
                        <th>%s</th>
                        <th>%s</th>
+                       <th>%s</th>
                     </tr>
               </thead>
               <tbody>
@@ -1179,6 +1182,7 @@ class Template:
                             _("Name"),
                             _("Item"),
                             _('Library'),
+                            _('Call no'),
                             _("Location"),
                             _("Vol."),
                             _("Ed."),
@@ -1187,7 +1191,7 @@ class Template:
                             _("Request date"),
                             _("Actions"))
 
-            for (request_id, recid, barcode, name, borrower_id, library, location,
+            for (request_id, recid, barcode, name, borrower_id, library, call_no, location,
                  date_from, date_to, request_date) in result:
 
                 title_link = create_html_link(CFG_SITE_URL +
@@ -1218,6 +1222,7 @@ class Template:
                  <td>%s</td>
                  <td>%s</td>
                  <td>%s</td>
+                 <td>%s</td>
                  <td algin='center'>
                  <input type="button" value='%s' style="background: url(/img/dialog-cancel.png)
                  no-repeat #8DBDD8; width: 75px; text-align: right;"
@@ -1237,6 +1242,7 @@ class Template:
                 """ % (borrower_link,
                        title_link,
                        library,
+                       call_no,
                        location,
                        volume,
                        edition,
@@ -1362,6 +1368,7 @@ class Template:
                        <th>%s</th>
                        <th>%s</th>
                        <th>%s</th>
+                       <th>%s</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -1369,6 +1376,7 @@ class Template:
                _("Name"),
                _("Item"),
                _('Library'),
+               _("Call no"),
                _("Location"),
                _("From"),
                _("To"),
@@ -1389,7 +1397,7 @@ class Template:
                 </script>
                 """ % (CFG_SITE_URL, _("Request not deleted."))
 
-            for (request_id, recid, _barcode, name, borrower_id, library, location,
+            for (request_id, recid, _barcode, name, borrower_id, library, call_no, location,
                  date_from, date_to, request_date) in result:
 
                 title_link = create_html_link(CFG_SITE_URL +
@@ -1403,6 +1411,7 @@ class Template:
 
                 out += """
                 <tr>
+                 <td>%s</td>
                  <td>%s</td>
                  <td>%s</td>
                  <td>%s</td>
@@ -1426,6 +1435,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                 """ % (borrower_link,
                        title_link,
                        library,
+                       call_no,
                        location,
                        date_from,
                        date_to,
@@ -3102,15 +3112,16 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                    <td class="bibcirctableheader" align="center">%s</td>
                    <td class="bibcirctableheader" align="center">%s</td>
                    <td class="bibcirctableheader" align="center">%s</td>
+                   <td class="bibcirctableheader" align="center">%s</td>
                    <td class="bibcirctableheader "align="center">%s</td>
                    <td class="bibcirctableheader "align="center">%s</td>
                    <td class="bibcirctableheader"></td>
                    </tr>
-                   """ % (_("Barcode"), _("Library"), _("Collection"),
+                   """ % (_("Barcode"), _("Library"), _("Collection"), _("Call no"),
                           _("Location"), _("Description"), _("Item type"),
                           _("Status"), _("Due date"))
 
-        for (barcode, library, collection, location, description, item_type,
+        for (barcode, library, collection, call_no, location, description, item_type,
              status, due_date) in holdings_information:
             out += """
                      <tr onMouseOver="this.className='highlight'" onmouseout="this.className='normal'">
@@ -3122,12 +3133,13 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                           <td class="bibcirccontent" align="center">%s</td>
                           <td class="bibcirccontent" align="center">%s</td>
                           <td class="bibcirccontent" align="center">%s</td>
+                          <td class="bibcirccontent" align="center">%s</td>
                           <td class="bibcirccontent" align="right">
                           <input type=button onClick="location.href='%s/admin2/bibcirculation/place_new_request_step2?ln=%s&barcode=%s&recid=%s&user_info=%s,%s,%s,%s,%s,%s,%s,%s'"
                           value='%s' class="formbutton"></td>
                      </tr>
 
-                """ % (barcode, library, collection, location,
+                """ % (barcode, library, collection, call_no, location,
                        description, item_type, status, due_date,
                        CFG_SITE_URL, ln, barcode, recid, user_info[0],
                        user_info[1], user_info[2], user_info[3],
@@ -4925,19 +4937,21 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                 <th>%s</th>
                 <th>%s</th>
                 <th>%s</th>
+                <th>%s</th>
               </tr>
             </thead>
             <tbody>
          """% (_("Name"),
                _("Item"),
                _('Library'),
+               _("Call no"),
                _("Location"),
                _("From"),
                _("To"),
                _("Request date"),
                _("Actions"))
 
-            for (request_id, recid, borrower_id, library_id, location,
+            for (request_id, recid, borrower_id, library_id, call_no, location,
                  date_from, date_to, request_date) in result:
 
                 borrower_name = db.get_borrower_name(borrower_id)
@@ -4978,6 +4992,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                   <td>%s</td>
                   <td>%s</td>
                   <td>%s</td>
+                  <td>%s</td>
                   <td algin='center'>
                     <input type="button" value='%s' style="background: url(/img/dialog-cancel.png)
                         no-repeat #8DBDD8; width: 75px; text-align: right;"
@@ -4994,6 +5009,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                        borrower_link,
                        title_link,
                        library_name,
+                       call_no,
                        location,
                        date_from,
                        date_to,
@@ -5238,11 +5254,13 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                       <th>%s</th>
                       <th>%s</th>
                       <th>%s</th>
+                      <th>%s</th>
                """ % (_("Barcode"),
                       _("Status"),
                       _(CFG_BIBCIRCULATION_ILL_STATUS_REQUESTED), #_("Requested"),
                       _("Due date"),
-                      _("Library"))
+                      _("Library"),
+                      _("Call no"))
 
         if not record_is_periodical:
             out += """
@@ -5282,7 +5300,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                     """ % (_("Description"),
                            _("Actions"))
 
-        for (barcode, loan_period, library_name, library_id,
+        for (barcode, loan_period, library_name, library_id, call_no,
              location, nb_requests, status, collection,
              description, due_date, code, item_type) in copies:
 
@@ -5318,8 +5336,9 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                      <td>%s</td>
                      <td>%s</td>
                      <td>%s</td>
+                     <td>%s</td>
                      """ % (barcode, status, requested,
-                            due_date or '-', library_link)
+                            due_date or '-', library_link, call_no)
 
             if not record_is_periodical:
                 out += """
@@ -5623,6 +5642,7 @@ onClick="location.href='%s/admin2/bibcirculation/list_purchase?ln=%s&status=%s&r
                         <th>%s</th>
                         <th>%s</th>
                         <th>%s</th>
+                        <th>%s</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -5630,6 +5650,7 @@ onClick="location.href='%s/admin2/bibcirculation/list_purchase?ln=%s&status=%s&r
                         _("Borrower"),
                         _("Status"),
                         _("Library"),
+                        _("Call no"),
                         _("Location"),
                         _("Barcode"),
                         _("Item Desc"),
@@ -5639,7 +5660,7 @@ onClick="location.href='%s/admin2/bibcirculation/list_purchase?ln=%s&status=%s&r
                         _("Option(s)"))
 
 
-            for (borrower_id, name, id_bibrec, barcode, status, library,
+            for (borrower_id, name, id_bibrec, barcode, status, library, call_no,
                  location, description, date_from, date_to, request_id,
                  request_date) in result:
 
@@ -5658,6 +5679,7 @@ onClick="location.href='%s/admin2/bibcirculation/list_purchase?ln=%s&status=%s&r
                 <td>%s</td>
                 <td>%s</td>
                 <td>%s</td>
+                <td>%s</td>
                 <td align="center">
                    <input type=button
 onClick="location.href='%s/admin2/bibcirculation/create_loan?recid=%s&request_id=%s&borrower_id=%s'" value='%s' class='formbutton'>
@@ -5665,7 +5687,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?recid=%s&request_id
 onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid=%s&request_id=%s'" value='%s' class='formbutton'>
                 </td>
             </tr>
-            """ % (borrower_link, status, library, location, barcode, description,
+            """ % (borrower_link, status, library, call_no, location, barcode, description,
                    date_from, date_to, request_date, CFG_SITE_URL,
                    id_bibrec, request_id, borrower_id, _("Create loan"),
                    CFG_SITE_URL, id_bibrec, request_id, _("Cancel hold request"))
@@ -5889,19 +5911,21 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                <th>%s</th>
                <th>%s</th>
                <th>%s</th>
+               <th>%s</th>
               </tr>
               </thead>
               </tbody>
                      """ % (_("Borrower"),
                             _("Barcode"),
                             _("Library"),
+                            _("Call no"),
                             _("Location"),
                             _("From"),
                             _("To"),
                             _("Request date"))
 
             for (name, borrower_id, barcode, library_name,
-                 location, req_from, req_to, req_date) in req_hist_overview:
+                 call_no, location, req_from, req_to, req_date) in req_hist_overview:
 
                 borrower_link = create_html_link(CFG_SITE_URL +
                                 '/admin2/bibcirculation/get_borrower_details',
@@ -5916,10 +5940,11 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                    <td>%s</td>
                    <td>%s</td>
                    <td>%s</td>
+                   <td>%s</td>
                   </tr>
 
                  """ % (borrower_link, barcode, library_name,
-                        location, req_from, req_to, req_date)
+                        call_no, location, req_from, req_to, req_date)
 
         out += """
            </tbody>
@@ -5980,12 +6005,14 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                      <th>%s</th>
                      <th>%s</th>
                      <th>%s</th>
+                     <th>%s</th>
                      </tr>
                      </thead>
                      <tbody>
                      """ % (_("Borrower"),
                             _("Barcode"),
                             _("Library"),
+                            _("Call no"),
                             _("Location"),
                             _("Loaned on"),
                             _("Due date"),
@@ -5993,7 +6020,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                             _("Renewals"),
                             _("Overdue letters"))
 
-        for (name, borrower_id, barcode, library_name, location, loaned_on,
+        for (name, borrower_id, barcode, library_name, call_no, location, loaned_on,
              due_date, returned_on, nb_renew,
              nb_overdueletters) in loans_hist_overview:
 
@@ -6011,9 +6038,10 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                        <td>%s</td>
                        <td>%s</td>
                        <td>%s</td>
+                       <td>%s</td>
                        </tr>
                  """ % (borrower_link, barcode, library_name,
-                        location, loaned_on,
+                        call_no, location, loaned_on,
                         due_date, returned_on, nb_renew,
                         nb_overdueletters)
 
@@ -6250,11 +6278,13 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                       <td align="center">%s</td>
                       <td align="center">%s</td>
                       <td align="center">%s</td>
+                      <td align="center">%s</td>
                       <td align="center"></td>
                       <td width="350"></td>
                     </tr>""" % (_("Barcode"),
                                 _("Status"),
                                 _("Library"),
+                                _("Call no"),
                                 _("Location"),
                                 _("Item type"),
                                 _("No of loans"),
@@ -6262,7 +6292,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                                 _("Description"))
 
 
-        for (barcode, loan_period, lib_name, libid, location, nb_requests,
+        for (barcode, loan_period, lib_name, libid, call_no, location, nb_requests,
              status, collection, description, due_date, code, item_type) in result:
 
             library_link = create_html_link(CFG_SITE_URL +
@@ -6279,6 +6309,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                      <td class="bibcirccontent" align="center">%s</td>
                      <td class="bibcirccontent" align="center">%s</td>
                      <td class="bibcirccontent" align="center">%s</td>
+                     <td class="bibcirccontent" align="center">%s</td>
                      <td class="bibcirccontent" align="center">
                      <input type=button
       onClick="location.href='%s/admin2/bibcirculation/update_item_info_step4?ln=%s&barcode=%s'"
@@ -6286,7 +6317,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                      </td>
                      <td class="bibcirccontent" width="350"></td>
                  </tr>
-                 """ % (barcode, status, library_link, location, item_type,
+                 """ % (barcode, status, library_link, call_no, location, item_type,
                         nb_requests, collection, description, CFG_SITE_URL, ln,
                         barcode, _("Update"))
 
@@ -6445,7 +6476,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                   <th width="100">%s</th>
                   <td>
                     <select name="collection" style='border: 1px solid #cfcfcf'>
-                    """ % (_("Location"), result[4],
+                    """ % (_("Location"), result[5],
                            _("Collection"))
 
         for collection in CFG_BIBCIRCULATION_COLLECTION:
@@ -6469,7 +6500,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                            name="description" value="%s">
                   </td>
                 </tr>
-                    """ % (_("Description"), result[5] or '-')
+                    """ % (_("Description"), result[6] or '-')
 
         out += """
                 <tr>
@@ -6479,7 +6510,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                 """ % (_("Item type"))
 
         for id, item_type in item_types:
-            if id == result[6]:
+            if id == result[7]:
                 out += """
                           <option value="%s" selected="selected">%s</option>
                        """ % (id, item_type)
@@ -6507,7 +6538,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
             if st == CFG_BIBCIRCULATION_ITEM_STATUS_ON_LOAN and result[7] != CFG_BIBCIRCULATION_ITEM_STATUS_ON_LOAN:
                 pass # to avoid creting a fake loan,
                      # 'on loan' is only shown if the item was already on loan
-            elif st == result[7]:
+            elif st == result[8]:
                 out += """
                           <option value="%s" selected>%s</option>
                     """ % (st, st)
@@ -6903,10 +6934,12 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                       <th>%s</th>
                       <th>%s</th>
                       <th>%s</th>
+                      <th>%s</th>
                 """ % (_("Barcode"),
                        _("Status"),
                        _("Due date"),
-                       _("Library"))
+                       _("Library"),
+                       _("Call no"))
 
         if not record_is_periodical:
             out += """
@@ -6931,7 +6964,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                   <tboby>
                     """ % (_("Description"))
 
-        for (barcode, loan_period, lib_name, libid, location, nb_requests,
+        for (barcode, loan_period, lib_name, libid, call_no, location, nb_requests,
              status, collection, description, due_date, code, item_type) in result:
 
             library_link = create_html_link(CFG_SITE_URL +
@@ -6944,7 +6977,8 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                      <td>%s</td>
                      <td>%s</td>
                      <td>%s</td>
-                     """ % (barcode, status, due_date or '-', library_link)
+                     <td>%s</td>
+                     """ % (barcode, status, due_date or '-', library_link, call_no)
 
             if not record_is_periodical:
                 out += """
@@ -7000,9 +7034,9 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
             if default_details is not None:
                 default_library_id = default_details[1]
                 default_collection = default_details[3]
-                default_location = default_details[4]
-                default_description = default_details[5]
-                default_loan_period = default_details[6]
+                default_location = default_details[5]
+                default_description = default_details[6]
+                default_loan_period = default_details[7]
 
         out += """
           <table class="bibcirctable">
@@ -7470,10 +7504,12 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                       <th>%s</th>
                       <th>%s</th>
                       <th>%s</th>
+                      <th>%s</th>
                 """ % (_("Barcode"),
                        _("Status"),
                        _("Due date"),
-                       _("Library"))
+                       _("Library"),
+                       _("Call no"))
 
         if not record_is_periodical:
             out += """
@@ -7498,7 +7534,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                   <tboby>
                     """ % (_("Description"))
 
-        for (barcode, loan_period, lib_name, libid, location, nb_requests,
+        for (barcode, loan_period, lib_name, libid, call_no, location, nb_requests,
              status, collection, description, due_date, code, item_type) in result:
 
             library_link = create_html_link(CFG_SITE_URL +
@@ -7511,7 +7547,8 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                      <td>%s</td>
                      <td>%s</td>
                      <td>%s</td>
-                     """ % (barcode, status, due_date or '-', library_link)
+                     <td>%s</td>
+                     """ % (barcode, status, due_date or '-', library_link, call_no)
 
             if not record_is_periodical:
                 out += """
@@ -8110,6 +8147,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                        <th>%s</th>
                        <th>%s</th>
                        <th>%s</th>
+                       <th>%s</th>
                    </tr>
               </thead>
               <tbody>
@@ -8118,13 +8156,14 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                _("Item"),
                _("Request status"),
                _("Library"),
+               _("Call no"),
                _("Location"),
                _("From"),
                _("To"),
                _("Request date"),
                _("Request option(s)"))
 
-            for (recid, status, library, location, date_from,
+            for (recid, status, library, call_no, location, date_from,
                  date_to, request_date, request_id) in result:
 
                 title_link = create_html_link(CFG_SITE_URL +
@@ -8134,6 +8173,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
                 out += """
             <tr>
+                 <td>%s</td>
                  <td>%s</td>
                  <td>%s</td>
                  <td>%s</td>
@@ -8151,7 +8191,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                  </td>
             </tr>
 
-            """ % (title_link, status, library, location, date_from,
+            """ % (title_link, status, library, call_no, location, date_from,
                    date_to, request_date, _("Cancel"),
                    CFG_SITE_URL, ln, request_id)
 
@@ -8393,14 +8433,15 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                      <th>%s</th>
                      <th>%s</th>
                      <th>%s</th>
+                     <th>%s</th>
                      </tr>
                     <thead>
                     <tbody>
                     """ % (_("Item"), _("Barcode"), _("Library"),
-                           _("Location"), _("From"),
+                           _("Call no"), _("Location"), _("From"),
                            _("To"), _("Request date"))
 
-            for (recid, barcode, library_name,
+            for (recid, barcode, library_name, call_no,
                  location, req_from, req_to, req_date) in req_hist_overview:
 
                 title_link = create_html_link(CFG_SITE_URL +
@@ -8416,8 +8457,9 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                             <td>%s</td>
                             <td>%s</td>
                             <td>%s</td>
+                            <td>%s</td>
                            </tr>
-                 """ % (title_link, barcode, library_name, location, req_from,
+                 """ % (title_link, barcode, library_name, call_no, location, req_from,
                         req_to, req_date)
 
         out += """
@@ -8484,12 +8526,14 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                      <th>%s</th>
                      <th>%s</th>
                      <th>%s</th>
+                     <th>%s</th>
                      </tr>
                    </thead>
                    <tbody>
                      """ % (_("Item"),
                             _("Barcode"),
                             _("Library"),
+                            _("Call no"),
                             _("Location"),
                             _("Loaned on"),
                             _("Due date"),
@@ -8507,7 +8551,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
             nb_renew = '-'
             nb_overdueletters = '-'
 
-            for (recid, barcode, library_name, location, loaned_on, due_date,
+            for (recid, barcode, library_name, call_no, location, loaned_on, due_date,
                  returned_on, nb_renew,
                  nb_overdueletters) in loans_hist_overview:
 
@@ -8526,9 +8570,10 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                            <td>%s</td>
                            <td>%s</td>
                            <td>%s</td>
+                           <td>%s</td>
                            </tr>
                      """ % (title_link, barcode,
-                            library_name, location,
+                            library_name, call_no, location,
                             loaned_on, due_date,
                             returned_on, nb_renew,
                             nb_overdueletters)

@@ -175,7 +175,7 @@ def task_run_core():
         write_message("Started update-requests")
         list_of_reqs = db.get_loan_request_by_status(CFG_BIBCIRCULATION_REQUEST_STATUS_WAITING)
 
-        for (_request_id, recid, bc, _name, borrower_id, _library, _location,
+        for (_request_id, recid, bc, _name, borrower_id, _library, _call_no, _location,
              _date_from, _date_to, _request_date) in list_of_reqs:
             description = db.get_item_description(bc)
             list_of_barcodes = db.get_barcodes(recid, description)

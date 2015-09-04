@@ -265,7 +265,7 @@ def perform_book_proposal_send(uid, recid, period_from, period_to,
                                             only_edition='False', barcode=tmp_barcode, ln=CFG_SITE_LANG)
 
             db.add_new_copy(tmp_barcode, recid, library_id=CFG_BIBCIRCULATION_DEFAULT_LIBRARY_ID,
-                            collection='', location='',
+                            collection='', call_no='', location='',
                             description=_("This book was suggested for acquisition"), loan_period='',
                             status=CFG_BIBCIRCULATION_ITEM_STATUS_UNDER_REVIEW, expected_arrival_date='')
 
@@ -359,7 +359,7 @@ def perform_new_request_send_message(uid, recid, period_from, period_to, barcode
             if details:
                 library = details[3]
                 location = details[4]
-                request_date = details[7]
+                request_date = details[8]
 
         message_template = load_template(mail_template)
 

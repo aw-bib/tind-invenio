@@ -317,16 +317,19 @@ def get_loan_request_details(req_id):
                             bor.name,
                             bor.id,
                             lib.name,
-                            it.location,
-                            DATE_FORMAT(lr.period_of_interest_from,'%%Y-%%m-%%d'),
-                            DATE_FORMAT(lr.period_of_interest_to,'%%Y-%%m-%%d'),
+                            it.call_no,
+                            loc.name as location,
+                            DATE_FORMAT(lr.period_of_interest_from,'%%d-%%m-%%Y'),
+                            DATE_FORMAT(lr.period_of_interest_to,'%%d-%%m-%%Y'),
                             lr.request_date
                        FROM crcLOANREQUEST lr,
                             crcBORROWER bor,
                             crcITEM it,
+                            crcLOCATION loc,
                             crcLIBRARY lib
                       WHERE lr.id_crcBORROWER=bor.id AND it.barcode=lr.barcode
                         AND lib.id = it.id_crcLIBRARY
+                        AND it.id_location = loc.id
                         AND lr.id=%s
                    """, (req_id, ))
 
@@ -344,16 +347,19 @@ def get_loan_request_by_status(status):
                         bor.name,
                         bor.id,
                         lib.name,
-                        it.location,
-                        DATE_FORMAT(lr.period_of_interest_from,'%%Y-%%m-%%d'),
-                        DATE_FORMAT(lr.period_of_interest_to,'%%Y-%%m-%%d'),
-                        DATE_FORMAT(lr.request_date,'%%Y-%%m-%%d %%T')
+                        it.call_no,
+                        loc.name as location,
+                        DATE_FORMAT(lr.period_of_interest_from,'%%d-%%m-%%Y'),
+                        DATE_FORMAT(lr.period_of_interest_to,'%%d-%%m-%%Y'),
+                        DATE_FORMAT(lr.request_date,'%%d-%%m-%%Y %%T')
                    FROM crcLOANREQUEST lr,
                         crcBORROWER bor,
                         crcITEM it,
+                        crcLOCATION loc,
                         crcLIBRARY lib
                   WHERE lr.id_crcBORROWER=bor.id AND it.barcode=lr.barcode AND
                         lib.id = it.id_crcLIBRARY AND lr.status=%s
+                        AND it.id_location = loc.id
                         AND lr.period_of_interest_from <= NOW()
                         AND lr.period_of_interest_to >= NOW()
                ORDER BY lr.request_date"""
@@ -578,17 +584,20 @@ def get_pdf_request_data(status):
                             lr.id_bibrec,
                             bor.name,
                             lib.name,
-                            it.location,
-                            DATE_FORMAT(lr.period_of_interest_from,'%%Y-%%m-%%d'),
-                            DATE_FORMAT(lr.period_of_interest_to,'%%Y-%%m-%%d'),
+                            it.call_no,
+                            loc.name as location,
+                            DATE_FORMAT(lr.period_of_interest_from,'%%d-%%m-%%Y'),
+                            DATE_FORMAT(lr.period_of_interest_to,'%%d-%%m-%%Y'),
                             lr.request_date
                      FROM   crcLOANREQUEST lr,
                             crcBORROWER bor,
                             crcITEM it,
+                            crcLOCATION loc,
                             crcLIBRARY lib
                      WHERE  lr.id_crcBORROWER=bor.id AND
                             it.id_bibrec=lr.id_bibrec AND
                             lib.id = it.id_crcLIBRARY AND
+                            it.id_location = loc.id AND
                             lr.status=%s;
                   """ , (status,))
     return res
@@ -946,14 +955,17 @@ def get_expired_loans_with_waiting_requests():
                             lr.id_bibrec,
                             lr.id_crcBORROWER,
                             it.id_crcLIBRARY,
-                            it.location,
-                            DATE_FORMAT(lr.period_of_interest_from,'%%Y-%%m-%%d'),
-                            DATE_FORMAT(lr.period_of_interest_to,'%%Y-%%m-%%d'),
+                            it.call_no,
+                            loc.name as location,
+                            DATE_FORMAT(lr.period_of_interest_from,'%%d-%%m-%%Y'),
+                            DATE_FORMAT(lr.period_of_interest_to,'%%d-%%m-%%Y'),
                             lr.request_date
                        FROM crcLOANREQUEST lr,
                             crcITEM it,
+                            crcLOCATION loc,
                             crcLOAN l
                       WHERE it.barcode=l.barcode
+                        AND it.id_location = loc.id
                         AND lr.id_bibrec=it.id_bibrec
                         AND (lr.status=%s or lr.status=%s)
                         AND (l.status=%s or (l.status=%s
@@ -1134,11 +1146,13 @@ def get_item_info(barcode):
                             it.id_crcLIBRARY,
                             lib.name,
                             it.collection,
-                            it.location,
+                            it.call_no,
+                            loc.name as location,
                             it.description,
                             itt.itemtype_id,
                             it.status
                        FROM crcITEM it
+                       JOIN crcLOCATION loc on it.id_location = loc.id
                        JOIN crcLIBRARY lib ON it.id_crcLIBRARY = lib.id
                   LEFT JOIN crcITEMTYPE_ITEM itt on itt.barcode = it.barcode
                       WHERE it.barcode=%s""",
@@ -1167,35 +1181,22 @@ def get_loan_period(barcode):
     else:
         return None
 
-def update_item_info(barcode, library_id, collection, location, description,
+def update_item_info(barcode, library_id, collection, call_no, location_id, description,
                  item_type, status, expected_arrival_date):
-    """
-    Update item's information.
-
-    barcode: identify the item. It is the primary key of the table
-             crcITEM.
-
-    library_id: identify the library. It is also the primary key of
-                the table crcLIBRARY.
-    """
-
     int(run_sql("""UPDATE crcITEM
                       set barcode=%s,
                           id_crcLIBRARY=%s,
                           collection=%s,
-                          location=%s,
+                          call_no=%s,
+                          id_location=%s,
+                          id_itemtype=%s,
                           description=%s,
                           status=%s,
                           expected_arrival_date=%s,
                           modification_date=NOW()
                    WHERE  barcode=%s""",
-                (barcode, library_id, collection, location, description,
+                (barcode, library_id, collection, call_no, location_id, item_type, description,
                  status, expected_arrival_date, barcode)))
-    run_sql("""INSERT INTO crcITEMTYPE_ITEM(barcode, itemtype_id)
-                    VALUES (%s, %s)
-                    ON DUPLICATE KEY
-                    UPDATE itemtype_id=%s""",
-            (barcode, item_type, item_type))
 
 def update_barcode(old_barcode, barcode):
 
@@ -1265,7 +1266,8 @@ def get_item_requests(recid):
                             lr.barcode,
                             lr.status,
                             lib.name,
-                            it.location,
+                            it.call_no,
+                            loc.name as location,
                             it.description,
                             DATE_FORMAT(lr.period_of_interest_from,'%%Y-%%m-%%d'),
                             DATE_FORMAT(lr.period_of_interest_to,'%%Y-%%m-%%d'),
@@ -1274,8 +1276,10 @@ def get_item_requests(recid):
                      FROM   crcLOANREQUEST lr,
                             crcBORROWER bor,
                             crcITEM it,
+                            crcLOCATION loc,
                             crcLIBRARY lib
                      WHERE  bor.id = lr.id_crcBORROWER and lr.id_bibrec=%s
+                            and it.id_location = loc.id
                             and lr.status!=%s and lr.status!=%s and lr.status!=%s
                             and lr.barcode = it.barcode and lib.id = it.id_crcLIBRARY
                      """, (recid,
@@ -1334,16 +1338,18 @@ def get_item_loans_historical_overview(recid):
                             bor.id,
                             l.barcode,
                             lib.name,
-                            it.location,
-                            DATE_FORMAT(l.loaned_on,'%%Y-%%m-%%d'),
-                            DATE_FORMAT(l.due_date,'%%Y-%%m-%%d'),
+                            it.call_no,
+                            loc.name as location,
+                            DATE_FORMAT(l.loaned_on,'%%d-%%m-%%Y'),
+                            DATE_FORMAT(l.due_date,'%%d-%%m-%%Y'),
                             l.returned_on,
                             l.number_of_renewals,
                             l.overdue_letter_number
-                     FROM crcLOAN l, crcBORROWER bor, crcITEM it, crcLIBRARY lib
+                     FROM crcLOAN l, crcBORROWER bor, crcITEM it, crcLIBRARY lib, crcLOCATION loc
                      WHERE l.id_crcBORROWER=bor.id and
                            lib.id = it.id_crcLIBRARY and
                            it.barcode = l.barcode and
+                           it.id_location = loc.id and
                            l.id_bibrec = %s and
                            l.status = %s """
                   , (recid, CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED))
@@ -1361,14 +1367,16 @@ def get_item_requests_historical_overview(recid):
                          bor.id,
                          lr.barcode,
                          lib.name,
-                         it.location,
-                         DATE_FORMAT(lr.period_of_interest_from,'%%Y-%%m-%%d'),
-                         DATE_FORMAT(lr.period_of_interest_to,'%%Y-%%m-%%d'),
+                         it.call_no,
+                         loc.name as location,
+                         DATE_FORMAT(lr.period_of_interest_from,'%%d-%%m-%%Y'),
+                         DATE_FORMAT(lr.period_of_interest_to,'%%d-%%m-%%Y'),
                          lr.request_date
-                  FROM crcLOANREQUEST lr, crcBORROWER bor, crcITEM it, crcLIBRARY lib
+                  FROM crcLOANREQUEST lr, crcBORROWER bor, crcITEM it, crcLIBRARY lib, crcLOCATION loc
                   WHERE lr.id_crcBORROWER=bor.id and
                         lib.id = it.id_crcLIBRARY and
                         it.barcode = lr.barcode and
+                        it.id_location = loc.id and
                         lr.id_bibrec = %s and
                         lr.status = %s
                   """, (recid, CFG_BIBCIRCULATION_REQUEST_STATUS_DONE))
@@ -1392,7 +1400,7 @@ def get_nb_copies_on_loan(recid):
 def get_item_copies_details(recid, patrontype=None):
     if type(patrontype) is int:
         qry = """SELECT it.barcode, lrv.loan_period, lib.name,
-                                    lib.id, it.location, it.number_of_requests,
+                                    lib.id, it.call_no, loc.name as location, it.number_of_requests,
                                     it.status, it.collection, it.description,
                                     DATE_FORMAT(ln.due_date,'%%d-%%m-%%Y'), lrv.code,
                                     itt.name AS itemtype
@@ -1401,18 +1409,18 @@ def get_item_copies_details(recid, patrontype=None):
                                     ON it.barcode = ln.barcode AND ln.status != "%(returncode)s"
                                     LEFT JOIN crcLIBRARY lib
                                     ON lib.id = it.id_crcLIBRARY
-                                    LEFT JOIN crcITEMTYPE_ITEM itt_it
-                                    ON it.barcode = itt_it.barcode
                                     LEFT JOIN crcITEMTYPES itt
-                                    ON itt_it.itemtype_id = itt.id
+                                    ON it.id_itemtype = itt.id
                                     LEFT JOIN crcLOANRULES_MATCH_VIEW lrv
                                     ON it.barcode = lrv.barcode
+                                    LEFT JOIN crcLOCATION loc
+                                    ON it.id_location = loc.id
                              WHERE it.id_bibrec=%(recid)s
                              AND lrv.`patrontype_id` = %(patrontype)s
                              GROUP BY it.barcode
                 UNION ALL
                 SELECT it.barcode, NULL AS loan_period, lib.name,
-                                    lib.id, it.location, it.number_of_requests,
+                                    lib.id, it.call_no, loc.name as location, it.number_of_requests,
                                     it.status, it.collection, it.description,
                                     DATE_FORMAT(ln.due_date,'%%d-%%m-%%Y'), NULL,
                                     itt.name AS itemtype
@@ -1421,10 +1429,10 @@ def get_item_copies_details(recid, patrontype=None):
                                     ON it.barcode = ln.barcode AND ln.status != "%(returncode)s"
                                     LEFT JOIN crcLIBRARY lib
                                     ON lib.id = it.id_crcLIBRARY
-                                    LEFT JOIN crcITEMTYPE_ITEM itt_it
-                                    ON it.barcode = itt_it.barcode
                                     LEFT JOIN crcITEMTYPES itt
-                                    ON itt_it.itemtype_id = itt.id
+                                    ON it.id_itemtype = itt.id
+                                    LEFT JOIN crcLOCATION loc
+                                    ON it.id_location = loc.id
                             WHERE it.id_bibrec=%(recid)s
                             AND it.barcode NOT IN (SELECT it.barcode FROM crcITEM AS it
                             					JOIN crcLOANRULES_MATCH_VIEW AS lrv
@@ -1441,7 +1449,7 @@ def get_item_copies_details(recid, patrontype=None):
     else:
         qry = """
              SELECT it.barcode, NULL, lib.name,
-                    lib.id, it.location, it.number_of_requests,
+                    lib.id, it.call_no, loc.name as location, it.number_of_requests,
                     it.status, it.collection, it.description,
                     DATE_FORMAT(ln.due_date,'%%d-%%m-%%Y'), NULL,
                     itt.name as item_type
@@ -1450,10 +1458,10 @@ def get_item_copies_details(recid, patrontype=None):
                     on it.barcode = ln.barcode and ln.status != "%(returncode)s"
                     left join crcLIBRARY lib
                     on lib.id = it.id_crcLIBRARY
-                    left join crcITEMTYPE_ITEM itt_it
-                    on it.barcode = itt_it.barcode
                     left join crcITEMTYPES itt
-                    on itt_it.itemtype_id = itt.id
+                    on it.id_itemtype = itt.id
+                    left join crcLOCATION loc
+                    on it.id_location = loc.id
              WHERE it.id_bibrec=%(recid)s
              ORDER BY barcode
              """ % {
@@ -1551,7 +1559,8 @@ def get_holdings_information(recid, include_hidden_libraries=True):
         res = run_sql("""SELECT it.barcode,
                                 lib.name,
                                 it.collection,
-                                it.location,
+                                it.call_no,
+                                loc.name as location,
                                 it.description,
                                 itt.name AS item_type,
                                 it.status,
@@ -1561,10 +1570,10 @@ def get_holdings_information(recid, include_hidden_libraries=True):
                                 on it.barcode = ln.barcode and ln.status != %s
                                 left join crcLIBRARY lib
                                 on lib.id = it.id_crcLIBRARY
-                                left join crcITEMTYPE_ITEM it_i
-                                on it.barcode = it_i.barcode
                                 left join crcITEMTYPES itt
-                                on it_i.itemtype_id = itt.id
+                                on it.id_itemtype = itt.id
+                                left join crcLOCATION loc
+                                on it.id_location = loc.id
                           WHERE it.id_bibrec=%s
                     """, (CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED, recid))
 
@@ -1572,7 +1581,8 @@ def get_holdings_information(recid, include_hidden_libraries=True):
         res = run_sql("""SELECT it.barcode,
                                 lib.name,
                                 it.collection,
-                                it.location,
+                                it.call_no,
+                                loc.name as location,
                                 it.description,
                                 itt.name AS item_type,
                                 it.status,
@@ -1582,10 +1592,10 @@ def get_holdings_information(recid, include_hidden_libraries=True):
                                 on it.barcode = ln.barcode and ln.status != %s
                                 left join crcLIBRARY lib
                                 on lib.id = it.id_crcLIBRARY
-                                left join crcITEMTYPE_ITEM it_i
-                                on it.barcode = it_i.barcode
                                 left join crcITEMTYPES itt
-                                on it_i.itemtype_id = itt.id
+                                on it.id_itemtype = itt.id
+                                left join crcLOCATION loc
+                                on it.id_location = loc.id
                           WHERE it.id_bibrec=%s
                             AND lib.type<>%s
                     """, (CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED, recid,
@@ -1627,35 +1637,18 @@ def has_copies(recid):
     """
     return (get_number_copies(recid) != 0)
 
-def add_new_copy(barcode, recid, library_id, collection, location, description,
+def add_new_copy(barcode, recid, library_id, collection, call_no, location_id, description,
                  item_type, status, expected_arrival_date):
-
-    """
-    Add a new copy
-
-    barcode: identify the item. It is the primary key of the table
-             crcITEM.
-
-    recid: identify the record. It is also the primary key of
-       the table bibrec.
-
-    library_id: identify the library. It is also the primary key of
-                the table crcLIBRARY.
-    """
-
     run_sql("""insert into crcITEM (barcode, id_bibrec, id_crcLIBRARY,
-                                collection, location, description,
+                                collection, call_no, id_itemtype, id_location, description,
                                 status, expected_arrival_date, creation_date,
                                 modification_date)
-                values (%s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())""",
-            (barcode, recid, library_id, collection, location, description or '-',
+                values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())""",
+            (barcode, recid, library_id, collection, call_no, item_type, location_id, description or '-',
              status, expected_arrival_date))
-    run_sql("INSERT INTO crcITEMTYPE_ITEM(barcode, itemtype_id) VALUES(%s, %s)" % (barcode, item_type))
 
 def delete_copy(barcode):
     res = run_sql("""delete FROM crcITEM WHERE barcode=%s""", (barcode, ))
-    if res:
-        run_sql("""DELETE FROM crcITEMTYPE_ITEM WHERE barcode=%s""", (barcode, ))
     return res
 
 def get_expected_arrival_date(barcode):
@@ -2064,16 +2057,19 @@ def get_borrower_request_details(borrower_id):
     res = run_sql("""SELECT lr.id_bibrec,
                             lr.status,
                             lib.name,
-                            it.location,
-                            DATE_FORMAT(lr.period_of_interest_from,'%%Y-%%m-%%d'),
-                            DATE_FORMAT(lr.period_of_interest_to,'%%Y-%%m-%%d'),
+                            it.call_no,
+                            loc.name as location,
+                            DATE_FORMAT(lr.period_of_interest_from,'%%d-%%m-%%Y'),
+                            DATE_FORMAT(lr.period_of_interest_to,'%%d-%%m-%%Y'),
                             lr.request_date,
                             lr.id
                      FROM   crcLOANREQUEST lr,
                             crcITEM it,
-                            crcLIBRARY lib
+                            crcLIBRARY lib,
+                            crcLOCATION loc
                      WHERE  lr.id_crcBORROWER=%s
                        AND  (lr.status=%s OR lr.status=%s)
+                       AND  it.id_location = loc.id
                             and lib.id = it.id_crcLIBRARY and lr.barcode = it.barcode
                             """, (borrower_id,
                                   CFG_BIBCIRCULATION_REQUEST_STATUS_WAITING,
@@ -2131,14 +2127,16 @@ def bor_loans_historical_overview(borrower_id):
     res = run_sql("""SELECT l.id_bibrec,
                             l.barcode,
                             lib.name,
-                            it.location,
-                            DATE_FORMAT(l.loaned_on,'%%Y-%%m-%%d'),
-                            DATE_FORMAT(l.due_date,'%%Y-%%m-%%d'),
+                            it.call_no,
+                            loc.name as location,
+                            DATE_FORMAT(l.loaned_on,'%%d-%%m-%%Y'),
+                            DATE_FORMAT(l.due_date,'%%d-%%m-%%Y'),
                             l.returned_on,
                             l.number_of_renewals,
                             l.overdue_letter_number
-                     FROM crcLOAN l, crcITEM it, crcLIBRARY lib
+                     FROM crcLOAN l, crcITEM it, crcLIBRARY lib, crcLOCATION loc
                      WHERE l.id_crcBORROWER=%s and
+                           it.id_location = loc.id and
                            lib.id = it.id_crcLIBRARY and
                            it.barcode = l.barcode and
                            l.status = %s
@@ -2157,14 +2155,16 @@ def bor_requests_historical_overview(borrower_id):
     res = run_sql("""SELECT lr.id_bibrec,
                             lr.barcode,
                             lib.name,
-                            it.location,
-                            DATE_FORMAT(lr.period_of_interest_from,'%%Y-%%m-%%d'),
-                            DATE_FORMAT(lr.period_of_interest_to,'%%Y-%%m-%%d'),
+                            it.call_no,
+                            loc.name as location,
+                            DATE_FORMAT(lr.period_of_interest_from,'%%d-%%m-%%Y'),
+                            DATE_FORMAT(lr.period_of_interest_to,'%%d-%%m-%%Y'),
                             lr.request_date
-                       FROM crcLOANREQUEST lr, crcITEM it, crcLIBRARY lib
+                       FROM crcLOANREQUEST lr, crcITEM it, crcLIBRARY lib, crcLOCATION loc
                       WHERE lr.id_crcBORROWER=%s and
                             lib.id = it.id_crcLIBRARY and
                             it.barcode = lr.barcode and
+                            it.id_location = loc.id and
                             lr.status =%s
                 """, (borrower_id, CFG_BIBCIRCULATION_REQUEST_STATUS_DONE))
     return res
@@ -2301,10 +2301,11 @@ def get_library_items(library_id):
     library_id: identify the library. It is also the primary key of
                 the table crcLIBRARY.
     """
-    res = run_sql("""SELECT barcode, id_bibrec, collection,
-                            location, description, loan_period, status, number_of_requests
-                       FROM crcITEM
-                      WHERE id_crcLIBRARY=%s""",
+    res = run_sql("""SELECT barcode, id_bibrec, collection, call_no,
+                            loc.name as location, description, loan_period, status, number_of_requests
+                       FROM crcITEM, crcLOCATION loc
+                      WHERE id_location = loc.id
+                        AND id_crcLIBRARY=%s""",
                   (library_id, ))
 
     return res
@@ -2358,8 +2359,9 @@ def get_library_name(library_id):
 
 def get_lib_location(barcode):
 
-    res = run_sql("""SELECT id_crcLIBRARY, location
-                       FROM crcITEM
+    res = run_sql("""SELECT i.id_crcLIBRARY, loc.name
+                       FROM crcITEM i
+                       JOIN crcLOCATION loc on i.id_location = loc.id
                       WHERE barcode=%s""",
                   (barcode, ))
 

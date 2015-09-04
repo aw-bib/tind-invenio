@@ -414,7 +414,7 @@ def print_new_loan_information(req, ln=CFG_SITE_LANG):
     (book_title, book_year, book_author,
                  book_isbn, book_editor) = book_information_from_MARC(recid)
 
-    book_location = db.get_item_info(book_barcode)[4]
+    book_location = db.get_item_info(book_barcode)[5]
 
     # get borrower's data/information (name, address, email)
     (borrower_name, borrower_address,
@@ -581,16 +581,18 @@ def print_pending_hold_requests_information(req, ln):
                        <td><strong>%s</strong></td>
                        <td><strong>%s</strong></td>
                        <td><strong>%s</strong></td>
+                       <td><strong>%s</strong></td>
                   </tr>
                        """ % (_("Borrower"),
                               _("Item"),
                               _("Library"),
+                              _("Call no"),
                               _("Location"),
                               _("From"),
                               _("To"),
                               _("Request date"))
 
-    for (recid, borrower_name, library_name, location,
+    for (recid, borrower_name, library_name, call_no, location,
          date_from, date_to, request_date) in requests:
 
         out += """<tr style='color: black;'>
@@ -601,9 +603,10 @@ def print_pending_hold_requests_information(req, ln):
                          <td class="bibcirccontent">%s</td>
                          <td class="bibcirccontent">%s</td>
                          <td class="bibcirccontent">%s</td>
+                         <td class="bibcirccontent">%s</td>
                       </tr>
                          """ % (borrower_name, book_title_from_MARC(recid),
-                                library_name, location, date_from, date_to,
+                                library_name, call_no, location, date_from, date_to,
                                 request_date)
 
     out += """</table>

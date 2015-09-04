@@ -3189,7 +3189,7 @@ def update_item_info_step6(req, tup_infos, ln=CFG_SITE_LANG):
         db.return_loan(old_barcode)
 
     if not is_on_loan and status == CFG_BIBCIRCULATION_ITEM_STATUS_ON_LOAN:
-        status = db.get_copy_details(barcode)[7]
+        status = db.get_status(barcode)
         infos.append(_("Item <strong>[%s]</strong> updated, but the <strong>status was not modified</strong>.") % (old_barcode))
 
     # update item information.

@@ -1462,17 +1462,15 @@ def get_item_copies_details(recid, patrontype=None):
         }
         return run_sql(qry)
 
-def get_copy_details(barcode):
-
-    res = run_sql(""" SELECT *
-                        FROM crcITEM it
-                       WHERE barcode=%s""",
-                  (barcode, ))
-
-    if res is not None:
+def get_status(barcode):
+    res = run_sql(""" SELECT status
+                        FROM crcITEM
+                       WHERE barcoe='%s'
+                  """, (barcode, ))
+    if res:
         return res[0]
     else:
-        return None
+        return None;
 
 def get_copies_status(recid, description='-'):
     """

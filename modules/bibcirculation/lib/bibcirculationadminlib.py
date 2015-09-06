@@ -2835,6 +2835,17 @@ def add_new_copy_step4(req, barcode, library, location, collection, description,
                                                     tmp_barcode=None,
                                                     infos=infos,
                                                     ln=ln)
+    elif not item_type:
+        infos.append(_("Please select an item type."))
+        title = _("Add new copy") + " - III"
+        body  = bc_templates.tmpl_add_new_copy_step3(recid=recid,
+                                                    result=result,
+                                                    libraries=libraries,
+                                                    item_types=item_types,
+                                                    original_copy_barcode=None,
+                                                    tmp_barcode=None,
+                                                    infos=infos,
+                                                    ln=ln)
     elif barcode[:3] == 'tmp' \
         and status in [CFG_BIBCIRCULATION_ITEM_STATUS_ON_SHELF,
                        CFG_BIBCIRCULATION_ITEM_STATUS_ON_LOAN,

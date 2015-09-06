@@ -7621,7 +7621,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                         _("Collection"),
                         _("Description"))
 
-        for (barcode, loan_period, lib_name, libid, location, nb_requests,
+        for (barcode, loan_period, lib_name, libid, call_no, location, nb_requests,
              status, collection, description, due_date, code, item_type) in result:
             if barcode == barcode_to_delete:
                 library_link = create_html_link(CFG_SITE_URL +
@@ -7639,8 +7639,9 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                          <td>%s</td>
                          <td>%s</td>
                          <td>%s</td>
+                         <td>%s</td>
                      </tr>
-                     """ % (barcode, status, due_date, library_link, location,
+                     """ % (barcode, status, due_date, library_link, call_no, location,
                             item_type or '-', nb_requests, collection or '-',
                             description or '-')
 

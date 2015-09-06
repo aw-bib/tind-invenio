@@ -7058,7 +7058,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                       <select name="library"  style='border: 1px solid #cfcfcf'>
 
                 """ % (_("New copy details"), _("Barcode"),
-                       colspan, tmp_barcode, _("Library"), colspan)
+                       colspan, tmp_barcode or '', _("Library"), colspan)
 
         main_library = db.get_main_libraries()
         if main_library is not None:

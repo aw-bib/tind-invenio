@@ -2843,7 +2843,7 @@ def add_new_copy_step4(req, barcode, library, location, collection, description,
                                                     libraries=libraries,
                                                     item_types=item_types,
                                                     original_copy_barcode=None,
-                                                    tmp_barcode=None,
+                                                    tmp_barcode=barcode,
                                                     infos=infos,
                                                     ln=ln)
     elif barcode[:3] == 'tmp' \

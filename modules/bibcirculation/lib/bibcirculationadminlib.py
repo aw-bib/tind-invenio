@@ -6140,6 +6140,13 @@ def search_library_step2(req, column, string, ln=CFG_SITE_LANG):
                 lastupdated=__lastupdated__)
 
 def get_locations(req, id):
+
+    (auth_code, auth_message) = is_adminuser(req)
+    if auth_code != 0:
+        return mustloginpage(req, auth_message)
+
+    req.content_type = "application/json"
+
     return json.dumps(db.get_locations(id))
 
 

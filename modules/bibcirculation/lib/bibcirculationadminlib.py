@@ -6142,7 +6142,7 @@ def search_library_step2(req, column, string, ln=CFG_SITE_LANG):
 def get_locations(req, id):
 
     locations = run_sql("""
-                SELECT id, code, name FROM crcLOCATIONS
+                SELECT id, code, name FROM crcLOCATION
                  WHERE id_crcLIBRARY = %s
     """, (id,))
     return_list = []

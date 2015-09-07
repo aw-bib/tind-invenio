@@ -6140,20 +6140,7 @@ def search_library_step2(req, column, string, ln=CFG_SITE_LANG):
                 lastupdated=__lastupdated__)
 
 def get_locations(req, id):
-
-    locations = run_sql("""
-                SELECT id, code, name FROM crcLOCATION
-                 WHERE id_crcLIBRARY = %s
-    """, (id,))
-    return_list = []
-    for location in locations:
-        return_list.append({
-            'id': location[0],
-            'code': location[1],
-            'name': location[2]
-        })
-
-    return json.dumps(return_list)
+    return json.dumps(db.get_locations(id))
 
 
 ###

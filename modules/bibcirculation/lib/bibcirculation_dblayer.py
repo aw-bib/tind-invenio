@@ -2370,6 +2370,19 @@ def get_lib_location(barcode):
     else:
         return None
 
+def get_locations(library_id)
+    locations = run_sql("""
+                SELECT id, code, name FROM crcLOCATION
+                 WHERE id_crcLIBRARY = %s
+    """, (library_id,))
+    return_list = []
+    for location in locations:
+        return_list.append({
+            'id': location[0],
+            'code': location[1],
+            'name': location[2]
+        })
+
 def get_library_notes(library_id):
     """ The data associated to this library will be retrieved."""
     res = run_sql("""SELECT notes

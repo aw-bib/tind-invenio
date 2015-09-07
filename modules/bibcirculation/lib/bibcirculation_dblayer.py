@@ -2382,6 +2382,7 @@ def get_locations(library_id):
             'code': location[1],
             'name': location[2]
         })
+    return return_list
 
 def get_library_notes(library_id):
     """ The data associated to this library will be retrieved."""

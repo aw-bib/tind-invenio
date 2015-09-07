@@ -2370,7 +2370,7 @@ def get_lib_location(barcode):
     else:
         return None
 
-def get_locations(library_id)
+def get_locations(library_id):
     locations = run_sql("""
                 SELECT id, code, name FROM crcLOCATION
                  WHERE id_crcLIBRARY = %s

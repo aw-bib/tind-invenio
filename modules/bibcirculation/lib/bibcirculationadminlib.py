@@ -36,9 +36,7 @@ __revision__ = "$Id$"
 
 __lastupdated__ = """$Date$"""
 
-import datetime, time, types
-from urlparse import parse_qs
-import simplejson
+import datetime, time, types, json
 
 from MySQLdb import IntegrityError, DatabaseError
 
@@ -6141,8 +6139,21 @@ def search_library_step2(req, column, string, ln=CFG_SITE_LANG):
                 navtrail=navtrail_previous_links,
                 lastupdated=__lastupdated__)
 
+def get_locations(req, id):
 
+    locations = run_sql("""
+                SELECT id, code, name FROM crcLOCATIONS
+                 WHERE id_crcLIBRARY = %s
+    """, (id,))
+    return_list = []
+    for location in locations:
+        return_list.append({
+            'id': location[0],
+            'code': location[1],
+            'name': location[2]
+        })
 
+    return json.dumps(return_list)
 
 
 ###

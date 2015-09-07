@@ -1847,7 +1847,8 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
     def get_locations(self, req, form):
         """http://cds.cern.ch/admin2/bibcirculation/get_locations"""
         argd = wash_urlargd(form, {'id': (int, None)})
-        return bal.get_locations(req=req, id=id)
+        library_id= argd['id']
+        return bal.get_locations(req=req, library_id=library_id)
 
 
 # "Vendor related pages

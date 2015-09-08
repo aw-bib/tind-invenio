@@ -1949,6 +1949,49 @@ class BibFormatObject(object):
         else:
             return ""
 
+    def fields_ordered(self, tag, escape=0, repeatable_subfields_p=False):
+        if self.get_record() is None:
+            # Case where BibRecord could not parse object
+            return []
+
+        p_tag = parse_tag(tag)
+        if p_tag[3] != "":
+            # Subcode has been defined. Simply returns list of values
+            values = record_get_field_values(self.get_record(),
+                                             p_tag[0],
+                                             p_tag[1],
+                                             p_tag[2],
+                                             p_tag[3])
+            if escape == 0:
+                return values
+            else:
+                return [escape_field(value, escape) for value in values]
+
+        else:
+            # Subcode is undefined. Returns list of dicts.
+            # However it might be the case of a control field.
+
+            instances = record_get_field_instances(self.get_record(),
+                                                   p_tag[0],
+                                                   p_tag[1],
+                                                   p_tag[2])
+            if repeatable_subfields_p:
+                list_of_instances = []
+                for instance in instances:
+                    instance_list = []
+                    for subfield in instance[0]:
+                        if escape == 0:
+                            instance_list.append(subfield[1])
+                        else:
+                            instance_list.append(escape_field(subfield[1], escape))
+                    list_of_instances.append(instance_list)
+                return list_of_instances
+            else:
+                if escape == 0:
+                    return [[x[1] for x in instance[0]] for instance in instances]
+                else:
+                    return [[escape_field(x[1], escape) for x in instance[0]] for instance in instances]
+
     def fields(self, tag, escape=0, repeatable_subfields_p=False):
         """
         Returns the list of values corresonding to "tag".

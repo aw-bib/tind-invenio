@@ -22,8 +22,9 @@ __revision__ = "$Id$"
 
 from invenio.bibformat_utils import parse_tag
 
-def format_element(bfo, tag, limit, instances_separator=" ",
-           subfields_separator=" ", extension="", output_pattern=""):
+
+def format_element(bfo, tag, limit, instances_separator=" ", subfields_separator=" ", extension="",
+                   output_pattern=""):
     """
     Prints the given field of a record.
     If tag is in range [001, 010], this element assumes
@@ -88,68 +89,63 @@ def format_element(bfo, tag, limit, instances_separator=" ",
     @param subfields_separator: a separator between subfields of an instance
     @param limit: the maximum number of values to display.
     @param extension: a text printed at the end if 'limit' has been exceeded
-    @param output_pattern: when specified, prints the subfields of each instance according to pattern specified as parameter (following Python string formatting convention)
+    @param output_pattern: when specified, prints the subfields of each instance according to
+     pattern specified as parameter (following Python string formatting convention)
+    @param bfo: BibFormatObject which represents the record to format.
     """
     # Check if data or control field
+    try:
+        limit = int(limit)
+    except ValueError:
+        limit = 0
+
     p_tag = parse_tag(tag)
     if p_tag[0].isdigit() and int(p_tag[0]) in range(0, 11):
-        return  bfo.control_field(tag)
-    elif p_tag[0].isdigit():
-        # Get values without subcode.
-        # We will filter unneeded subcode later
-        if p_tag[1] == '':
-            p_tag[1] = '_'
-        if p_tag[2] == '':
-            p_tag[2] = '_'
-        values = bfo.fields(p_tag[0]+p_tag[1]+p_tag[2]) # Values will
-                                                        # always be a
-                                                        # list of
-                                                        # dicts
+        return bfo.control_field(tag)
+
+    flos = []  # Final list of string
+
+    # Get values without subcode.
+    # We will filter unneeded subcode later
+    if p_tag[1] == '':
+        p_tag[1] = '_'
+    if p_tag[2] == '':
+        p_tag[2] = '_'
+
+    # values will always be a list.
+    if not output_pattern:
+        values = bfo.fields_ordered(''.join(p_tag))
     else:
+        values = bfo.fields(''.join(p_tag))
+
+    # At this step values can be a list of dict a list of string or an empty list.
+    if not values:
         return ''
-
+    # At this point we are sure we will get at least an element in values.
     x = 0
-    instances_out = [] # Retain each instance output
-    for instance in values:
-        filtered_values = [value for (subcode, value) in instance.iteritems()
-                          if p_tag[3] == '' or p_tag[3] == '%' \
-                           or p_tag[3] == subcode]
-        if len(filtered_values) > 0:
-            # We have found some corresponding subcode(s)
-            if limit.isdigit() and x + len(filtered_values) >= int(limit):
-                # We are going to exceed the limit
-                filtered_values = filtered_values[:int(limit)-x] # Takes only needed one
-                if len(filtered_values) > 0: # do not append empty list!
-                    if output_pattern:
-                        try:
-                            instances_out.append(output_pattern % DictNoKeyError(instance))
-                        except:
-                            pass
-                    else:
-                        instances_out.append(subfields_separator.join(filtered_values))
-                    x += len(filtered_values) # record that so we know limit has been exceeded
-                break # No need to go further
-            else:
-                if output_pattern:
-                    try:
-                        instances_out.append(output_pattern % DictNoKeyError(instance))
-                    except:
-                        pass
+    if isinstance(values[0], list):
+        if limit:
+            for instance in values:
+                x += len(instance)
+                if x > limit:
+                    flos.append(subfields_separator.join(instance[:limit - x]) + extension)
+                    break
                 else:
-                    instances_out.append(subfields_separator.join(filtered_values))
-                x += len(filtered_values)
+                    flos.append(subfields_separator.join(instance))
+        else:
+            flos = [subfields_separator.join(instance) for instance in values]
 
-    ext_out = ''
-    if limit.isdigit() and x > int(limit):
-        ext_out = extension
+    elif isinstance(values[0], dict):
+        flos = [output_pattern % DictNoKeyError(instance) for instance in values]
+    else:
+        flos = values
 
-    return instances_separator.join(instances_out) + ext_out
+    return instances_separator.join(flos)
 
 
 class DictNoKeyError(dict):
     def __getitem__(self, key):
-        if dict.__contains__(self, key):
-            val = dict.__getitem__(self, key)
-        else:
-            val = ''
-        return val
+        try:
+            return dict.__getitem__(self, key)
+        except KeyError:
+            return ''

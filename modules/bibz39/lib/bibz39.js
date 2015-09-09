@@ -18,86 +18,32 @@
  */
 
 
-/* How often to ping server for updates? (in ms) */
-var PING_INTERVAL = 5000;
-/* After how long of inactivity do we stop pinging the server? (in ms) */
-var TIMEOUT_TIME = 120 * 1000;
-/* Is the session timed out? */
-var IS_SESSION_TIMEOUT = false;
-
-
-function initAjax(){
-  /*
-   * Initialize Ajax.
-   */
-  $.ajaxSetup(
-    {cache: false,
-      dataType: 'json',
-      type: 'POST',
-      url: '.'
-    }
-  );
-}
-
-
-function createReq() {
-    /*
-     * Perform AJAX request and update page content
-     */
-    $.ajax({data: {jsondata: JSON.stringify("dummy")},
-        success: function(json) {
-              $('#bibsched_table').html(json['bibsched']);
-        }
+function showxml(identifier) {
+    $("#dialog-message")[0].innerHTML =  "<pre>" + gAllMarcXml[identifier].replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') + "</pre>"
+    $("#dialog-message").dialog({
+      width: window.innerWidth/2,
+      height: window.innerHeight/1.5,
+      modal: true,
     });
 }
 
-
-function onTimeout() {
-    /*
-     * Stop pinging the server and alert the user
-     */
-    var timeout_msg_html = "<br><div style='color:red;'>Your session has timed out. Refresh the page to keep seeing updates.<div>"
-
-    clearInterval(pingTimer);
-    IS_SESSION_TIMEOUT = true;
-
-    $("#bibsched_table").after(timeout_msg_html);
-}
-
-
-function renewSession() {
-    /*
-     * There is some activity on the screen, avoid time out
-     */
-    clearInterval(timeoutTimer);
-    if ( !IS_SESSION_TIMEOUT ) {
-        timeoutTimer = setTimeout(onTimeout, TIMEOUT_TIME);
+function enterKeyLookUp(e) {
+    var key;
+    if(window.event)
+      key = window.event.keyCode;     // IE
+    else
+      key = e.keyCode || e.which;     // Firefox
+    if (key == 13) {
+        spinning();
+        e.preventDefault()
+        return false;
     }
+    return true;
 }
 
-
-function initBibSchedPing() {
-    /*
-     * Specify the interval to ping the server
-     */
-    timeoutTimer = setTimeout(onTimeout, TIMEOUT_TIME);
-    pingTimer = setInterval("createReq()", PING_INTERVAL);
+function spinning(e) {
+    $("#middle_area > table").remove();
+    $("#middle_area > .error").remove();
+    $("#middle_area").append("<p class='spinning_wheel'><i class='fa fa fa-spinner fa-pulse fa-5x'></i></p><p class='bibz39_button_td'>Searching...</p>");
+    setTimeout( function() { $("#main_form").submit() }, 1000);
 }
-
-
-function bindHandlers() {
-    /*
-     * Definition of event handlers
-     */
-    $(document).on("mousemove", renewSession);
-}
-
-
-$(function() {
-    /*
-     * DOM ready. Init functions
-     */
-    initAjax();
-    bindHandlers();
-    initBibSchedPing();
-});

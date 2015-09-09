@@ -6866,7 +6866,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                     sel_location = $('select[name="location"]');
                     id_library = $('select[name="library"]').val();
                     locations = []
-                    $.getJSON("https://blixmaster.tind.io/admin2/bibcirculation/get_locations",
+                    $.getJSON("/admin2/bibcirculation/get_locations",
                         {
                             id: id_library,
                         },

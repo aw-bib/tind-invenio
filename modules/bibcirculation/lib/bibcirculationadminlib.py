@@ -1264,8 +1264,6 @@ def place_new_request_step3(req, barcode, recid, user_info,
                         language=ln,
                         navtrail=navtrail_previous_links,
                         lastupdated=__lastupdated__)
-        else:
-    (_id, ccid, name, email, phone, address, mailbox) = user_info
 
     loan_rule = db.get_matching_loan_rule(barcode, user_id=_id)
     infos = []
@@ -1289,6 +1287,7 @@ def place_new_request_step3(req, barcode, recid, user_info,
                                                          user_info=user_info,
                                                          infos=infos,
                                                          ln=ln)
+
         return page(title=_("New request"),
                     uid=id_user,
                     req=req,

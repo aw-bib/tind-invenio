@@ -2809,7 +2809,7 @@ def add_new_copy_step4(req, barcode, library, call_no, location, description,
 
 
     library_name = db.get_library_name(library)
-    item_type_name = db.get_item_type_name(item_type) if itemtype else ''
+    item_type_name = db.get_item_type_name(item_type) if item_type else ''
     tup_infos = (barcode, library, library_name, call_no, location,
                  description, item_type, status, expected_arrival_date,
                  recid, item_type_name)

@@ -6801,7 +6801,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
     def tmpl_add_new_copy_step3(self, recid, result, libraries, item_types,
                                 original_copy_barcode, tmp_barcode,
-                                infos, ln=CFG_SITE_LANG):
+                                infos, tup_infos=None, ln=CFG_SITE_LANG):
         """
         @param ln: language of the page
         """
@@ -6857,6 +6857,31 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                 $(document).ready(function() {
                     $('#table_copies').tablesorter({widthFixed: true, widgets: ['zebra']})
                 });
+            </script>
+            """
+
+        out += """
+            <script type="text/javascript">
+                function updateLocations() {
+                    sel_location = $('select[name="location"]');
+                    id_library = $('select[name="library"]').val();
+                    locations = []
+                    $.getJSON("https://blixmaster.tind.io/admin2/bibcirculation/get_locations",
+                        {
+                            id: id_library,
+                        },
+                        function(results) {
+                            $.each(results, function(index) {
+                                locations.push(results[index]);
+                            });
+                            $(sel_location).empty();
+                            $(sel_location).append("<option>Select location</option>");
+                            $.each(locations, function(i) {
+                              $(sel_location).append("<option value='" + locations[i].id + "'>" + locations[i].name + "</option>");
+                            });
+                        }
+                    );
+                }
             </script>
             """
 
@@ -7038,6 +7063,11 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                 default_description = default_details[6]
                 default_loan_period = default_details[7]
 
+        if tup_infos:
+            (given_barcode, given_library, given_library_name, given_call_no, given_location,
+             given_description, given_item_type, given_status, given_expected_arrival_date,
+             recid, given_item_type_name) = tup_infos
+
         out += """
           <table class="bibcirctable">
                 <tr>
@@ -7055,38 +7085,43 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                 <tr>
                     <th>%s</th>
                     <td %s>
-                      <select name="library"  style='border: 1px solid #cfcfcf'>
+                      <select name="library"  style='border: 1px solid #cfcfcf' onChange="javascript:updateLocations()">
+                      <option>--</option>
 
                 """ % (_("New copy details"), _("Barcode"),
-                       colspan, tmp_barcode or '', _("Library"), colspan)
+                       colspan, barcode or '', _("Library"), colspan)
 
         main_library = db.get_main_libraries()
         if main_library is not None:
             main_library = main_library[0][0] #id of the first main library
 
         for(library_id, name) in libraries:
-            if original_copy_barcode is not None and \
-               default_details is not None and \
-               library_id == default_library_id:
+            if given_library and library_id == given_library:
                 out += """<option value="%s" selected="selected">%s</option>
                       """ % (library_id, name)
-            elif library_id == main_library:
+            elif main_library and library_id == main_library and not given_library:
                 out += """<option value="%s" selected="selected">%s</option>
                       """ % (library_id, name)
             else:
                 out += """<option value="%s">%s</option>""" % (library_id, name)
-
-        if original_copy_barcode is not None \
-            and default_location is not None:
-            loc = default_location
-        else:
-            loc = ''
 
         out += """
                     </select>
                     </td>
                 </tr>
             """
+
+
+
+        out += """
+                <tr>
+                    <th width="100">%s</th>
+                    <td>
+                      <input type="text" style='border: 1px solid #cfcfcf' size=35
+                             name="call_no" value="%s">
+                    </td>
+                </tr>
+                """ % (_("Call no"), given_call_no or '')
 
         if record_is_periodical:
             out += """ <input type=hidden name=collection value="%s">
@@ -7096,30 +7131,20 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                 <tr>
                     <th width="100">%s</th>
                     <td>
-                      <input type="text" style='border: 1px solid #cfcfcf' size=35
-                             name="location" value="%s">
-                    </td>
-                </tr>
-                """ % (_("Location"), loc)
-
-            out += """
-                <tr>
-                    <th width="100">%s</th>
-                    <td>
-                      <select name="collection" style='border: 1px solid #cfcfcf'>
-                   """ % (_("Collection"))
-
-            for collection in CFG_BIBCIRCULATION_COLLECTION:
-                if original_copy_barcode is not None and \
-                   default_collection is not None and \
-                   collection == default_collection:
-                    out += """
-                        <option value="%s" selected="selected">%s</option>
-                           """ % (collection, collection)
+                      <select name="location" style='border: 1px solid #cfcfcf'>
+                """  % (_("Location"))
+            if given_library or main_library:
+                if given_library:
+                    locations = db.get_locations(given_library)
                 else:
-                    out += """
-                        <option value="%s">%s</option>
-                           """ % (collection, collection)
+                    locations = db.get_locations(main_library)
+                for loc in locations:
+                    if loc['name'] == given_location:
+                        out += """<option value="%s" selected="selected">%s</option>""" % (loc['id'], loc['name'])
+                    else:
+                        out += """<option value="%s">%s</option>""" % (loc['id'], loc['name'])
+            else:
+                out += """<option>Please select library</option>"""
 
             out += """
                       </select>
@@ -7127,11 +7152,6 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                 </tr>
                 """
 
-        if original_copy_barcode is not None \
-           and default_description is not None:
-            desc = default_description
-        else:
-            desc = ''
 
         out += """
                 <tr>
@@ -7141,7 +7161,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                              name="description" value="%s">
                     </td>
                 </tr>
-                """ % (_("Description"), desc)
+                """ % (_("Description"), given_description or '')
 
         out += """
                 <tr>
@@ -7222,7 +7242,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
         _ = gettext_set_language(ln)
 
-        (barcode, library, _library_name, location, collection, description,
+        (barcode, library, _library_name, call_no, location, description,
          item_type, status, expected_arrival_date, recid, item_type_name) = tup_infos
 
         out = """ """
@@ -7293,14 +7313,14 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                 """ % (CFG_SITE_URL,
                        _("Barcode"), tup_infos[0],
                        _("Library"), tup_infos[2],
-                       _("Location"), tup_infos[3],
-                       _("Collection"), tup_infos[4],
+                       _("Call no"), tup_infos[3],
+                       _("Location"), tup_infos[4],
                        _("Description"), tup_infos[5],
                        _("Item type"), tup_infos[10],
                        _("Status"), tup_infos[7],
                        _("Expected arrival date"), expected_arrival_date,
                        _("Back"), _("Continue"),
-                       barcode, library, location, collection, description,
+                       barcode, library, call_no, location, description,
                        item_type, status, expected_arrival_date, recid)
 
         return out

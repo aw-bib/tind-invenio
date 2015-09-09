@@ -615,14 +615,14 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
     def add_new_copy_step4(self, req, form):
         """http://cds.cern.ch/admin2/bibcirculation/add_new_copy_step4"""
         argd = wash_urlargd(form, {'barcode': (str, None), 'library': (str, ''),
-            'location': (str, ''), 'collection': (str, ''), 'description': (str, '-'),
+            'call_no': (str, ''), 'location': (str, ''), 'description': (str, '-'),
             'item_type': (int, ''), 'status': (str, ''),
             'expected_arrival_date': (str, ''), 'recid': (str, None), 'ln': (str, "en")})
 
         barcode     = argd['barcode']
         library     = argd['library']
+        call_no     = argd['call_no']
         location    = argd['location']
-        collection  = argd['collection']
         description = argd['description']
         item_type   = argd['item_type']
         status      = argd['status']
@@ -635,7 +635,6 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
 
         library     = library.strip()
         location    = location.strip()
-        collection  = collection.strip()
         description = description.strip()
 
         status      = status.strip()
@@ -644,28 +643,28 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         if recid is not None:
             recid = recid.strip()
 
-        return bal.add_new_copy_step4(req, barcode, library, location, collection,
+        return bal.add_new_copy_step4(req, barcode, library, call_no, location,
                                       description, item_type, status,
                                       expected_arrival_date, recid, ln)
 
     def add_new_copy_step5(self, req, form):
 
         argd = wash_urlargd(form, {'barcode': (str, None), 'library': (str, None),
-            'location': (str, None), 'collection': (str, None), 'description': (str, '-'),
+            'location': (str, None), 'call_no': (str, None), 'description': (str, '-'),
             'item_type': (int, None), 'status': (str, None),
             'expected_arrival_date': (str, None), 'recid': (str, None), 'ln': (str, "en")})
 
         barcode = argd['barcode']
         library = argd['library']
+        call_no = argd['call_no']
         location = argd['location']
-        collection = argd['collection']
         description = argd['description']
         item_type = argd['item_type']
         status = argd['status']
         expected_arrival_date = argd['expected_arrival_date']
         recid = argd['recid']
         ln = argd['ln']
-        return bal.add_new_copy_step5(req, barcode, library, location, collection,
+        return bal.add_new_copy_step5(req, barcode, library, call_no, location,
                             description, item_type, status, expected_arrival_date, recid, ln)
 
 

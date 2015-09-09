@@ -1149,12 +1149,11 @@ def get_item_info(barcode):
                             it.call_no,
                             loc.name as location,
                             it.description,
-                            itt.itemtype_id,
+                            it.id_itemtype,
                             it.status
                        FROM crcITEM it
                        JOIN crcLOCATION loc on it.id_location = loc.id
                        JOIN crcLIBRARY lib ON it.id_crcLIBRARY = lib.id
-                  LEFT JOIN crcITEMTYPE_ITEM itt on itt.barcode = it.barcode
                       WHERE it.barcode=%s""",
                   (barcode, ))
 
@@ -1216,11 +1215,6 @@ def update_barcode(old_barcode, barcode):
                 """, (barcode, old_barcode))
 
     run_sql("""UPDATE crcILLREQUEST
-                  SET barcode=%s
-                WHERE barcode=%s
-                """, (barcode, old_barcode))
-
-    run_sql("""UPDATE crcITEMTYPE_ITEM
                   SET barcode=%s
                 WHERE barcode=%s
                 """, (barcode, old_barcode))
@@ -1637,14 +1631,14 @@ def has_copies(recid):
     """
     return (get_number_copies(recid) != 0)
 
-def add_new_copy(barcode, recid, library_id, collection, call_no, location_id, description,
+def add_new_copy(barcode, recid, library_id, call_no, location_id, description,
                  item_type, status, expected_arrival_date):
     run_sql("""insert into crcITEM (barcode, id_bibrec, id_crcLIBRARY,
-                                collection, call_no, id_itemtype, id_location, description,
+                                call_no, id_itemtype, id_location, description,
                                 status, expected_arrival_date, creation_date,
                                 modification_date)
                 values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())""",
-            (barcode, recid, library_id, collection, call_no, item_type, location_id, description or '-',
+            (barcode, recid, library_id, call_no, item_type, location_id, description or '-',
              status, expected_arrival_date))
 
 def delete_copy(barcode):
@@ -3319,9 +3313,9 @@ def get_item_type_name(id):
 
 def get_item_type_name_from_barcode(barcode):
     res = run_sql("""
-                   SELECT name FROM crcITEMTYPES it
-                   JOIN crcITEMTYPE_ITEM it_i on it_i.itemtype_id = it.id
-                   WHERE it_i.barcode = '%s'
+                   SELECT name FROM crcITEMTYPES itt
+                   JOIN crcITEM it on it.id_itemtype = itt.id
+                   WHERE it.barcode = '%s'
                    """ % barcode)
     if res:
         return res[0][0]
@@ -3335,7 +3329,7 @@ def add_item_type(name):
     """ % name)
 
 def delete_item_type(id):
-    res = run_sql("SELECT COUNT(*) FROM crcITEMTYPE_ITEM WHERE itemtype_id = %s" % id)
+    res = run_sql("SELECT COUNT(*) FROM crcITEM WHERE id_itemtype = %s" % id)
     if res[0][0] == 0:
         res = run_sql("DELETE FROM crcITEMTYPES WHERE id = %s" % id)
         if res == 0:

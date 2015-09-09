@@ -816,7 +816,7 @@ def get_all_loans(limit=None, sort= None, libraries=(), sort_by=-1, sort_dir="as
     if libraries:
         if not isinstance(libraries, list):
             libraries = [libraries]
-        where_addition += " and li.name IN ('"
+        where_addition += " and lib.name IN ('"
         for library in libraries:
             where_addition += library + "','"
 
@@ -825,11 +825,11 @@ def get_all_loans(limit=None, sort= None, libraries=(), sort_by=-1, sort_dir="as
         criteria = ["bor.name", "bi.value", "l.barcode",
                     "l.loaned_on", "l.due_date",
                     "l.number_of_renewals", "l.overdue_letter_number",
-                    "li.name", "it.location"]
+                    "lib.name", "loc.name"]
         order_addition += " ORDER BY {0} {1}".format(criteria[int(sort_by)], sort_dir.capitalize())
 
     if type_l:
-        type_addition += " and li.type IN {0} ".format(str(type_l).replace("[","(").replace("]",")"))
+        type_addition += " and lib.type IN {0} ".format(str(type_l).replace("[","(").replace("]",")"))
 
     query_select = """
     SELECT bor.id,
@@ -844,12 +844,13 @@ def get_all_loans(limit=None, sort= None, libraries=(), sort_by=-1, sort_dir="as
            DATE_FORMAT(l.overdue_letter_date,'%d-%m-%Y'),
            l.notes,
            l.id,
-           li.name,
-           it.location
-    FROM crcLOAN l, crcBORROWER bor, crcITEM it, crcLIBRARY li, bib24x bi, bibrec_bib24x bibrec
+           lib.name,
+           loc.name
+    FROM crcLOAN l, crcBORROWER bor, crcITEM it, bib24x bi, bibrec_bib24x bibrec, crcLOCATION loc, crcLIBRARY lib
     WHERE l.id_crcBORROWER = bor.id
+          and it.id_crcLIBRARY = lib.id
+          and it.id_location = loc.id
           and l.barcode = it.barcode
-          and it.id_crcLIBRARY = li.id
           and bibrec.id_bibrec = it.id_bibrec
           and bibrec.id_bibxxx = bi.id
           and bi.tag like '%a'
@@ -873,7 +874,7 @@ def get_expired_loans_with_parameters(sort= None, libraries=(), sort_by=-1, sort
     if libraries:
         if not isinstance(libraries, list):
             libraries = [libraries]
-        where_addition += " and li.name IN ('"
+        where_addition += " and lib.name IN ('"
         for library in libraries:
             where_addition += library + "','"
 
@@ -882,11 +883,11 @@ def get_expired_loans_with_parameters(sort= None, libraries=(), sort_by=-1, sort
         criteria = ["bor.name", "bi.value", "l.barcode",
                     "l.loaned_on", "l.due_date",
                     "l.number_of_renewals", "l.overdue_letter_number",
-                    "li.name", "it.location"]
+                    "lib.name", "loc.name"]
         order_addition += " ORDER BY {0} {1}".format(criteria[int(sort_by)], sort_dir.capitalize())
 
     if type_l:
-        type_addition += " and li.type IN {0} ".format(str(type_l).replace("[","(").replace("]",")"))
+        type_addition += " and lib.type IN {0} ".format(str(type_l).replace("[","(").replace("]",")"))
 
     query_select = """
     SELECT bor.id,
@@ -901,14 +902,15 @@ def get_expired_loans_with_parameters(sort= None, libraries=(), sort_by=-1, sort
            DATE_FORMAT(l.overdue_letter_date,'%d-%m-%Y'),
            l.notes,
            l.id,
-           li.name,
-           it.location
-    FROM crcLOAN l, crcBORROWER bor, crcITEM it, crcLIBRARY li, bib24x bi, bibrec_bib24x bibrec
+           lib.name,
+           loc.name
+    FROM crcLOAN l, crcBORROWER bor, crcITEM it, bib24x bi, bibrec_bib24x bibrec, crcLOCATION loc, crcLIBRARY lib
     WHERE l.id_crcBORROWER = bor.id
+          and it.id_crcLIBRARY = lib.id
+          and it.id_location = loc.id
           and l.barcode = it.barcode
           and ((l.status = "{0}" and l.due_date < CURDATE())
                   or l.status = "{1}" )
-          and it.id_crcLIBRARY = li.id
           and bibrec.id_bibrec = it.id_bibrec
           and bibrec.id_bibxxx = bi.id
           and bi.tag like '%a'
@@ -916,6 +918,7 @@ def get_expired_loans_with_parameters(sort= None, libraries=(), sort_by=-1, sort
     """.format(CFG_BIBCIRCULATION_LOAN_STATUS_ON_LOAN,
           CFG_BIBCIRCULATION_LOAN_STATUS_EXPIRED,
           where_addition, order_addition, type_addition )
+
 
     res = run_sql(query_select)
 

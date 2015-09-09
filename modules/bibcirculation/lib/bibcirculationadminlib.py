@@ -37,8 +37,11 @@ __revision__ = "$Id$"
 __lastupdated__ = """$Date$"""
 
 import datetime, time, types, json
+import simplejson
 
 from MySQLdb import IntegrityError, DatabaseError
+
+from cgi import parse_qs
 
 # Other Invenio imports
 from invenio.config import \

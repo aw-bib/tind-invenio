@@ -614,7 +614,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
 
     def add_new_copy_step4(self, req, form):
         """http://cds.cern.ch/admin2/bibcirculation/add_new_copy_step4"""
-        argd = wash_urlargd(form, {'barcode': (str, None), 'library': (str, ''),
+        argd = wash_urlargd(form, {'barcode': (str, None), 'library': (int, ''),
             'call_no': (str, ''), 'location': (str, ''), 'description': (str, '-'),
             'item_type': (int, ''), 'status': (str, ''),
             'expected_arrival_date': (str, ''), 'recid': (str, None), 'ln': (str, "en")})
@@ -649,7 +649,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
 
     def add_new_copy_step5(self, req, form):
 
-        argd = wash_urlargd(form, {'barcode': (str, None), 'library': (str, None),
+        argd = wash_urlargd(form, {'barcode': (str, None), 'library': (int, None),
             'location': (str, None), 'call_no': (str, None), 'description': (str, '-'),
             'item_type': (int, None), 'status': (str, None),
             'expected_arrival_date': (str, None), 'recid': (str, None), 'ln': (str, "en")})

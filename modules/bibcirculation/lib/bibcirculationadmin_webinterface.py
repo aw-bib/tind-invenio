@@ -633,7 +633,6 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         if barcode is not None:
             barcode = barcode.strip()
 
-        library     = library.strip()
         location    = location.strip()
         description = description.strip()
 

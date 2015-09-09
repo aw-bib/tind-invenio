@@ -7067,6 +7067,11 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
             (given_barcode, given_library, given_library_name, given_call_no, given_location,
              given_description, given_item_type, given_status, given_expected_arrival_date,
              recid, given_item_type_name) = tup_infos
+        else:
+            (given_barcode, given_library, given_library_name, given_call_no, given_location,
+             given_description, given_item_type, given_status, given_expected_arrival_date,
+             recid, given_item_type_name) = [None for i in range(11)]
+
 
         out += """
           <table class="bibcirctable">

@@ -6499,7 +6499,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                     <td>
                       <select name="location" style='border: 1px solid #cfcfcf'>
                 """  % (_("Location"))
-        locations = db.get_locations(given_library)
+        locations = db.get_locations(result[1])
         if len(locations) < 1:
             out += """<option value=''>No locations for this library</option>"""
         else:

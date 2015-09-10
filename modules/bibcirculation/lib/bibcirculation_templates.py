@@ -7257,6 +7257,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
         (barcode, library, _library_name, call_no, location, description,
          item_type, status, expected_arrival_date, recid, item_type_name) = tup_infos
+        loc_name = db.get_location_name(location)
 
         out = """ """
 
@@ -7327,7 +7328,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                        _("Barcode"), tup_infos[0],
                        _("Library"), tup_infos[2],
                        _("Call no"), tup_infos[3],
-                       _("Location"), tup_infos[4],
+                       _("Location"), loc_name,
                        _("Description"), tup_infos[5],
                        _("Item type"), tup_infos[10],
                        _("Status"), tup_infos[7],

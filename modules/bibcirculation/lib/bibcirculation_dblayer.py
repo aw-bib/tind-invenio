@@ -3354,3 +3354,12 @@ def delete_rules_selection(id):
     res = run_sql("DELETE FROM crcRULES_SELECTION WHERE id = %s", (id, ))
     if res == 0:
         raise DatabaseError("No such id")
+
+def get_location_name(id=None, code=None):
+    if id:
+        res = run_sql("SELECT name FROM crcLOCATION WHERE id=%s", (id,))
+    elif code:
+        res = run_sql("""SELECT name FROM crcLOCATION WHERE code=%s""", (code,))
+    if len(res):
+        return res[0][0]
+    return None

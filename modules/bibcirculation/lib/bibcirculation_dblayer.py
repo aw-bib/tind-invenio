@@ -276,7 +276,7 @@ def get_requests(recid, description, status):
                        WHERE period_of_interest_from <= NOW()
                          AND period_of_interest_to >= NOW()
                          AND id_bibrec=%s
-                         AND status='%s' """% (recid, status)
+                         AND status='%s' """, (recid, status))
 
 
     if len(barcodes) == 1:
@@ -1033,7 +1033,7 @@ def get_due_date(loan_id):
     date = run_sql("""SELECT DATE_FORMAT(due_date, '%%d-%%m-%%Y')
                         FROM crcLOAN
                        WHERE id = %s
-                   """ % loan_id)
+                   """, (loan_id, ))
     if date:
         return date[0][0]
     else:
@@ -1403,7 +1403,7 @@ def get_item_copies_details(recid, patrontype=None):
                                     itt.name AS itemtype
                              FROM crcITEM it
                                     LEFT JOIN crcLOAN ln
-                                    ON it.barcode = ln.barcode AND ln.status != "%(returncode)s"
+                                    ON it.barcode = ln.barcode AND ln.status != "%s"
                                     LEFT JOIN crcLIBRARY lib
                                     ON lib.id = it.id_crcLIBRARY
                                     LEFT JOIN crcITEMTYPES itt
@@ -1412,8 +1412,8 @@ def get_item_copies_details(recid, patrontype=None):
                                     ON it.barcode = lrv.barcode
                                     LEFT JOIN crcLOCATION loc
                                     ON it.id_location = loc.id
-                             WHERE it.id_bibrec=%(recid)s
-                             AND lrv.`patrontype_id` = %(patrontype)s
+                             WHERE it.id_bibrec=%s
+                             AND lrv.`patrontype_id` = %s
                              GROUP BY it.barcode
                 UNION ALL
                 SELECT it.barcode, NULL AS loan_period, lib.name,
@@ -1423,26 +1423,23 @@ def get_item_copies_details(recid, patrontype=None):
                                     itt.name AS itemtype
                             FROM crcITEM it
                                     LEFT JOIN crcLOAN ln
-                                    ON it.barcode = ln.barcode AND ln.status != "%(returncode)s"
+                                    ON it.barcode = ln.barcode AND ln.status != "%s"
                                     LEFT JOIN crcLIBRARY lib
                                     ON lib.id = it.id_crcLIBRARY
                                     LEFT JOIN crcITEMTYPES itt
                                     ON it.id_itemtype = itt.id
                                     LEFT JOIN crcLOCATION loc
                                     ON it.id_location = loc.id
-                            WHERE it.id_bibrec=%(recid)s
+                            WHERE it.id_bibrec=%s
                             AND it.barcode NOT IN (SELECT it.barcode FROM crcITEM AS it
                             					JOIN crcLOANRULES_MATCH_VIEW AS lrv
                             					ON it.barcode = lrv.barcode
-                            					WHERE patrontype_id = %(patrontype)s
+                            					WHERE patrontype_id = %s
                             					)
                             GROUP BY it.barcode;
-              """ % {
-            'returncode': CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED,
-            'recid': recid,
-            'patrontype': patrontype
-        }
-        return run_sql(qry)
+              """
+        return run_sql(qry, (CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED, recid, patrontype,
+                             CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED, recid, patrontype))
     else:
         qry = """
              SELECT it.barcode, NULL, lib.name,
@@ -1452,20 +1449,18 @@ def get_item_copies_details(recid, patrontype=None):
                     itt.name as item_type
              FROM crcITEM it
                     left join crcLOAN ln
-                    on it.barcode = ln.barcode and ln.status != "%(returncode)s"
+                    on it.barcode = ln.barcode and ln.status != "%s"
                     left join crcLIBRARY lib
                     on lib.id = it.id_crcLIBRARY
                     left join crcITEMTYPES itt
                     on it.id_itemtype = itt.id
                     left join crcLOCATION loc
                     on it.id_location = loc.id
-             WHERE it.id_bibrec=%(recid)s
+             WHERE it.id_bibrec=%s
              ORDER BY barcode
-             """ % {
-            'returncode': CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED,
-            'recid': recid
-        }
-        return run_sql(qry)
+             """
+
+        return run_sql(qry, (CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED, recid))
 
 def get_status(barcode):
     res = run_sql(""" SELECT status
@@ -1759,13 +1754,10 @@ def update_borrower_info(borrower_id, name, email, phone, address, mailbox, p_id
                           WHERE  id=%s""",
                        (name, email, phone, address, mailbox, borrower_id))
     run_sql("""INSERT INTO crcPATRONTYPE_BORROWER(patrontype_id, borrower_id)
-			   VALUES (%(p_id)s, %(b_id)s)
+			   VALUES (%s, %s)
 			   ON DUPLICATE KEY
-               UPDATE patrontype_id=%(p_id)s;
-            """ % {
-                    'p_id': p_id,
-                    'b_id': borrower_id
-                })
+               UPDATE patrontype_id=%s;
+            """, (p_id, borrower_id, p_id))
 
 def get_borrower_data(borrower_id):
     """
@@ -3197,21 +3189,16 @@ def get_matching_loan_rule(barcode, user_id=None, patrontype_id=None):
     if user_id:
         res = run_sql("""
             SELECT user_id, name, code, loan_period, holdable, homepickup, renewable, location FROM crcLOANRULES_MATCH_VIEW
-            WHERE user_id = %(user_id)s
-            AND barcode = '%(barcode)s'
-        """ % {
-            'user_id': user_id,
-            'barcode': barcode
-        })
+            WHERE user_id = %s
+            AND barcode = '%s'
+        """, (user_id, barcode))
+
     elif patrontype_id:
         res = run_sql("""
             SELECT DISTINCT NULL, name, code, loan_period, holdable, homepickup, renewable, location FROM crcLOANRULES_MATCH_VIEW
-            WHERE patrontype_id = %(patrontype_id)s
-            AND barcode = '%(barcode)s'
-        """ % {
-            'patrontype_id': patrontype_id,
-            'barcode': barcode
-        })
+            WHERE patrontype_id = %s
+            AND barcode = '%s'
+        """, (patrontype_id, barcode))
     else:
         return None
 
@@ -3251,7 +3238,7 @@ def get_loan_period_from_loan_rule(barcode, user_id=None, patrontype_id=None):
     return returndict
 
 def get_patron_type_from_user_id(id):
-    res = run_sql("SELECT patrontype_id FROM crcPATRONTYPE_BORROWER WHERE borrower_id = %s" % id)
+    res = run_sql("SELECT patrontype_id FROM crcPATRONTYPE_BORROWER WHERE borrower_id = %s", (id, ))
     if res:
         return res[0][0]
     else:
@@ -3261,7 +3248,7 @@ def get_patron_types():
     return run_sql("SELECT id, name FROM crcPATRONTYPES")
 
 def get_patron_type_name(id):
-    return run_sql("SELECT name FROM crcPATRONTYPES WHERE id = %s" % id)[0][0]
+    return run_sql("SELECT name FROM crcPATRONTYPES WHERE id = %s", (id, ))[0][0]
 
 def add_patron_type(name):
     run_sql("""
@@ -3269,9 +3256,9 @@ def add_patron_type(name):
     """ % name)
 
 def delete_patron_type(id):
-    res = run_sql("SELECT COUNT(*) FROM crcPATRONTYPE_BORROWER WHERE patrontype_id = %s" % id)
+    res = run_sql("SELECT COUNT(*) FROM crcPATRONTYPE_BORROWER WHERE patrontype_id = %s", (id, ))
     if res[0][0] == 0:
-        res = run_sql("DELETE FROM crcPATRONTYPES WHERE id = %s" % id)
+        res = run_sql("DELETE FROM crcPATRONTYPES WHERE id = %s", (id, ))
         if res == 0:
             raise DatabaseError("No such id")
     else:
@@ -3300,9 +3287,9 @@ def add_loan_rule(name, code, loan_period, holdable, homepickup, renewable):
     """ % (name, code, loan_period, holdable, homepickup, renewable))
 
 def delete_loan_rule(id):
-    res = run_sql("SELECT COUNT(*) FROM crcRULES_SELECTION WHERE rule_id = %s" % id)
+    res = run_sql("SELECT COUNT(*) FROM crcRULES_SELECTION WHERE rule_id = %s", (id, ))
     if res[0][0] == 0:
-        res = run_sql("DELETE FROM crcLOANRULES WHERE id = %s" % id)
+        res = run_sql("DELETE FROM crcLOANRULES WHERE id = %s", (id, ))
         if res == 0:
             raise DatabaseError("No such id")
     else:
@@ -3312,14 +3299,14 @@ def get_item_types():
     return run_sql("SELECT id, name FROM crcITEMTYPES")
 
 def get_item_type_name(id):
-    return run_sql("SELECT name FROM crcITEMTYPES WHERE id = %s" % id)[0][0]
+    return run_sql("SELECT name FROM crcITEMTYPES WHERE id = %s", (id, ))[0][0]
 
 def get_item_type_name_from_barcode(barcode):
     res = run_sql("""
                    SELECT name FROM crcITEMTYPES itt
                    JOIN crcITEM it on it.id_itemtype = itt.id
                    WHERE it.barcode = '%s'
-                   """ % barcode)
+                   """, (barcode, ))
     if res:
         return res[0][0]
     else:
@@ -3332,9 +3319,9 @@ def add_item_type(name):
     """ % name)
 
 def delete_item_type(id):
-    res = run_sql("SELECT COUNT(*) FROM crcITEM WHERE id_itemtype = %s" % id)
+    res = run_sql("SELECT COUNT(*) FROM crcITEM WHERE id_itemtype = %s", (id, ))
     if res[0][0] == 0:
-        res = run_sql("DELETE FROM crcITEMTYPES WHERE id = %s" % id)
+        res = run_sql("DELETE FROM crcITEMTYPES WHERE id = %s", (id, ))
         if res == 0:
             raise DatabaseError("No such id")
     else:
@@ -3355,15 +3342,15 @@ def add_rules_selection(r_id, i_id, p_id, loc, active):
     """ % (r_id, i_id, p_id, loc, active))
 
 def toggle_rules_selection(id):
-    status = run_sql("SELECT active FROM crcRULES_SELECTION WHERE id = %s" % id)[0][0]
+    status = run_sql("SELECT active FROM crcRULES_SELECTION WHERE id = %s", (id, ))[0][0]
     if status == 'Y':
-        run_sql("UPDATE crcRULES_SELECTION SET active = 'N' WHERE id = %s" % id)
+        run_sql("UPDATE crcRULES_SELECTION SET active = 'N' WHERE id = %s", (id, ))
         return 'N'
     else:
-        run_sql("UPDATE crcRULES_SELECTION SET active = 'Y' WHERE id = %s" % id)
+        run_sql("UPDATE crcRULES_SELECTION SET active = 'Y' WHERE id = %s", (id, ))
         return 'Y'
 
 def delete_rules_selection(id):
-    res = run_sql("DELETE FROM crcRULES_SELECTION WHERE id = %s" % id)
+    res = run_sql("DELETE FROM crcRULES_SELECTION WHERE id = %s", (id, ))
     if res == 0:
         raise DatabaseError("No such id")

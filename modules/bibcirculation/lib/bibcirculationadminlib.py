@@ -1159,7 +1159,7 @@ def place_new_request_step1(req, barcode, recid, key, string, ln=CFG_SITE_LANG):
     if len(result) == 1:
         borrower = clean_data(borrowers_list[0])
         return place_new_request_step2(req, barcode, recid,
-                                       borrowers_list[0], ln)
+                                       borrower, ln)
     else:
         body = bc_templates.tmpl_place_new_request_step1(result=borrowers_list,
                                                          key=key,

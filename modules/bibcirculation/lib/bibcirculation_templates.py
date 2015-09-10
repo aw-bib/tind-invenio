@@ -16564,7 +16564,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
         return out
 
-    def tmpl_locations(self, result, infos, ln=CFG_SITE_LANG):
+    def tmpl_locations(self, result, libraries, infos, ln=CFG_SITE_LANG):
         """
         @param results: all current item types
         @type results: tuple

@@ -16648,8 +16648,8 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                        </thead>
                        <tbody>
                             <tr>
-                                <td><input type="text" name="code"></td>
-                                <td><input type="text" name="name"></td>
+                                <td><input type="text" name="code" style="width:50px"></td>
+                                <td><input type="text" name="name" style="width:140px"></td>
                                 <td><select name="lib_id">
                     """ % (_("Add new item type"),
                           CFG_SITE_URL,

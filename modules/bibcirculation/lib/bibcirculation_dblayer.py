@@ -1464,7 +1464,7 @@ def get_item_copies_details(recid, patrontype=None):
 def get_status(barcode):
     res = run_sql(""" SELECT status
                         FROM crcITEM
-                       WHERE barcode='%s'
+                       WHERE barcode=%s
                   """, (barcode, ))
     if res:
         return res[0][0]
@@ -2358,20 +2358,6 @@ def get_lib_location(barcode):
     else:
         return None
 
-def get_locations(library_id):
-    locations = run_sql("""
-                SELECT id, code, name FROM crcLOCATION
-                 WHERE id_crcLIBRARY = %s
-    """, (library_id,))
-    return_list = []
-    for location in locations:
-        return_list.append({
-            'id': location[0],
-            'code': location[1],
-            'name': location[2]
-        })
-    return return_list
-
 def get_library_notes(library_id):
     """ The data associated to this library will be retrieved."""
     res = run_sql("""SELECT notes
@@ -3189,14 +3175,14 @@ def get_matching_loan_rule(barcode, user_id=None, patrontype_id=None):
         res = run_sql("""
             SELECT user_id, name, code, loan_period, holdable, homepickup, renewable, location FROM crcLOANRULES_MATCH_VIEW
             WHERE user_id = %s
-            AND barcode = '%s'
+            AND barcode = %s
         """, (user_id, barcode))
 
     elif patrontype_id:
         res = run_sql("""
             SELECT DISTINCT NULL, name, code, loan_period, holdable, homepickup, renewable, location FROM crcLOANRULES_MATCH_VIEW
             WHERE patrontype_id = %s
-            AND barcode = '%s'
+            AND barcode = %s
         """, (patrontype_id, barcode))
     else:
         return None
@@ -3304,7 +3290,7 @@ def get_item_type_name_from_barcode(barcode):
     res = run_sql("""
                    SELECT name FROM crcITEMTYPES itt
                    JOIN crcITEM it on it.id_itemtype = itt.id
-                   WHERE it.barcode = '%s'
+                   WHERE it.barcode = %s
                    """, (barcode, ))
     if res:
         return res[0][0]
@@ -3362,3 +3348,36 @@ def get_location_name(id=None, code=None):
     if len(res):
         return res[0][0]
     return None
+
+def get_locations(library_id=None):
+    if library_id:
+        locations = run_sql("""
+                    SELECT id, code, name FROM crcLOCATION
+                     WHERE id_crcLIBRARY = %s
+        """, (library_id,))
+        return_list = []
+        for location in locations:
+            return_list.append({
+                'id': location[0],
+                'code': location[1],
+                'name': location[2]
+            })
+        return return_list
+    else:
+        return run_sql("""
+                    SELECT id, code, name, id_crcLIBRARY FROM crcLOCATION
+                      """)
+
+def add_location(code, name, lib_id):
+    return run_sql("""
+                INSERT INTO crcLOCATION(code, name, id_crcLIBRARY)
+                VALUES(%s, %s, %s)
+    """, (code, name, lib_id))
+
+def del_location(id):
+    res = run_sql("SELECT count(*) FROM crcITEM where id_location = %s", (id,))
+    if len(res)>0:
+        raise IntegrityError("Location in use")
+    else:
+        return run_sql("DELETE FROM crcLOCATION WHERE id = %s", (id,))
+

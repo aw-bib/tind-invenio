@@ -1640,7 +1640,7 @@ def create_new_request_step1(req, borrower_id, p="", f="", search=None,
     else:
         message = _('Empty borrower ID.')
         return borrower_search(req, message, False, ln)
-
+    borrower = clean_data(borrower)
     if search and p == '':
         infos.append(_('Empty string.') + ' ' + _('Please, try again.'))
         result = ''
@@ -1670,6 +1670,7 @@ def create_new_request_step1(req, borrower_id, p="", f="", search=None,
         recid = result
         holdings_information = db.get_holdings_information(recid)
         user_info = db.get_borrower_details(borrower_id)
+        user_info = clean_data(user_info)
         body = bc_templates.tmpl_create_new_request_step2(user_info=user_info,
                                     holdings_information=holdings_information,
                                     recid=recid, ln=ln)

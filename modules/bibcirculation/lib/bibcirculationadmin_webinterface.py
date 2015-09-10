@@ -720,7 +720,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
     def update_item_info_step5(self, req, form):
         """http://cds.cern.ch/admin2/bibcirculation/update_item_info_step5"""
         argd = wash_urlargd(form, {'barcode': (str, ''), 'old_barcode': (str, ''),
-            'library_id': (int, 0), 'location': (str, 'Unknown'), 'collection': (str, 'Unknown'),
+            'library_id': (int, 0), 'location': (str, ''), 'call_no': (str, ''),
             'description': (str, '-'), 'item_type': (int, None),
             'status': (str, CFG_BIBCIRCULATION_ITEM_STATUS_ON_SHELF), 'expected_arrival_date': (str, ''),
             'recid': (int, 0), 'ln': (str, "en")})
@@ -728,8 +728,8 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         barcode = argd['barcode']
         old_barcode = argd['old_barcode']
         library = argd['library_id']
+        call_no = argd['call_no']
         location = argd['location']
-        collection = argd['collection']
         description = argd['description']
         item_type = argd['item_type']
         status = argd['status']
@@ -745,8 +745,8 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         status = status.strip()
         expected_arrival_date = expected_arrival_date.strip()
 
-        return bal.update_item_info_step5(req, barcode, old_barcode, library, location,
-                                          collection, description, item_type,
+        return bal.update_item_info_step5(req, barcode, old_barcode, library, call_no,
+                                          location, description, item_type,
                                           status, expected_arrival_date, recid, ln)
 
     def update_item_info_step6(self, req, form):

@@ -6825,7 +6825,7 @@ def locations(req, code, name, lib_id, delete, ln=CFG_SITE_LANG):
                               'href="%s/help/admin">Admin Area' \
                               '</a>' % (CFG_SITE_SECURE_URL,)
 
-    return page(title=_("Item types"),
+    return page(title=_("Locations"),
                 uid=id_user,
                 req=req,
                 body=body, language=ln,

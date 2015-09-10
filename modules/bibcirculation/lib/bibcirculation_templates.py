@@ -6304,7 +6304,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                      </td>
                      <td class="bibcirccontent" width="350"></td>
                  </tr>
-                 """ % (barcode, status, library_link, call_no, location, item_type,
+                 """ % (barcode, status, library_link, call_no or '', location, item_type,
                         nb_requests, description, CFG_SITE_URL, ln,
                         barcode, _("Update"))
 

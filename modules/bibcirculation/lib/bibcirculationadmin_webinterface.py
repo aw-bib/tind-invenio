@@ -2053,6 +2053,9 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         toggle = argd['toggle']
         delete = argd['delete']
 
+        # Replace * wildcard with SQL %
+        loc = loc.replace("*", "%")
+
         return bal.rules_selection(req, r_id=r_id, i_id=i_id, p_id=p_id, loc=loc, active=active,
                                    toggle=toggle, delete=delete, ln=ln)
 

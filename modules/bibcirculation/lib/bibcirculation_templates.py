@@ -7339,7 +7339,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                        _("Barcode"), tup_infos[0],
                        _("Library"), tup_infos[2],
                        _("Call no"), tup_infos[3],
-                       _("Location"), loc_name,
+                       _("Location"), loc_name or '',
                        _("Description"), tup_infos[5],
                        _("Item type"), tup_infos[10],
                        _("Status"), tup_infos[7],
@@ -16521,7 +16521,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                      _("Rule"),
                      _("Item type"),
                      _("Patron type"),
-                     _("Location"),
+                     _("Location code"),
                      _("Active"))
 
         for id, rule in rules:

@@ -6268,7 +6268,6 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                       <td align="center">%s</td>
                       <td align="center">%s</td>
                       <td align="center">%s</td>
-                      <td align="center">%s</td>
                       <td align="center"></td>
                       <td width="350"></td>
                     </tr>""" % (_("Barcode"),
@@ -6278,7 +6277,6 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                                 _("Location"),
                                 _("Item type"),
                                 _("No of loans"),
-                                _("Collection"),
                                 _("Description"))
 
 
@@ -6299,7 +6297,6 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                      <td class="bibcirccontent" align="center">%s</td>
                      <td class="bibcirccontent" align="center">%s</td>
                      <td class="bibcirccontent" align="center">%s</td>
-                     <td class="bibcirccontent" align="center">%s</td>
                      <td class="bibcirccontent" align="center">
                      <input type=button
       onClick="location.href='%s/admin2/bibcirculation/update_item_info_step4?ln=%s&barcode=%s'"
@@ -6308,7 +6305,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                      <td class="bibcirccontent" width="350"></td>
                  </tr>
                  """ % (barcode, status, library_link, call_no, location, item_type,
-                        nb_requests, collection, description, CFG_SITE_URL, ln,
+                        nb_requests, description, CFG_SITE_URL, ln,
                         barcode, _("Update"))
 
         out += """
@@ -6357,6 +6354,36 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
             book_cover = get_book_cover(isbn)
         else:
             book_cover = "%s/img/book_cover_placeholder.gif" % (CFG_SITE_URL)
+
+
+        out += """
+            <script type="text/javascript">
+                function updateLocations() {
+                    sel_location = $('select[name="location"]');
+                    id_library = $('select[name="library_id"]').val();
+                    locations = []
+                    $.getJSON("/admin2/bibcirculation/get_locations",
+                        {
+                            id: id_library,
+                        },
+                        function(results) {
+                            $.each(results, function(index) {
+                                locations.push(results[index]);
+                            });
+                            $(sel_location).empty();
+
+                            if(locations.length < 1) {
+                              $(sel_location).append("<option value=''>No locations for this library</option>");
+                            } else {
+                                $.each(locations, function(i) {
+                                  $(sel_location).append("<option value='" + locations[i].id + "'>" + locations[i].name + "</option>");
+                                });
+                            }
+                        }
+                    );
+                }
+            </script>
+            """
 
         out += """
            <style type="text/css"> @import url("/img/tablesorter.css"); </style>
@@ -6435,7 +6462,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                <tr>
                  <th width="100">%s</th>
                  <td>
-                   <select name="library_id"  style='border: 1px solid #cfcfcf'>
+                   <select name="library_id"  style='border: 1px solid #cfcfcf' onChange="javascript:updateLocations()">
 
                 """ % (_("Update copy information"),
                        _("Barcode"), result[0], result[0],
@@ -6451,38 +6478,44 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                 out += """<option value ="%s">%s</option>
                         """ % (library_id, name)
 
+
+        out += """:
+                <tr>
+                    <th width="100">%s</th>
+                    <td>
+                      <input type="text" style='border: 1px solid #cfcfcf' size=35
+                             name="call_no" value="%s">
+                    </td>
+                </tr>
+                """ % (_("Call no"), result[4] or '')
         out += """
                     </select>
                     </td>
                 </tr>
+               """
+        out += """
                 <tr>
-                  <th width="100">%s</th>
-                  <td>
-                    <input type="text" style='border: 1px solid #cfcfcf' size=35
-                           name="location" value="%s">
-                  </td>
-                </tr>
-                <tr>
-                  <th width="100">%s</th>
-                  <td>
-                    <select name="collection" style='border: 1px solid #cfcfcf'>
-                    """ % (_("Location"), result[5],
-                           _("Collection"))
-
-        for collection in CFG_BIBCIRCULATION_COLLECTION:
-            if collection == result[3]:
-                out += """
-                    <option value="%s" selected="selected">%s</option>
-                       """ % (collection, collection)
-            else:
-                out += """
-                    <option value="%s">%s</option>
-                       """ % (collection, collection)
+                    <th width="100">%s</th>
+                    <td>
+                      <select name="location" style='border: 1px solid #cfcfcf'>
+                """  % (_("Location"))
+        locations = db.get_locations(given_library)
+        if len(locations) < 1:
+            out += """<option value=''>No locations for this library</option>"""
+        else:
+            for loc in locations:
+                if loc['name'] == result[5]:
+                    out += """<option value="%s" selected="selected">%s</option>""" % (loc['id'], loc['name'])
+                else:
+                    out += """<option value="%s">%s</option>""" % (loc['id'], loc['name'])
 
         out += """
-                   </select>
-                  </td>
+                      </select>
+                    </td>
                 </tr>
+                """
+
+        out += """
                 <tr>
                   <th width="100">%s</th>
                   <td>
@@ -6578,6 +6611,8 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
         _ = gettext_set_language(ln)
 
+        loc_name = db.get_location_name(tup_infos[5])
+
         out = """ """
 
         out += load_menu(ln)
@@ -6631,8 +6666,8 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                      <input type=hidden name=barcode value="%s">
                      <input type=hidden name=old_barcode value="%s">
                      <input type=hidden name=library_id value="%s">
+                     <input type=hidden name=call_no value="%s">
                      <input type=hidden name=location value="%s">
-                     <input type=hidden name=collection value="%s">
                      <input type=hidden name=description value="%s">
                      <input type=hidden name=item_type value="%s">
                      <input type=hidden name=status value="%s">
@@ -6648,8 +6683,8 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                 """ % (CFG_SITE_URL, _("New copy information"),
                     _("Barcode"), cgi.escape(tup_infos[0], True),
                     _("Library"), cgi.escape(tup_infos[3], True),
-                    _("Location"), cgi.escape(tup_infos[4], True),
-                    _("Collection"), cgi.escape(tup_infos[5], True),
+                    _("Call no"), cgi.escape(tup_infos[4], True),
+                    _("Location"), loc_name,
                     _("Description"), cgi.escape(tup_infos[6], True),
                     _("Item type"), cgi.escape(tup_infos[11], True),
                     _("Status"), cgi.escape(tup_infos[8], True),
@@ -6658,7 +6693,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                     cgi.escape(tup_infos[0], True),
                     cgi.escape(tup_infos[1], True),
                     tup_infos[2], cgi.escape(tup_infos[4], True),
-                    cgi.escape(tup_infos[5], True),
+                    tup_infos[5],
                     cgi.escape(tup_infos[6], True),
                     tup_infos[7],
                     cgi.escape(tup_infos[8], True),
@@ -7112,34 +7147,30 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                 </tr>
                 """ % (_("Call no"), given_call_no or '')
 
-        if record_is_periodical:
-            out += """ <input type=hidden name=collection value="%s">
-                    """ % ("Periodical")
-        else:
-            out += """
+        out += """
                 <tr>
                     <th width="100">%s</th>
                     <td>
                       <select name="location" style='border: 1px solid #cfcfcf'>
                 """  % (_("Location"))
-            if given_library or main_library:
-                if given_library:
-                    locations = db.get_locations(given_library)
-                else:
-                    locations = db.get_locations(main_library)
-
-                if len(locations) < 1:
-                    out += """<option value=''>No locations for this library</option>"""
-                else:
-                    for loc in locations:
-                        if loc['name'] == given_location:
-                            out += """<option value="%s" selected="selected">%s</option>""" % (loc['id'], loc['name'])
-                        else:
-                            out += """<option value="%s">%s</option>""" % (loc['id'], loc['name'])
+        if given_library or main_library:
+            if given_library:
+                locations = db.get_locations(given_library)
             else:
-                out += """<option value=''>Please select library</option>"""
+                locations = db.get_locations(main_library)
 
-            out += """
+            if len(locations) < 1:
+                out += """<option value=''>No locations for this library</option>"""
+            else:
+                for loc in locations:
+                    if loc['name'] == given_location:
+                        out += """<option value="%s" selected="selected">%s</option>""" % (loc['id'], loc['name'])
+                    else:
+                        out += """<option value="%s">%s</option>""" % (loc['id'], loc['name'])
+        else:
+            out += """<option value=''>Please select library</option>"""
+
+        out += """
                       </select>
                     </td>
                 </tr>

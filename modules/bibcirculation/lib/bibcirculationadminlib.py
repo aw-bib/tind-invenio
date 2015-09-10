@@ -3147,8 +3147,8 @@ def update_item_info_step4(req, barcode, ln=CFG_SITE_LANG):
                 navtrail=navtrail_previous_links,
                 lastupdated=__lastupdated__)
 
-def update_item_info_step5(req, barcode, old_barcode, library, location,
-                           collection, description, item_type, status,
+def update_item_info_step5(req, barcode, old_barcode, library, call_no, location,
+                           description, item_type, status,
                            expected_arrival_date, recid, ln=CFG_SITE_LANG):
 
     """
@@ -3163,8 +3163,8 @@ def update_item_info_step5(req, barcode, old_barcode, library, location,
 
     library_name = db.get_library_name(library)
     item_type_name = db.get_item_type_name(item_type)
-    tup_infos = (barcode, old_barcode, library, library_name, location,
-                 collection, description, item_type, status,
+    tup_infos = (barcode, old_barcode, library, library_name, call_no,
+                 location, description, item_type, status,
                  expected_arrival_date, recid, item_type_name)
 
     navtrail_previous_links = '<a class="navtrail"' \
@@ -3194,7 +3194,7 @@ def update_item_info_step6(req, tup_infos, ln=CFG_SITE_LANG):
     infos = []
 
     # tuple containing information for the update process.
-    (barcode, old_barcode, library_id, call_no, collection,
+    (barcode, old_barcode, library_id, call_no, location,
      description, item_type, status, expected_arrival_date, recid) = tup_infos
 
     is_on_loan = db.is_on_loan(old_barcode)
@@ -3211,7 +3211,7 @@ def update_item_info_step6(req, tup_infos, ln=CFG_SITE_LANG):
         infos.append(_("Item <strong>[%s]</strong> updated, but the <strong>status was not modified</strong>.") % (old_barcode))
 
     # update item information. FIXME add functionality for adding locations
-    db.update_item_info(old_barcode, library_id, collection, call_no, 0, description.strip(),
+    db.update_item_info(old_barcode, library_id, call_no, location, description.strip(),
                         item_type, status, expected_arrival_date)
     update_requests_statuses(old_barcode)
     navtrail_previous_links = '<a class="navtrail"' \

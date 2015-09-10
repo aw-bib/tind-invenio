@@ -16651,7 +16651,11 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                                 <td><input type="text" name="code"></td>
                                 <td><input type="text" name="name"></td>
                                 <td><select name="lib_id">
-                    """
+                    """ % (_("Add new item type"),
+                          CFG_SITE_URL,
+                          _("Code"),
+                          _("Name"),
+                          _("Library"))
         main_library = db.get_main_libraries()
         if main_library is not None:
             main_library = main_library[0][0] #id of the first main library
@@ -16670,11 +16674,6 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                      </table>
                      </form>
                      </td></tr></table>
-                   """ % (_("Add new item type"),
-                          CFG_SITE_URL,
-                          _("Code"),
-                          _("Name"),
-                          _("Library"),
-                          _("Add rule"))
+                   """ % (_("Add rule"))
 
         return out

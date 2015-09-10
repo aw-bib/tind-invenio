@@ -1635,7 +1635,7 @@ def add_new_copy(barcode, recid, library_id, call_no, location_id, description,
                                 call_no, id_itemtype, id_location, description,
                                 status, expected_arrival_date, creation_date,
                                 modification_date)
-                values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())""",
+                values (%s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())""",
             (barcode, recid, library_id, call_no, item_type, location_id, description or '-',
              status, expected_arrival_date))
 

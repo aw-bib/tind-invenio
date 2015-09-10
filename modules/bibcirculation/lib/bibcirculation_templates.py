@@ -6875,10 +6875,14 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                                 locations.push(results[index]);
                             });
                             $(sel_location).empty();
-                            $(sel_location).append("<option>Select location</option>");
-                            $.each(locations, function(i) {
-                              $(sel_location).append("<option value='" + locations[i].id + "'>" + locations[i].name + "</option>");
-                            });
+
+                            if(locations.length < 1) {
+                              $(sel_location).append("<option>No locations for this library</option>");
+                            } else {
+                                $.each(locations, function(i) {
+                                  $(sel_location).append("<option value='" + locations[i].id + "'>" + locations[i].name + "</option>");
+                                });
+                            }
                         }
                     );
                 }
@@ -7094,7 +7098,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                       <option>--</option>
 
                 """ % (_("New copy details"), _("Barcode"),
-                       colspan, barcode or '', _("Library"), colspan)
+                       colspan, given_barcode or '', _("Library"), colspan)
 
         main_library = db.get_main_libraries()
         if main_library is not None:
@@ -7118,7 +7122,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
 
 
-        out += """
+        out += """:
                 <tr>
                     <th width="100">%s</th>
                     <td>

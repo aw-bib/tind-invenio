@@ -3345,9 +3345,12 @@ def get_location_name(id=None, code=None):
         res = run_sql("SELECT name FROM crcLOCATION WHERE id=%s", (id,))
     elif code:
         res = run_sql("""SELECT name FROM crcLOCATION WHERE code=%s""", (code,))
-    if len(res):
+    else:
+        return None
+    if res:
         return res[0][0]
-    return None
+    else:
+        return None
 
 def get_locations(library_id=None):
     if library_id:

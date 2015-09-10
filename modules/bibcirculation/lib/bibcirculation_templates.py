@@ -6877,7 +6877,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                             $(sel_location).empty();
 
                             if(locations.length < 1) {
-                              $(sel_location).append("<option>No locations for this library</option>");
+                              $(sel_location).append("<option value=''>No locations for this library</option>");
                             } else {
                                 $.each(locations, function(i) {
                                   $(sel_location).append("<option value='" + locations[i].id + "'>" + locations[i].name + "</option>");
@@ -7147,13 +7147,17 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                     locations = db.get_locations(given_library)
                 else:
                     locations = db.get_locations(main_library)
-                for loc in locations:
-                    if loc['name'] == given_location:
-                        out += """<option value="%s" selected="selected">%s</option>""" % (loc['id'], loc['name'])
-                    else:
-                        out += """<option value="%s">%s</option>""" % (loc['id'], loc['name'])
+
+                if len(locations) < 1:
+                    out += """<option value=''>No locations for this library</option>"""
+                else:
+                    for loc in locations:
+                        if loc['name'] == given_location:
+                            out += """<option value="%s" selected="selected">%s</option>""" % (loc['id'], loc['name'])
+                        else:
+                            out += """<option value="%s">%s</option>""" % (loc['id'], loc['name'])
             else:
-                out += """<option>Please select library</option>"""
+                out += """<option value=''>Please select library</option>"""
 
             out += """
                       </select>

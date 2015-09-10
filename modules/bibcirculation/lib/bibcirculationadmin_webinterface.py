@@ -739,8 +739,6 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
 
         barcode = barcode.strip()
         old_barcode = old_barcode.strip()
-        location = location.strip()
-        collection = collection.strip()
         description = description.strip()
         status = status.strip()
         expected_arrival_date = expected_arrival_date.strip()

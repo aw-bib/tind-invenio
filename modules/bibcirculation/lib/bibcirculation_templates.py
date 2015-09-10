@@ -7070,11 +7070,11 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
         if tup_infos:
             (given_barcode, given_library, given_library_name, given_call_no, given_location,
              given_description, given_item_type, given_status, given_expected_arrival_date,
-             recid, given_item_type_name) = tup_infos
+             given_recid, given_item_type_name) = tup_infos
         else:
             (given_barcode, given_library, given_library_name, given_call_no, given_location,
              given_description, given_item_type, given_status, given_expected_arrival_date,
-             recid, given_item_type_name) = [None for i in range(11)]
+             given_recid, given_item_type_name) = [None for i in range(11)]
 
 
         out += """
@@ -7241,7 +7241,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
            </div>
            </form>
            """ % (_("Expected arrival date"), colspan, _("Back"),
-                  _("Continue"), recid)
+                  _("Continue"), given_recid or recid)
 
         return out
 

@@ -276,7 +276,7 @@ def get_requests(recid, description, status):
                        WHERE period_of_interest_from <= NOW()
                          AND period_of_interest_to >= NOW()
                          AND id_bibrec=%s
-                         AND status='%s' """ % (recid, status))
+                         AND status='%s' """ % (recid, status)
 
 
     if len(barcodes) == 1:

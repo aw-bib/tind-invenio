@@ -2055,6 +2055,19 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         return bal.rules_selection(req, r_id=r_id, i_id=i_id, p_id=p_id, loc=loc, active=active,
                                    toggle=toggle, delete=delete, ln=ln)
 
+    def locations(self, req, form):
+        """http://cds.cern.ch/admin2/bibcirculation/locations"""
+        argd = wash_urlargd(form, {'code': (str, None), 'name': (str, None), 'lib_id': (int, None),
+                                   'delete': (int, None), 'ln': (str, "en")})
+
+        ln = argd['ln']
+        code = argd['code']
+        name = argd['name']
+        lib_id = argd['lib_id']
+        delete = argd['delete']
+
+        return bal.locations(req, code=code, name=name, lib_id=lib_id, delete=delete, ln=ln)
+
 
     def __call__(self, req, form):
         """Redirect calls without final slash."""

@@ -16563,3 +16563,118 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                    """ % _("Submit")
 
         return out
+
+    def tmpl_locations(self, result, infos, ln=CFG_SITE_LANG):
+        """
+        @param results: all current item types
+        @type results: tuple
+
+        @param ln: language of the page
+
+        """
+
+
+        _ = gettext_set_language(ln)
+
+        out = self.tmpl_infobox(infos, ln)
+
+        out += load_menu(ln)
+
+        out += """
+
+            <style type="text/css"> @import url("/js/tablesorter/themes/blue/style.css"); </style>
+            <style>
+                table#new_type input[type="text"] {
+                    padding: 2px;
+                }
+                table#new_type td {
+                    border: none;
+                    padding-top: 0px !important;
+                }
+                table#new_type th {
+
+                }
+            </style>
+
+            <br />
+
+            <div class="bibcircbottom">
+            """
+
+        out += """
+            <table style="width:800px"><tr><td style="width:50%%">
+            <table id="table_item_types" class="tablesorter"
+                   border="0" cellpadding="0" cellspacing="1">
+               <thead>
+                    <tr>
+                       <th>%s</th>
+                       <th>%s</th>
+                       <th>%s</th>
+                       <th></th>
+                    </tr>
+               </thead>
+              <tbody>
+              """ % (_("Code"), _("Name"), _("Library"))
+
+        for (id, code, name, library) in result:
+
+            out += """
+                    <tr>
+                        <td>%s</td>
+                        <td>%s</td>
+                        <td>%s</td>
+                        <td><input type="button" value="%s" class="bibcircbutton" onClick="window.location='locations?delete=%s'"></td>
+                    </tr>
+
+                    """ % (code, name, library, _("Delete"), id)
+
+        out += """
+                    </tbody>
+                    </table>
+                    </td><td style="padding-left:50px;vertical-align:top;">
+                    """
+
+        out += """
+                    <h3 style="margin-bottom: 5px">%s</h3>
+                    <form name="add_location" action="%s/admin2/bibcirculation/locations" method="get">
+                    <table id="new_type" class="tablesorter">
+                       <thead>
+                            <tr>
+                               <th>%s</th>
+                               <th>%s</th>
+                               <th>%s</th>
+                               <th></th>
+                            </tr>
+                       </thead>
+                       <tbody>
+                            <tr>
+                                <td><input type="text" name="code"></td>
+                                <td><input type="text" name="name"></td>
+                                <td><select name="lib_id">
+                    """
+        main_library = db.get_main_libraries()
+        if main_library is not None:
+            main_library = main_library[0][0] #id of the first main library
+
+        for id, lib in libraries:
+            if id == main_library:
+                out += """<option value="%s" selected="selected">%s</option>""" % (id, lib)
+            else:
+                out += """<option value="%s">%s</option>""" % (id, lib)
+
+        out += """
+                                </select></td>
+                                <td><input type="submit" value="%s" class="bibcircbutton"></td>
+                             </tr>
+                         </tbody>
+                     </table>
+                     </form>
+                     </td></tr></table>
+                   """ % (_("Add new item type"),
+                          CFG_SITE_URL,
+                          _("Code"),
+                          _("Name"),
+                          _("Library"),
+                          _("Add rule"))
+
+        return out

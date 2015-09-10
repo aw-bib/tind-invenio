@@ -3365,7 +3365,8 @@ def get_locations(library_id=None):
         return return_list
     else:
         return run_sql("""
-                    SELECT id, code, name, id_crcLIBRARY FROM crcLOCATION
+                    SELECT loc.id, loc.code, loc.name, lib.name as library FROM crcLOCATION loc
+                      JOIN crcLIBRARY lib ON loc.id_crcLIBRARY = lib.id
                       """)
 
 def add_location(code, name, lib_id):
@@ -3376,8 +3377,10 @@ def add_location(code, name, lib_id):
 
 def del_location(id):
     res = run_sql("SELECT count(*) FROM crcITEM where id_location = %s", (id,))
-    if len(res)>0:
+    if res[0][0] != 0:
         raise IntegrityError("Location in use")
     else:
-        return run_sql("DELETE FROM crcLOCATION WHERE id = %s", (id,))
+        res = run_sql("DELETE FROM crcLOCATION WHERE id = %s", (id,))
+        if res == 0:
+            raise DatabaseError("No such id")
 

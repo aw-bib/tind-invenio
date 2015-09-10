@@ -6774,3 +6774,60 @@ def rules_selection(req, r_id, i_id, p_id, loc, active, toggle, delete, ln=CFG_S
                 body=body, language=ln,
                 navtrail=navtrail_previous_links,
                 lastupdated=__lastupdated__)
+
+def locations(req, code, name, lib_id, delete, ln=CFG_SITE_LANG):
+    """
+    Lists all existing item types, and displays form for adding new rule
+    """
+    id_user = getUid(req)
+    (auth_code, auth_message) = is_adminuser(req)
+    if auth_code != 0:
+        return mustloginpage(req, auth_message)
+
+    _ = gettext_set_language(ln)
+    infos = []
+
+    if type(delete) == int:
+        try:
+            db.del_location(delete)
+            infos.append(_("Location deleted."))
+        except IntegrityError:
+            infos.append(_("%(x_strong_tag_open)sError:%(x_strong_tag_close)s location in use."
+                           % {'x_strong_tag_open': '<strong>',
+                              'x_strong_tag_close': '</strong>'
+                              }))
+        except DatabaseError:
+            infos.append(_("%(x_strong_tag_open)sError:%(x_strong_tag_close)s The location ID you are trying to delete does not exist."
+                           % {'x_strong_tag_open': '<strong>',
+                              'x_strong_tag_close': '</strong>'
+                              }))
+
+    elif code and name and lib_id:
+        try:
+            db.add_location(code, name, lib_id)
+            infos.append(_("Item type %(x_strong_tag_open)s%(name)s%(x_strong_tag_close)s added successfully."
+                           % {'x_strong_tag_open': '<strong>',
+                              'x_strong_tag_close': '</strong>',
+                              'name': name
+                              }))
+        except IntegrityError:
+            infos.append(_("%(x_strong_tag_open)sError:%(x_strong_tag_close)s location code already exists."
+                           % {'x_strong_tag_open': '<strong>',
+                              'x_strong_tag_close': '</strong>'
+                              }))
+
+
+    result = db.get_locations()
+    libraries = db.get_all_libraries()
+    body = bc_templates.tmpl_locations(result=result, libraries=libraries, infos=infos, ln=ln)
+
+    navtrail_previous_links = '<a class="navtrail" ' \
+                              'href="%s/help/admin">Admin Area' \
+                              '</a>' % (CFG_SITE_SECURE_URL,)
+
+    return page(title=_("Item types"),
+                uid=id_user,
+                req=req,
+                body=body, language=ln,
+                navtrail=navtrail_previous_links,
+                lastupdated=__lastupdated__)

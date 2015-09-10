@@ -5286,11 +5286,6 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                       <th>%s</th>
                 """ % (_("No of loans"))
 
-        if not record_is_periodical:
-            out += """
-                      <th>%s</th>
-                   """ % (_("Collection"))
-
         out += """
                       <th>%s</th>
                       <th>%s</th>
@@ -5350,11 +5345,6 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                      <td>%s</td>
                      <td>%s</td>
                      """ % (item_type or '-', loan_period_text, nb_requests)
-
-            if not record_is_periodical:
-                out += """
-                     <td>%s</td>
-                     """ % (collection or '-')
 
             out += """
                      <td>%s</td>
@@ -6981,11 +6971,6 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                 """ % (_("Item type"),
                        _("No of loans"))
 
-        if not record_is_periodical:
-            out += """
-                      <th>%s</th>
-                   """ % (_("Collection"))
-
         out += """
                       <th>%s</th>
                     </tr>
@@ -7018,11 +7003,6 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                      <td>%s</td>
                      <td>%s</td>
                      """ % (item_type or '-', nb_requests)
-
-            if not record_is_periodical:
-                out += """
-                     <td>%s</td>
-                     """ % (collection or '-')
 
             out += """
                      <td>%s</td>

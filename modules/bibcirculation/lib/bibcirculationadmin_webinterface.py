@@ -95,6 +95,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
                 'add_new_library_step3', 'update_library_info_step1', 'update_library_info_step2',
                 'update_library_info_step3', 'update_library_info_step4', 'update_library_info_step5',
                 'get_library_notes', 'search_library_step1', 'search_library_step2', 'get_locations',
+                'locations',
 
                 # "Vendor related pages
                 'get_vendor_details', 'add_new_vendor_step1', 'add_new_vendor_step2',

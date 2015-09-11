@@ -6,6 +6,22 @@
     border-collapse: collapse;
 }
 
+.item {
+    float:left;
+}
+
+.circulation_list_menu {
+    text-align:center;
+    border:0px!important;
+    width:50%;
+    margin: auto;
+
+}
+
+.circulation_list_menu table td {
+    border-bottom:0px!important;
+}
+
 table {
     font-family:arial;
     font-size: 8pt;

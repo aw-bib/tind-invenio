@@ -4649,10 +4649,19 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
             #for library in libraries:
             #    out += '<option value="{0}">{0}</option>'.format(library[1])
             #out += "</select>"
-                out += "<form id='search_form'><p>"
+                z = []
+                out += "<form class='circulation_list_menu'>"
+                out += "<table>"
                 for library in libraries:
-                   out += '<label class="checkboxes_exp_loan" for="{0}"></label><input id="{0}" type="checkbox" name="libraries" value="{0}"  class="js-switch" checked>{0}'.format(library[1])
-                out += "</p></form>"
+                    z.append(library)
+                    if len(z) == 2:
+                        out += '<tr><td><label class="checkboxes_exp_loan" for="{0}"></label><input id="{0}" type="checkbox" name="libraries" value="{0}"  class="js-switch" checked>{0}</td>' \
+                               '<td><label class="checkboxes_exp_loan" for="{1}"></label><input id="{1}" type="checkbox" name="libraries" value="{1}"  class="js-switch" checked>{1}</td></tr>'.format(z[0][1], z[1][1])
+                        z = []
+                if z:
+                    out += '<tr><td><label class="checkboxes_exp_loan" for="{0}"></label><input id="{0}" type="checkbox" name="libraries" value="{0}"  class="js-switch" checked>{0}</td>' \
+                           '<td></td></tr>'.format(z[0][1])
+                out += "</table></form>"
             out += """
 
             <form name="borrower_form"
@@ -4783,11 +4792,21 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
             #for library in libraries:
             #    out += '<option value="{0}">{0}</option>'.format(library[1])
             #out += "</select>"
-                out += "<form id='search_form'><p>"
+                z = []
+                out += "<form class='circulation_list_menu'>"
+                out += "<table>"
                 for library in libraries:
-                   out += '<label class="checkboxes_exp_loan" for="{0}"></label><input id="{0}" type="checkbox" name="libraries" value="{0}"  class="js-switch" checked>{0} '.format(library[1])
-                out += "</p></form>"
+                    z.append(library)
+                    if len(z) == 2:
+                        out += '<tr><td><label class="checkboxes_exp_loan" for="{0}"></label><input id="{0}" type="checkbox" name="libraries" value="{0}"  class="js-switch" checked>{0}</td>' \
+                               '<td><label class="checkboxes_exp_loan" for="{1}"></label><input id="{1}" type="checkbox" name="libraries" value="{1}"  class="js-switch" checked>{1}</td></tr>'.format(z[0][1], z[1][1])
+                        z = []
+                if z:
+                    out += '<tr><td><label class="checkboxes_exp_loan" for="{0}"></label><input id="{0}" type="checkbox" name="libraries" value="{0}"  class="js-switch" checked>{0}</td>' \
+                           '<td></td></tr>'.format(z[0][1])
+                out += "</table></form>"
             out += """
+
 
             <form name="borrower_form"
                   action="%s/admin2/bibcirculation/all_loans"

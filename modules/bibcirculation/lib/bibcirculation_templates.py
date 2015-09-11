@@ -454,7 +454,7 @@ class Template:
             if bibcirc_user:
                 out += """
                     <td>%s</td>
-                    """ % render_loan_period(loan_period) or 'Not available'
+                    """ % render_loan_period(loan_period) if loan_period else 'Not available'
             out += """
                     <td>%s</td>
                     <td>%s</td>

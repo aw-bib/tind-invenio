@@ -43,7 +43,7 @@ from invenio.bibcirculation_utils import get_book_cover, \
       all_copies_are_missing, \
       is_periodical, \
       looks_like_dictionary, \
-      generate_new_due_date,
+      generate_new_due_date, \
       render_loan_period
 from invenio.bibcirculation_config import \
     CFG_BIBCIRCULATION_ITEM_LOAN_PERIOD, \

@@ -416,7 +416,7 @@ class Template:
                     <tbody>
                 """ % (_("Status"), _("Due date"), _("Barcode"))
 
-        for (barcode, library, call_no, location, description,
+        for (barcode, library, collection, call_no, location, description,
              item_type, status, due_date) in holdings_info:
 
             loan_rule = get_matching_loan_rule(barcode, user_id=bibcirc_user)

@@ -3177,7 +3177,6 @@ def get_matching_loan_rule(barcode, user_id=None, patrontype_id=None):
             WHERE user_id = %s
             AND barcode = %s
         """, (user_id, barcode))
-
     elif patrontype_id:
         res = run_sql("""
             SELECT DISTINCT NULL, name, code, loan_period, holdable, homepickup, renewable, location FROM crcLOANRULES_MATCH_VIEW
@@ -3186,17 +3185,27 @@ def get_matching_loan_rule(barcode, user_id=None, patrontype_id=None):
         """, (patrontype_id, barcode))
     else:
         return None
-
     if len(res) > 1:
-        nof_location = 0
-        location_row = 0
+        wildcard_rules = []
+        specific_rules = []
         for i, row in enumerate(res):
             if row[7] != '':
-                nof_location += 1
-                location_row = i
-        if nof_location != 1:
-            raise DatabaseError("More than one matching loan rule")
-        return res[location_row]
+                if "%" in row[7]:
+                    wildcard_rules.append(row)
+                else:
+                    specific_rules.append(row)
+        if len(specific_rules) > 0:
+            return specific_rules[0]
+        # there should never be more than one matching specific rule (database constraint),
+        # meaning wildcard_rules will need to be prioritized
+        elif len(wildcard_rules) == 1:
+            return wildcard_rules[0]
+        else:
+            longest_loc_rule = wildcard_rules[0]
+            for rule in wildcard_rules:
+                if rule[7] > longest_loc_rule[7]:
+                    longest_loc_rule = rule
+            return longest_loc_rule
     elif res:
         return res[0]
     else:

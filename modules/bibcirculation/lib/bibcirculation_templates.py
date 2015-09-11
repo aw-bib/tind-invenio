@@ -43,7 +43,8 @@ from invenio.bibcirculation_utils import get_book_cover, \
       all_copies_are_missing, \
       is_periodical, \
       looks_like_dictionary, \
-      generate_new_due_date
+      generate_new_due_date,
+      render_loan_period
 from invenio.bibcirculation_config import \
     CFG_BIBCIRCULATION_ITEM_LOAN_PERIOD, \
     CFG_BIBCIRCULATION_COLLECTION, \
@@ -453,7 +454,7 @@ class Template:
             if bibcirc_user:
                 out += """
                     <td>%s</td>
-                    """ % loan_period or 'Not available'
+                    """ % render_loan_period(loan_period) or 'Not available'
             out += """
                     <td>%s</td>
                     <td>%s</td>

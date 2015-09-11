@@ -353,6 +353,13 @@ def generate_new_due_date(value, hours=False, minutes=False, absolute=False):
 
     return due_date_string
 
+def render_loan_period(loan_period):
+    if isinstance(loan_period, dict):
+        if ('value' and 'type') in loan_period:
+             return str(loan_period['value']) + " " + loan_period['type']
+    return None
+
+
 
 def renew_loan_for_X_days(barcode, borrower_id=None):
     """

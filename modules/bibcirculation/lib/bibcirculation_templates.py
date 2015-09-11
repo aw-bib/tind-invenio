@@ -32,6 +32,7 @@ from invenio.config import CFG_SITE_URL, CFG_SITE_LANG, \
      CFG_CERN_SITE, CFG_SITE_SECURE_URL, CFG_SITE_RECORD, \
      CFG_SITE_NAME
 from invenio.messages import gettext_set_language
+from invenio.webuser import collect_user_info
 
 import invenio.bibcirculation_dblayer as db
 from invenio.bibcirculation_utils import get_book_cover, \
@@ -312,6 +313,7 @@ class Template:
         from invenio.bibcirculationadminlib import is_adminuser
 
         (auth_code, _auth_message) = is_adminuser(req)
+        bibcirc_user = db.get_borrower_id_by_email(collect_user_info(req)['email'])
 
         _ = gettext_set_language(ln)
 
@@ -400,26 +402,36 @@ class Template:
                             <th>%s</th>
                             <th>%s</th>
                             <th>%s</th>
-                            <th>%s</th>
+                """ % (_("Options"), _("Library"), _("Call no"),
+                       _("Location"), _("Description"), _("Item type"))
+        if bibcirc_user:
+            out += """      <th>%s</th>
+                   """ % _("Loan period")
+        out += """
                             <th>%s</th>
                             <th>%s</th>
                             <th>%s</th>
                         </tr>
                     </thead>
                     <tbody>
-                """ % (_("Options"), _("Library"), _("Collection"), _("Call no"),
-                       _("Location"), _("Description"), _("Item type"),
-                       _("Status"), _("Due date"), _("Barcode"))
+                """ % (_("Status"), _("Due date"), _("Barcode"))
 
-        for (barcode, library, collection, call_no, location, description,
+        for (barcode, library, call_no, location, description,
              item_type, status, due_date) in holdings_info:
 
-            request_button = """
-            <input type=button
-            onClick="location.href='%s/%s/%s/holdings/request?barcode=%s&ln=%s'"
-            value='%s' class="bibcircbutton" onmouseover="this.className='bibcircbuttonover'"
-            onmouseout="this.className='bibcircbutton'">
-            """ % (CFG_SITE_URL, CFG_SITE_RECORD, recid, barcode, ln, _("Request"))
+            loan_rule = get_matching_loan_rule(barcode, user_id=bibcirc_user)
+            loan_period = db.get_loan_period_from_loan_rule(barcode, user_id=bibcirc_user)
+
+
+            if loan_rule and loan_rule[4] == 'Y':
+                request_button = """
+                <input type=button
+                onClick="location.href='%s/%s/%s/holdings/request?barcode=%s&ln=%s'"
+                value='%s' class="bibcircbutton" onmouseover="this.className='bibcircbuttonover'"
+                onmouseout="this.className='bibcircbutton'">
+                """ % (CFG_SITE_URL, CFG_SITE_RECORD, recid, barcode, ln, _("Request"))
+            else:
+                request_button = ''
 
             if status in (CFG_BIBCIRCULATION_ITEM_STATUS_ON_ORDER,
                           'claimed'):
@@ -436,13 +448,18 @@ class Template:
                     <td>%s</td>
                     <td>%s</td>
                     <td>%s</td>
+                """ % (request_button, library, call_no, location,
+                       description, item_type or '-')
+            if bibcirc_user:
+                out += """
                     <td>%s</td>
+                    """ % loan_period or 'Not available'
+            out += """
                     <td>%s</td>
                     <td>%s</td>
                     <td align='center'>%s</td>
                 </tr>
-                """ % (request_button, library, collection or '-', call_no, location,
-                       description, item_type or '-', status, due_date or '-', barcode)
+                """ % (status, due_date or '-', barcode)
 
         if auth_code != 0:
             bibcirc_link = ''

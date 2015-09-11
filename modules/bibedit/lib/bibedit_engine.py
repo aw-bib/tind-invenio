@@ -1342,7 +1342,7 @@ def perform_request_autocomplete(request_type, recid, uid, data):
                         new_suggest_vals["k"].append(sugg)
 
             if CFG_ENABLE_AUTHORITY:
-                authority_results = process_authority_autosuggest(searchby, fulltag[:3])
+                authority_results = process_authority_autosuggest(searchby, fulltag)
                 new_suggest_vals["a"] = authority_results
 
             response['autosuggest'] = new_suggest_vals

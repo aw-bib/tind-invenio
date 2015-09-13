@@ -73,7 +73,7 @@ $(document).ready(function(){
         $('.pagedisplay')[0].value = (pg_info.page + 1) + "/" + pg_info.pages
         $(window).scrollTop(scrollPos);
     } );
-     $('.pagedisplay')[0].onkeypress = function(e){
+     $('.pagedisplay').keypress(function(e){
         if (!e) e = window.event;
         var keyCode = e.keyCode || e.which;
         if (keyCode == '13'){
@@ -82,7 +82,7 @@ $(document).ready(function(){
 
           return false;
         }
-      }
+      })
       $('.pagesize').on('change', function() {
         changelength();
       });

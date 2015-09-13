@@ -77,6 +77,7 @@ class WebInterfacebibz39Pages(WebInterfaceDirectory):
             new_recid = reserve_record_id()
             record = create_record(argd["marcxml"])[0]
             record_delete_field(record, '001')
+            record_delete_field(record, '005')
             record_add_field(record, '001',
                              controlfield_value=str(new_recid))
             create_cache(new_recid, uid, record, True)

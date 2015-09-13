@@ -22,13 +22,20 @@
     border-bottom:0px!important;
 }
 
-table {
+
+.circulation_list_menu {
     font-family:arial;
     font-size: 8pt;
     text-align: left;
 }
 
-table tr th{
+#table_all_loans {
+    font-family:arial;
+    font-size: 8pt;
+    text-align: left;
+}
+
+#table_all_loans tr th{
     font-size: 1.2em;
     font-weight: normal;
     text-align: left;

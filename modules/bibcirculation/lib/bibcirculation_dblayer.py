@@ -580,7 +580,7 @@ def get_pdf_request_data(status):
                             it.id_bibrec=lr.id_bibrec AND
                             lib.id = it.id_crcLIBRARY AND
                             lr.status=%s;
-                  """ , (status))
+                  """ , (status,))
     return res
 
 

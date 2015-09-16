@@ -1440,6 +1440,7 @@ def get_item_copies_details(recid, patrontype=None):
         return run_sql(qry, (CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED, recid, patrontype,
                              CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED, recid, patrontype))
     else:
+        print "no patrontype"
         qry = """
              SELECT it.barcode, NULL, lib.name,
                     lib.id, it.call_no, loc.name as location, it.number_of_requests,
@@ -1458,7 +1459,6 @@ def get_item_copies_details(recid, patrontype=None):
              WHERE it.id_bibrec=%s
              ORDER BY barcode
              """
-
         return run_sql(qry, (CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED, recid))
 
 def get_status(barcode):
@@ -1707,10 +1707,8 @@ def new_borrower(ccid, name, email, phone, address, mailbox, notes, patrontype_i
     address: borrower's address.
     """
 
-    return run_sql("""INSERT INTO crcBORROWER(ccid, name, email, phone, address, mailbox, borrower_since, borrower_until, notes)
-              VALUES(%s, %s, %s, %s, %s, %s, NOW(), '0000-00-00 00:00:00', %s);
-              SELECT LAST_INSERT_ID() INTO @last_id;
-              INSERT INTO crcPATRONTYPE_BORROWER(borrower_id, patrontype_id) VALUES(@last_id, %s)
+    return run_sql("""INSERT INTO crcBORROWER(ccid, name, email, phone, address, mailbox, borrower_since, borrower_until, notes, id_patrontype)
+              VALUES(%s, %s, %s, %s, %s, %s, NOW(), '0000-00-00 00:00:00', %s, %s);
               """,
         (ccid, name, email, phone, address, mailbox, str(notes), patrontype_id))
 
@@ -1720,10 +1718,9 @@ def get_borrower_details(borrower_id):
     borrower_id: identify the borrower. It is also the primary key of
                  the table crcBORROWER.
     """
-    res = run_sql("""SELECT b.id, b.ccid, b.name, b.email, b.phone, b.address, b.mailbox, p_b.patrontype_id
-                     FROM crcBORROWER b
-                     LEFT JOIN crcPATRONTYPE_BORROWER p_b ON b.id = p_b.borrower_id
-                     WHERE b.id=%s""", (borrower_id, ))
+    res = run_sql("""SELECT id, ccid, name, email, phone, address, mailbox, id_patrontype
+                     FROM crcBORROWER
+                     WHERE id=%s""", (borrower_id, ))
     if res:
         return res[0]
     else:
@@ -1747,16 +1744,12 @@ def update_borrower_info(borrower_id, name, email, phone, address, mailbox, p_id
     run_sql("""UPDATE crcBORROWER
                              set name=%s,
                                  email=%s,
+                                 id_patrontype=%s,
                                  phone=%s,
                                  address=%s,
                                  mailbox=%s
                           WHERE  id=%s""",
-                       (name, email, phone, address, mailbox, borrower_id))
-    run_sql("""INSERT INTO crcPATRONTYPE_BORROWER(patrontype_id, borrower_id)
-			   VALUES (%s, %s)
-			   ON DUPLICATE KEY
-               UPDATE patrontype_id=%s;
-            """, (p_id, borrower_id, p_id))
+                       (name, email, p_id, phone, address, mailbox, borrower_id))
 
 def get_borrower_data(borrower_id):
     """
@@ -1783,10 +1776,9 @@ def get_borrower_data_by_id(borrower_id):
     """
     Retrieve borrower's data by borrower_id.
     """
-    res = run_sql("""SELECT b.id, b.ccid, b.name, b.email, b.phone,
-                            b.address, b.mailbox, p_b.patrontype_id
-                       FROM crcBORROWER b
-                  LEFT JOIN crcPATRONTYPE_BORROWER p_b ON b.id = p_b.borrower_id
+    res = run_sql("""SELECT id, ccid, name, email, phone,
+                            address, mailbox, id_patrontype
+                       FROM crcBORROWER
                       WHERE id=%s""", (borrower_id, ))
     if res:
         return res[0]
@@ -3261,7 +3253,7 @@ def get_loan_period_from_loan_rule(barcode, user_id=None, patrontype_id=None):
     return returndict
 
 def get_patron_type_from_user_id(id):
-    res = run_sql("SELECT patrontype_id FROM crcPATRONTYPE_BORROWER WHERE borrower_id = %s", (id, ))
+    res = run_sql("SELECT id_patrontype FROM crcBORROWER WHERE id = %s", (id, ))
     if res:
         return res[0][0]
     else:
@@ -3279,7 +3271,7 @@ def add_patron_type(name):
     """ % name)
 
 def delete_patron_type(id):
-    res = run_sql("SELECT COUNT(*) FROM crcPATRONTYPE_BORROWER WHERE patrontype_id = %s", (id, ))
+    res = run_sql("SELECT COUNT(*) FROM crcBORROWER WHERE id_patrontype = %s", (id, ))
     if res[0][0] == 0:
         res = run_sql("DELETE FROM crcPATRONTYPES WHERE id = %s", (id, ))
         if res == 0:

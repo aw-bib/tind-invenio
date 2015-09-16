@@ -1440,7 +1440,6 @@ def get_item_copies_details(recid, patrontype=None):
         return run_sql(qry, (CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED, recid, patrontype,
                              CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED, recid, patrontype))
     else:
-        print "no patrontype"
         qry = """
              SELECT it.barcode, NULL, lib.name,
                     lib.id, it.call_no, loc.name as location, it.number_of_requests,
@@ -1458,8 +1457,8 @@ def get_item_copies_details(recid, patrontype=None):
                     on it.id_location = loc.id
              WHERE it.id_bibrec=%s
              ORDER BY barcode
-             """
-        return run_sql(qry, (CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED, recid))
+             """ % (CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED, recid)
+        return run_sql(qry)
 
 def get_status(barcode):
     res = run_sql(""" SELECT status

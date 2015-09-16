@@ -16492,7 +16492,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                           _("Location"),
                           _("Active"))
 
-        for (id, rule, itemtype or 'All', patrontype or 'All', location, active) in rules_selections:
+        for (id, rule, itemtype, patrontype, location, active) in rules_selections:
             if active == "Y":
                 toggletext = _("Deactivate")
             else:
@@ -16509,7 +16509,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                         <td><input type="button" value="%s" class="bibcircbutton" onClick="window.location='rules_selection?delete=%s'"></td>
                     </tr>
 
-                    """ % (rule, itemtype, patrontype, location, active,
+                    """ % (rule, itemtype or 'All', patrontype or 'All', location, active,
                           toggletext, id, _("Delete"), id)
 
         out += """

@@ -3354,8 +3354,8 @@ def get_rules_selections():
     return run_sql("""
                     SELECT rs.id, r.name as rule, i.name as itemtype, p.name as patrontype, location, active FROM crcRULES_SELECTION rs
                     JOIN crcLOANRULES r on rs.rule_id = r.id
-                    JOIN crcITEMTYPES i on rs.itemtype_id = i.id
-                    JOIN crcPATRONTYPES p on rs.patrontype_id = p.id
+                    LEFT JOIN crcITEMTYPES i on rs.itemtype_id = i.id
+                    LEFT JOIN crcPATRONTYPES p on rs.patrontype_id = p.id
                    """)
 
 def add_rules_selection(r_id, i_id, p_id, loc, active):
@@ -3424,4 +3424,3 @@ def del_location(id):
         res = run_sql("DELETE FROM crcLOCATION WHERE id = %s", (id,))
         if res == 0:
             raise DatabaseError("No such id")
-

@@ -7124,7 +7124,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                              name="barcode" value='%s'>
                     </td>
                 </tr>
-                <tr>
+                   <tr>
                     <th>%s</th>
                     <td %s>
                       <select name="library"  style='border: 1px solid #cfcfcf' onChange="javascript:updateLocations()">
@@ -16492,7 +16492,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                           _("Location"),
                           _("Active"))
 
-        for (id, rule, itemtype, patrontype, location, active) in rules_selections:
+        for (id, rule, itemtype or 'All', patrontype or 'All', location, active) in rules_selections:
             if active == "Y":
                 toggletext = _("Deactivate")
             else:
@@ -16550,6 +16550,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
         out += """
                                  </select></td>
                                  <td><select name="i_id">
+                                        <option value='-1'>>All item types</option>
                """
 
 
@@ -16561,6 +16562,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
         out += """
                                  </select></td>
                                  <td><select name="p_id">
+                                <option value='-1'>>All patron types</option>
                """
 
 

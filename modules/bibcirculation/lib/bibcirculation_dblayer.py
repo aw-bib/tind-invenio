@@ -3173,43 +3173,72 @@ def delete_brief_format_cache(recid):
 def get_matching_loan_rule(barcode, user_id=None, patrontype_id=None):
     if user_id:
         res = run_sql("""
-            SELECT user_id, name, code, loan_period, holdable, homepickup, renewable, location FROM crcLOANRULES_MATCH_VIEW
+            SELECT user_id, barcode, patrontype_id, itemtype_id, name, code, loan_period, holdable, homepickup, renewable, location FROM crcLOANRULES_MATCH_VIEW
             WHERE user_id = %s
             AND barcode = %s
         """, (user_id, barcode))
     elif patrontype_id:
         res = run_sql("""
-            SELECT DISTINCT NULL, name, code, loan_period, holdable, homepickup, renewable, location FROM crcLOANRULES_MATCH_VIEW
+            SELECT DISTINCT NULL, barcode, patrontype_id, itemtype_id, name, code, loan_period, holdable, homepickup, renewable, location FROM crcLOANRULES_MATCH_VIEW
             WHERE patrontype_id = %s
             AND barcode = %s
         """, (patrontype_id, barcode))
     else:
         return None
+
     if len(res) > 1:
-        wildcard_rules = []
-        specific_rules = []
-        for i, row in enumerate(res):
-            if row[7] != '':
-                if "%" in row[7]:
-                    wildcard_rules.append(row)
+        def select_longest_wildcard_rules(rule_list):
+            return_rules = []
+            longest_location = 0
+            for rule in rule_list:
+                if len(rule[10]) > longest_location:
+                    longest_location = len(rule[10])
+            for rule in rule_list:
+                if len(rule[10]) == longest_location:
+                    return_rules.append(rule)
+            return return_rules
+
+        def prioritize_i_p(rule_list):
+            itemtype_rule = None
+            patrontype_rule = None
+            open_rule = None
+            for rule in rule_list:
+                if rule[3] != -1 and rule[2] != -1:
+                    return rule
+                elif rule[3] != -1:
+                    itemtype_rule = rule
+                elif rule[2] != -1:
+                    patrontype_rule = rule
                 else:
-                    specific_rules.append(row)
-        if len(specific_rules) > 0:
-            return specific_rules[0]
-        # there should never be more than one matching specific rule (database constraint),
-        # meaning wildcard_rules will need to be prioritized
-        elif len(wildcard_rules) == 1:
-            return wildcard_rules[0]
+                    open_rule = rule
+            return itemtype_rule or patrontype_rule or open_rule or rule_list
+
+        specific_loc_rules = []
+        wildcard_loc_rules = []
+        no_loc_rules = []
+        for rule in res:
+            if rule[10] != '':
+                if "%" in rule[10]:
+                    wildcard_loc_rules.append(rule)
+                else:
+                    specific_loc_rules.append(rule)
+            else:
+                no_loc_rules.append(rule)
+
+        if len(specific_loc_rules) > 0:
+            return prioritize_i_p(specific_loc_rules)
+
+        elif len(wildcard_loc_rules) > 0:
+            return prioritize_i_p(select_longest_wildcard_rules(wildcard_loc_rules))
+
         else:
-            longest_loc_rule = wildcard_rules[0]
-            for rule in wildcard_rules:
-                if rule[7] > longest_loc_rule[7]:
-                    longest_loc_rule = rule
-            return longest_loc_rule
+            return prioritize_i_p(no_loc_rules)
+
     elif res:
         return res[0]
     else:
         return None
+
 
 def get_loan_period_from_loan_rule(barcode, user_id=None, patrontype_id=None):
     rule = get_matching_loan_rule(barcode, user_id, patrontype_id)

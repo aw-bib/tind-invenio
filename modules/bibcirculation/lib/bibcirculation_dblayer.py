@@ -3239,16 +3239,16 @@ def get_loan_period_from_loan_rule(barcode, user_id=None, patrontype_id=None):
     returndict = {
         'type': '',
         'value': 0,
-        'code': rule[2]
+        'code': rule[5]
     }
-    if rule[2] in (CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_OVERNIGHT,
+    if rule[5] in (CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_OVERNIGHT,
                    CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS,
                    CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_MINUTE_OVERNIGHT,
                    CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_MINUTE):
         returndict['type'] = 'hours'
     else:
         returndict['type'] = 'days'
-    returndict['value'] = rule[3]
+    returndict['value'] = rule[6]
     return returndict
 
 def get_patron_type_from_user_id(id):

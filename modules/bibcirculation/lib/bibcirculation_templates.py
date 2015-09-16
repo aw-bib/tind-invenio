@@ -5328,11 +5328,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                 if expected_arrival_date != '':
                     status = status + ' - ' + expected_arrival_date
 
-            loan_period = db.get_loan_period_from_loan_rule(barcode, patrontype_id=patrontype)
-            if loan_period:
-                loan_period_text = str(loan_period['value']) + " " + loan_period['type']
-            else:
-                loan_period_text = "No loan rule"
+            loan_period_text = render_loan_period(loan_period)
 
             if code == CFG_BIBCIRCULATION_LOAN_RULE_CODE_NON_CIRC:
                 loan_period_text = "Non circulating"

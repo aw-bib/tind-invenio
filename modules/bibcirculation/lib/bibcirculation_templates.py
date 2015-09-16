@@ -16550,7 +16550,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
         out += """
                                  </select></td>
                                  <td><select name="i_id">
-                                        <option value='-1'>>All item types</option>
+                                        <option value='-1'>All item types</option>
                """
 
 
@@ -16562,7 +16562,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
         out += """
                                  </select></td>
                                  <td><select name="p_id">
-                                <option value='-1'>>All patron types</option>
+                                <option value='-1'>All patron types</option>
                """
 
 

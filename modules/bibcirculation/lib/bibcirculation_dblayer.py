@@ -1436,9 +1436,9 @@ def get_item_copies_details(recid, patrontype=None):
                             					WHERE patrontype_id = %s
                             					)
                             GROUP BY it.barcode;
-              """
-        return run_sql(qry, (CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED, recid, patrontype,
-                             CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED, recid, patrontype))
+              """ % (CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED, recid, patrontype,
+                             CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED, recid, patrontype)
+        return run_sql(qry)
     else:
         qry = """
              SELECT it.barcode, NULL, lib.name,

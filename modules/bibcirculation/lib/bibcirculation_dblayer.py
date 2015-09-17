@@ -3164,13 +3164,13 @@ def delete_brief_format_cache(recid):
 def get_matching_loan_rule(barcode, user_id=None, patrontype_id=None):
     if user_id:
         res = run_sql("""
-            SELECT user_id, barcode, patrontype_id, itemtype_id, name, code, loan_period, holdable, homepickup, renewable, location FROM crcLOANRULES_MATCH_VIEW
+            SELECT user_id, barcode, patrontype_id, itemtype_id, name, code, loan_period, holdable, homepickup, renewable, location, rule_i_id, rule_p_id FROM crcLOANRULES_MATCH_VIEW
             WHERE user_id = %s
             AND barcode = %s
         """, (user_id, barcode))
     elif patrontype_id:
         res = run_sql("""
-            SELECT DISTINCT NULL, barcode, patrontype_id, itemtype_id, name, code, loan_period, holdable, homepickup, renewable, location FROM crcLOANRULES_MATCH_VIEW
+            SELECT DISTINCT NULL, barcode, patrontype_id, itemtype_id, name, code, loan_period, holdable, homepickup, renewable, location, rule_i_id, rule_p_id  FROM crcLOANRULES_MATCH_VIEW
             WHERE patrontype_id = %s
             AND barcode = %s
         """, (patrontype_id, barcode))

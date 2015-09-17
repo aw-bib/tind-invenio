@@ -5218,16 +5218,27 @@ CREATE TABLE IF NOT EXISTS `crcRULES_SELECTION` (
   CONSTRAINT `rule_fk` FOREIGN KEY (`rule_id`) REFERENCES `crcLOANRULES` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE VIEW crcLOANRULES_MATCH_VIEW AS
-SELECT b.id AS user_id, i.barcode, pt.id AS patrontype_id, lr.name, lr.code, lr.loan_period, lr.holdable, lr.homepickup, lr.renewable, r_s.location FROM crcBORROWER AS b
-JOIN crcPATRONTYPE_BORROWER AS p_b ON b.id = p_b.borrower_id
-JOIN crcPATRONTYPES AS pt ON p_b.patrontype_id = pt.id
-JOIN crcRULES_SELECTION AS r_s ON pt.id = r_s.patrontype_id
-JOIN crcITEM AS i ON r_s.itemtype_id = i.id_itemtype
-JOIN crcLOANRULES AS lr ON r_s.rule_id = lr.id
-JOIN crcLOCATION loc ON i.id_location = loc.id
-WHERE (loc.code LIKE r_s.location OR r_s.location = '')
-AND UCASE(r_s.active) = "Y";
+CREATE VIEW `crcLOANRULES_MATCH_VIEW`
+AS SELECT
+   `b`.`id` AS `user_id`,
+   `i`.`barcode` AS `barcode`,
+   `b`.`id_patrontype` AS `patrontype_id`,
+   `i`.`id_itemtype` AS `itemtype_id`,
+   `lr`.`name` AS `name`,
+   `lr`.`code` AS `code`,
+   `lr`.`loan_period` AS `loan_period`,
+   `lr`.`holdable` AS `holdable`,
+   `lr`.`homepickup` AS `homepickup`,
+   `lr`.`renewable` AS `renewable`,
+   `r_s`.`location` AS `location`,
+   `r_s`.`itemtype_id` AS `rule_i_id`,
+   `r_s`.`patrontype_id` AS `rule_p_id`
+FROM `crcRULES_SELECTION` `r_s`
+  join `crcLOANRULES` `lr` on `r_s`.`rule_id` = `lr`.`id`
+  join `crcITEM` `i` on (case when (`r_s`.`itemtype_id` <> -(1)) then (`r_s`.`itemtype_id` = `i`.`id_itemtype`) else 1 end)
+  join `crcBORROWER` `b` on (case when (`r_s`.`patrontype_id` <> -(1)) then (`r_s`.`patrontype_id` = `b`.`id_patrontype`) else 1 end)
+  join `crcLOCATION` `loc` on `i`.`id_location` = `loc`.`id`
+WHERE (`loc`.`code` like `r_s`.`location` or `r_s`.`location` = '') and ucase(`r_s`.`active`) = 'Y';
 
 -- tables for invenio_upgrader
 CREATE TABLE IF NOT EXISTS upgrade (

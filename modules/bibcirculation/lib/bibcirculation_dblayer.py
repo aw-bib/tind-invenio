@@ -3194,7 +3194,7 @@ def get_matching_loan_rule(barcode, user_id=None, patrontype_id=None):
             patrontype_rule = None
             open_rule = None
             for rule in rule_list:
-                    if rule[11] != -1 and rule[12] != -1:
+                if rule[11] != -1 and rule[12] != -1:
                     return rule
                 elif rule[11] != -1:
                     itemtype_rule = rule

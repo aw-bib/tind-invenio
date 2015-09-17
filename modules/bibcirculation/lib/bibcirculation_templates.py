@@ -7153,7 +7153,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
 
 
-        out += """:
+        out += """
                 <tr>
                     <th width="100">%s</th>
                     <td>

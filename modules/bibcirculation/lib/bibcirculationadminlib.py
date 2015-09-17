@@ -3229,7 +3229,7 @@ def update_item_info_step6(req, tup_infos, ln=CFG_SITE_LANG):
             else:
                 infos.append(_("Item <strong>[%s]</strong> updated, but the <strong>barcode was not modified</strong> because it was not found (!?).") % (old_barcode))
     else:
-        infos.append(_("Item <strong>[%s]</strong> updated. %sClick here%s to edit the record") % (old_barcode, "<a target='_blank' href='/record/edit/#state=edit&recid=" + str(recid) + "'>", "</a>"))
+        infos.append(_("Item <strong>[%s]</strong> updated.") % old_barcode)
 
     copies = db.get_item_copies_details(recid)
     requests = db.get_item_requests(recid)

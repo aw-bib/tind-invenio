@@ -301,7 +301,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         ln = argd['ln']
 
         if user_info is not None:
-            user_info = user_info.split(',')
+            user_info = user_info.split(';')
 
         return bal.place_new_request_step2(req, barcode, recid, user_info, ln)
 
@@ -318,7 +318,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         ln = argd['ln']
 
         if user_info is not None:
-            user_info = user_info.split(',')
+            user_info = user_info.split(';')
 
         return bal.place_new_request_step3(req, barcode, recid, user_info, period_from,
                                            period_to, ln)
@@ -1113,7 +1113,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         ln = argd['ln']
 
         if user_info is not None:
-            user_info = user_info.split(',')
+            user_info = user_info.split(';')
 
         return bal.register_ill_request_with_no_recid_step3(req, title, authors, place,
                                                             publisher, year, edition, isbn,
@@ -1254,7 +1254,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
                            budget_code, additional_comments)
 
         if user_info is not None:
-            user_info = user_info.split(',')
+            user_info = user_info.split(';')
 
         return bal.register_ill_article_request_step3(req, periodical_title, article_title,
                                         author, report_number, volume, issue, page, year, issn,

@@ -1725,13 +1725,6 @@ def get_borrower_details(borrower_id):
     else:
         return None
 
-def clean_data(data):
-    final_res = list(data)
-    for i in range(0, len(final_res)):
-        if isinstance(final_res[i], str):
-            final_res[i] = final_res[i].replace(",", " ")
-    return final_res
-
 
 def update_borrower_info(borrower_id, name, email, phone, address, mailbox, p_id):
     """

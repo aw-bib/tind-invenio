@@ -3572,7 +3572,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                   method="post" >
             <input type=hidden name=barcode value='%s'>
             <input type=hidden name=recid value='%s'>
-            <input type=hidden name=user_info value="%s,%s,%s,%s,%s,%s,%s,%s">
+            <input type=hidden name=user_info value="%s;%s;%s;%s;%s;%s;%s;%s">
             <br />
 
                 <table class="bibcirctable">
@@ -9997,7 +9997,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
             for (borrower_id, ccid, name, email,
                  phone, address, mailbox, p_id) in result:
                 out += """
-                       <option value ='%s,%s,%s,%s,%s,%s,%s,%s'>%s
+                       <option value ='%s;%s;%s;%s;%s;%s;%s;%s'>%s
                        """ % (borrower_id, ccid, name, email, phone,
                               address, mailbox, p_id, name)
 
@@ -10861,7 +10861,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
             for (borrower_id, ccid, name, email,
                  phone, address, mailbox, p_id) in result:
                 out += """
-                       <option value ='%s,%s,%s,%s,%s,%s,%s,%s'>%s
+                       <option value ='%s;%s;%s;%s;%s;%s;%s;%s'>%s
                        """ % (borrower_id, ccid, name, email,
                               phone, address, mailbox, p_id, name)
 

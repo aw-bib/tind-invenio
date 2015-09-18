@@ -1157,9 +1157,8 @@ def place_new_request_step1(req, barcode, recid, key, string, ln=CFG_SITE_LANG):
             borrowers_list.append(borrower_data)
 
     if len(result) == 1:
-        borrower = clean_data(borrowers_list[0])
         return place_new_request_step2(req, barcode, recid,
-                                       borrower, ln)
+                                       borrowers_list[0], ln)
     else:
         body = bc_templates.tmpl_place_new_request_step1(result=borrowers_list,
                                                          key=key,
@@ -1640,7 +1639,7 @@ def create_new_request_step1(req, borrower_id, p="", f="", search=None,
     else:
         message = _('Empty borrower ID.')
         return borrower_search(req, message, False, ln)
-    borrower = clean_data(borrower)
+
     if search and p == '':
         infos.append(_('Empty string.') + ' ' + _('Please, try again.'))
         result = ''
@@ -1670,7 +1669,6 @@ def create_new_request_step1(req, borrower_id, p="", f="", search=None,
         recid = result
         holdings_information = db.get_holdings_information(recid)
         user_info = db.get_borrower_details(borrower_id)
-        user_info = clean_data(user_info)
         body = bc_templates.tmpl_create_new_request_step2(user_info=user_info,
                                     holdings_information=holdings_information,
                                     recid=recid, ln=ln)
@@ -6832,11 +6830,3 @@ def locations(req, code, name, lib_id, delete, ln=CFG_SITE_LANG):
                 body=body, language=ln,
                 navtrail=navtrail_previous_links,
                 lastupdated=__lastupdated__)
-
-
-def clean_data(data):
-    final_res = list(data)
-    for i in range(0, len(final_res)):
-        if isinstance(final_res[i], str):
-            final_res[i] = final_res[i].replace(",", " ")
-    return final_res

@@ -3153,7 +3153,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                           <td class="bibcirccontent" align="center">%s</td>
                           <td class="bibcirccontent" align="center">%s</td>
                           <td class="bibcirccontent" align="right">
-                          <input type=button onClick="location.href='%s/admin2/bibcirculation/place_new_request_step2?ln=%s&barcode=%s&recid=%s&user_info=%s;%s;%s;%s;%s;%s;%s;%s'"
+                          <input type=button onClick="location.href='%s/admin2/bibcirculation/place_new_request_step2?ln=%s&barcode=%s&recid=%s&user_info=%s,%s,%s,%s,%s,%s,%s,%s'"
                           value='%s' class="formbutton"></td>
                      </tr>
 
@@ -3496,7 +3496,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
             for (borrower_id, ccid, name, email,
                  phone, address, mailbox, p_id) in result:
                 out += """
-                       <option value ='%s;%s;%s;%s;%s;%s;%s;%s'>%s
+                       <option value ='%s,%s,%s,%s,%s,%s,%s,%s'>%s
                        """ % (borrower_id, ccid, name, email, phone,
                               address, mailbox, p_id, name)
 

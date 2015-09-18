@@ -1154,12 +1154,11 @@ def place_new_request_step1(req, barcode, recid, key, string, ln=CFG_SITE_LANG):
     else:
         for user in result:
             borrower_data = db.get_borrower_data_by_id(user[0])
-            borrowers_list.append(borrower_data)
+            borrowers_list.append(clean_data(borrower_data))
 
     if len(result) == 1:
-        borrower = clean_data(borrowers_list[0])
         return place_new_request_step2(req, barcode, recid,
-                                       borrower, ln)
+                                       borrowers_list[0], ln)
     else:
         body = bc_templates.tmpl_place_new_request_step1(result=borrowers_list,
                                                          key=key,

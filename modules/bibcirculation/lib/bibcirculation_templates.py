@@ -424,7 +424,7 @@ class Template:
             loan_period = db.get_loan_period_from_loan_rule(barcode, user_id=bibcirc_user)
 
 
-            if loan_rule and loan_rule[4] == 'Y':
+            if loan_rule and loan_rule[7] == 'Y':
                 request_button = """
                 <input type=button
                 onClick="location.href='%s/%s/%s/holdings/request?barcode=%s&ln=%s'"

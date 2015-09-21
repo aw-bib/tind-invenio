@@ -69,6 +69,8 @@ INSERT INTO field VALUES (47,'meeting name','meetingname');
 INSERT INTO field VALUES (48,'uniform title','uniformtitle');
 INSERT INTO field VALUES (49,'subjects','subjects');
 INSERT INTO field VALUES (50,'call number','callnumber');
+INSERT INTO field VALUES (51,'item type','item type');
+INSERT INTO field VALUES (52,'loans last year','loanslastyear');
 
 INSERT INTO field_tag VALUES (10,11,100);
 INSERT INTO field_tag VALUES (11,14,100);
@@ -709,7 +711,7 @@ INSERT INTO idxINDEX VALUES (17,'exactfirstauthor','This index contains exact wo
 INSERT INTO idxINDEX VALUES (18,'authorcount','This index contains number of authors of the record.','2015-09-01 09:38:37','','native','','No','No','No','BibIndexAuthorCountTokenizer');
 INSERT INTO idxINDEX VALUES (19,'exacttitle','This index contains exact words/phrases from title fields.','2015-09-01 09:38:37','','native','','No','No','No','BibIndexDefaultTokenizer');
 INSERT INTO idxINDEX VALUES (12,'callnumber','','2015-09-01 09:38:37','','native','','No','No','No','BibIndexDefaultTokenizer');
-INSERT INTO idxINDEX VALUES (24,'itemcount','This index contains number of copies of items in the library.','2015-09-01 09:38:37','','native','','No','No','No','BibIndexItemCountTokenizer');
+INSERT INTO idxINDEX VALUES (24,'itemcount','This index contains number of copies of items in the library.','2015-09-01 09:38:37','','native','','No','No','No','BibIndexItemCountTindTokenizer');
 INSERT INTO idxINDEX VALUES (25,'filetype','This index contains extensions of files connected to records.','2015-09-01 09:38:37','','native','','No','No','No','BibIndexFiletypeTokenizer');
 INSERT INTO idxINDEX VALUES (26,'miscellaneous','This index contains words/phrases from miscellaneous fields','2015-09-01 09:38:37','','native','','No','No','No','BibIndexDefaultTokenizer');
 INSERT INTO idxINDEX VALUES (27,'doi','This index contains words/phrases from doi fields','2015-09-01 09:38:37','','native','','No','No','No','BibIndexDOITokenizer');
@@ -718,6 +720,8 @@ INSERT INTO idxINDEX VALUES (29,'corporation','','2015-09-01 09:38:37','','nativ
 INSERT INTO idxINDEX VALUES (30,'subject','','2015-09-01 09:38:37','','native','','','','','BibIndexDefaultTokenizer');
 INSERT INTO idxINDEX VALUES (31,'headings','','2015-09-01 09:38:37','','native','','No','No','No','BibIndexDefaultTokenizer');
 INSERT INTO idxINDEX VALUES (32,'meeting','','2015-09-01 09:38:37','','native','','No','No','No','BibIndexDefaultTokenizer');
+INSERT INTO idxINDEX VALUES (33,'itemtype','','2015-09-01 09:38:37','','native','','No','No','No','BibIndexItemTypeTindTokenizer');
+INSERT INTO idxINDEX VALUES (34,'loanslastyear','','2015-09-01 09:38:37','','native','','No','No','No','BibIndexLoansLastYearTindTokenizer');
 
 
 INSERT INTO idxINDEX_field (id_idxINDEX, id_field) VALUES (1,1);
@@ -746,6 +750,8 @@ INSERT INTO idxINDEX_field (id_idxINDEX, id_field) VALUES (28,43);
 INSERT INTO idxINDEX_field (id_idxINDEX, id_field) VALUES (30,7);
 INSERT INTO idxINDEX_field (id_idxINDEX, id_field) VALUES (29,44);
 INSERT INTO idxINDEX_field (id_idxINDEX, id_field) VALUES (32,47);
+INSERT INTO idxINDEX_field (id_idxINDEX, id_field) VALUES (33,51);
+INSERT INTO idxINDEX_field (id_idxINDEX, id_field) VALUES (34,52);
 
 INSERT INTO idxINDEX_idxINDEX (id_virtual, id_normal) VALUES (1,2);
 INSERT INTO idxINDEX_idxINDEX (id_virtual, id_normal) VALUES (1,3);

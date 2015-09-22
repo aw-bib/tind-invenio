@@ -4208,7 +4208,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
         return out
 
 
-    def tmpl_change_due_date_step1(self, loan_details, loan_id, borrower_id,
+    def tmpl_change_due_date_step1(self, loan_details, loan_id, borrower_id, loan_period,
                                    ln=CFG_SITE_LANG):
         """
         Return the form where the due date can be changed.
@@ -4232,7 +4232,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
         out += load_menu(ln)
 
         (recid, barcode, loaned_on, due_date, loan_status,
-                                    loan_period, _item_status) = loan_details
+                                    old_loan_period, _item_status) = loan_details
         number_of_requests = db.get_number_requests_per_copy(barcode)
         if number_of_requests > 0:
             request_status = 'Yes'
@@ -4279,7 +4279,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                     _("Loan date"), loaned_on,
                     _("Due date"), due_date,
                     _("Loan status"), loan_status,
-                    _("Loan period"), loan_period,
+                    _("Loan period"), render_loan_period(loan_period),
                     _("Requested ?"), request_status)
 
         out += """

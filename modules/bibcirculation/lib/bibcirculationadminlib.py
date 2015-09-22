@@ -3767,6 +3767,10 @@ def get_borrower_loans_details(req, recid, barcode, borrower_id,
 
     infos = []
 
+    navtrail_previous_links = '<a class="navtrail" ' \
+                              'href="%s/help/admin">Admin Area' \
+                              '</a>' % (CFG_SITE_SECURE_URL,)
+
     loan_rule = db.get_matching_loan_rule(barcode, user_id=borrower_id)
     if not loan_rule:
 
@@ -3891,10 +3895,6 @@ def get_borrower_loans_details(req, recid, barcode, borrower_id,
             infos.append(_("All loans renewed successfully by 1 year."))
 
     borrower_loans = db.get_borrower_loan_details(borrower_id)
-
-    navtrail_previous_links = '<a class="navtrail" ' \
-                              'href="%s/help/admin">Admin Area' \
-                              '</a>' % (CFG_SITE_SECURE_URL,)
 
     body = bc_templates.tmpl_borrower_loans_details(
                                                 borrower_loans=borrower_loans,

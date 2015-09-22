@@ -1794,10 +1794,12 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
 
         return out
 
-    def tmpl_index(self, ln=CFG_SITE_LANG):
+    def tmpl_index(self, infos, ln=CFG_SITE_LANG):
         """
         Main page of the Admin interface.
         """
+
+        out = self.tmpl_infobox(infos, ln)
 
         _ = gettext_set_language(ln)
 

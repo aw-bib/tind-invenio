@@ -2095,7 +2095,7 @@ def all_loans_data(req, msg=None, ln=CFG_SITE_LANG, library=(), loans_per_page=0
 
         data.append([borrower_link, title_link, barcode,
                        loaned_on, due_date,
-                       nb_renewal, nb_overdue, library, location, actions_dropdown)
+                       nb_renewal, nb_overdue, library, location, actions_dropdown])
     ajax_answer["data"] = data
 
     return simplejson.dumps(ajax_answer)

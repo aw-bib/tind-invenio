@@ -3768,7 +3768,7 @@ def get_borrower_loans_details(req, recid, barcode, borrower_id,
     infos = []
 
     loan_rule = db.get_matching_loan_rule(barcode, user_id=borrower_id)
-    if len(loan_rule) == 0:
+    if not loan_rule:
 
         infos.append(_("There is no matching loan rule for this user and item."))
         return page(title=_("BibCirculation Admin"),

@@ -24,37 +24,37 @@ $(document).ready(function(){
       var switchery = new Switchery(html, { color:'#006FB7', size:'small' });
     });
     $('.checkboxes_exp_loan').wrap('<span style="text-align: left; margin-bottom: 5px; font-size: 14px;">');
-    $("#table_all_loans").DataTable({
-        "columns": [
-        null,
-        null,
-        null,
-        null,
-        null,
-        { className: "centered" },
-        { className: "centered" },
-        null,
-        null,
-        ],
-        "processing": true,
-        "serverSide": true,
-        "searching": false,
-        "bInfo" : false,
-        "dom": 'rt<"bottom"iflp<"clear">>',
-        "ajax": {
-        url: ajax_url,
-        data: function ( d ) {
-            return $.extend( {}, d, {
-            "library" :$("input:checkbox:checked").map(function(){
-                          return $(this).val();
-                        }).get()
-            })
-    },
+    if ($("#table_all_loans").length > 0) {
+        $("#table_all_loans").DataTable({
+            "columns": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            { className: "centered" },
+            { className: "centered" },
+            null,
+            null,
+            null,
+            ],
+            "processing": true,
+            "serverSide": true,
+            "searching": false,
+            "bInfo" : false,
+            "dom": 'rt<"bottom"iflp<"clear">>',
+            "ajax": {
+            url: ajax_url,
+            data: function ( d ) {
+                return $.extend( {}, d, {
+                "library" :$("input:checkbox:checked").map(function(){
+                              return $(this).val();
+                            }).get()
+                })
+        },
 
-
-
-    }});
-
+        }});
+    }
 
     $("input[type='checkbox']").on("change", function() {
         scrollPos =  $(window).scrollTop();

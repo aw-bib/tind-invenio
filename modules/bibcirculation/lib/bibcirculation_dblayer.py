@@ -3258,6 +3258,15 @@ def get_patron_type_from_user_id(id):
     else:
         return None
 
+def get_patron_type_name_from_user_id(id):
+    res = run_sql("""SELECT pt.name FROM crcPATRONTYPES pt
+                       JOIN crcBORROWER b ON pt.id = b.id_patrontype
+                       WHERE b.id = %s""" % id)
+    if res:
+        return res[0][0]
+    else:
+        return None
+
 def get_patron_types():
     return run_sql("SELECT id, name FROM crcPATRONTYPES")
 
@@ -3376,6 +3385,15 @@ def get_location_name(id=None, code=None):
         res = run_sql("""SELECT name FROM crcLOCATION WHERE code=%s""", (code,))
     else:
         return None
+    if res:
+        return res[0][0]
+    else:
+        return None
+
+def get_location_code_from_barcode(barcode):
+    res = run_sql("""SELECT code FROM crcLOCATION l
+                       JOIN crcITEM i on i.id_location = l.id
+                      WHERE i.barcode = '%s'""" % barcode)
     if res:
         return res[0][0]
     else:

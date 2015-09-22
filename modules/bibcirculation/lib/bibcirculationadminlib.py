@@ -3773,8 +3773,11 @@ def get_borrower_loans_details(req, recid, barcode, borrower_id,
 
     loan_rule = db.get_matching_loan_rule(barcode, user_id=borrower_id)
     if not loan_rule:
-
-        infos.append(_("There is no matching loan rule for this user and item."))
+        patron_type = db.get_patron_type_name_from_user_id(borrower_id) or "None"
+        item_type = db.get_item_type_name_from_barcode(barcode) or "None"
+        loc_code = db.get_location_code_from_barcode(barcode) or "None"
+        infos.append(_("There is no matching loan rule for item type <strong>%s</strong>, patron type <strong>%s</strong> and location code <strong>%s</strong>")
+                     % (item_type, patron_type, loc_code))
         return page(title=_("BibCirculation Admin"),
                     uid=id_user,
                     req=req,

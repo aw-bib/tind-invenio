@@ -432,7 +432,7 @@ class Template:
                 onmouseout="this.className='bibcircbutton'">
                 """ % (CFG_SITE_URL, CFG_SITE_RECORD, recid, barcode, ln, _("Request"))
             else:
-                request_button = ''
+                request_button = '<span class="bibcircbuttonover" style="background: #9A9A9A">Request</span>'
 
             if status in (CFG_BIBCIRCULATION_ITEM_STATUS_ON_ORDER,
                           'claimed'):

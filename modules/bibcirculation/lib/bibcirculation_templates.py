@@ -1787,11 +1787,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
         """
         _ = gettext_set_language(ln)
 
-
-        if CFG_CERN_SITE == 1:
-            id_string = 'ccid'
-        else:
-            id_string = _('id')
+        id_string = 'ccid'
 
         out = self.tmpl_infobox(infos, ln)
 

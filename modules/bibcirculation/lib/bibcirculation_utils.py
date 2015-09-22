@@ -125,7 +125,7 @@ def search_user(column, string):
         elif column == 'email':
             result = db.search_borrower_by_email(string)
         else:
-            result = db.search_borrower_by_id(string)
+            result = db.search_borrower_by_ccid(string)
 
     return result
 

@@ -2067,6 +2067,21 @@ def all_loans_data(req, msg=None, ln=CFG_SITE_LANG, library=(), loans_per_page=0
                         '/admin2/bibcirculation/get_loans_notes',
                         {'loan_id': loan_id, 'ln': ln}, (_("no notes")))
 
+        actions_dropdown = """
+                            <select onchange="location = this.options[this.selectedIndex].value;">
+                                <option>Select an action</option>
+                                <option value="get_borrower_loans_details?borrower_id=%(borrower_id)s&barcode=%(barcode)s&loan_id=%(loan_id)s&recid=%(recid)s">Renew</option>
+                                <option value="loan_return_confirm?barcode=%(barcode)s">Return</option>
+                                <option value="change_due_date_step1?barcode=%(barcode)s&borrower_id=%(borrower_id)s">Change due date</option>
+                                <option value="claim_book_return?borrower_id=%(borrower_id)s&recid=%(recid)s&loan_id=%(loan_id)s&template=claim_return">Recall</option>
+                            </select>
+                    """ % {
+                            'borrower_id': borrower_id,
+                            'barcode': barcode,
+                            'loan_id': loan_id,
+                            'recid': recid
+                        }
+
 
         if notes == "" or str(notes) == '{}':
             check_notes = no_notes_link
@@ -2080,8 +2095,7 @@ def all_loans_data(req, msg=None, ln=CFG_SITE_LANG, library=(), loans_per_page=0
 
         data.append([borrower_link, title_link, barcode,
                        loaned_on, due_date,
-                       nb_renewal, nb_overdue, library, location, CFG_SITE_URL,
-                       borrower_id, recid, loan_id, _("Send recall")])
+                       nb_renewal, nb_overdue, library, location, actions_dropdown)
     ajax_answer["data"] = data
 
     return simplejson.dumps(ajax_answer)

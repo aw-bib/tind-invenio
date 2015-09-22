@@ -4678,6 +4678,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                        <th class="header">%s</th>
                        <th class="header">%s</th>
                        <th class="header">%s</th>
+                       <th class="header">%s</th>
                     </tr>
                </thead>
               <tbody>
@@ -4690,7 +4691,8 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                           _("Renewals"),
                           _("Reminders"),
                           _("Library"),
-                          _("Location"))
+                          _("Location"),
+                          _("Loan options"))
 
             out += """
                     </tbody>
@@ -4822,6 +4824,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                        <th class="header">%s</th>
                        <th class="header">%s</th>
                        <th class="header">%s</th>
+                       <th class="header">%s</th>
                     </tr>
                </thead>
               <tbody>
@@ -4834,7 +4837,8 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                           _("Renewals"),
                           _("Reminders"),
                           _("Library"),
-                          _("Location"))
+                          _("Location"),
+                          _("Loan options"))
 
 
             out += """

@@ -819,7 +819,6 @@ def get_all_loans(limit=None, sort= None, libraries=(), sort_by=-1, sort_dir="as
         where_addition += " and lib.name IN ('"
         for library in libraries:
             where_addition += library + "','"
-
         where_addition += "') "
     if sort_by > -1:
         criteria = ["bor.name", "bi.value", "l.barcode",
@@ -827,10 +826,8 @@ def get_all_loans(limit=None, sort= None, libraries=(), sort_by=-1, sort_dir="as
                     "l.number_of_renewals", "l.overdue_letter_number",
                     "lib.name", "loc.name"]
         order_addition += " ORDER BY {0} {1}".format(criteria[int(sort_by)], sort_dir.capitalize())
-
     if type_l:
         type_addition += " and lib.type IN {0} ".format(str(type_l).replace("[","(").replace("]",")"))
-
     query_select = """
     SELECT bor.id,
            bor.name,
@@ -854,13 +851,12 @@ def get_all_loans(limit=None, sort= None, libraries=(), sort_by=-1, sort_dir="as
           and bibrec.id_bibrec = it.id_bibrec
           and bibrec.id_bibxxx = bi.id
           and bi.tag like '%a'
+          and l.status = '{4}'
           {0}{2}{1}
           {3}
     """.format(where_addition, order_addition, type_addition,
-               'LIMIT %s'.format(limit) if limit else '')
-
+               'LIMIT {0}'.format(limit) if limit else '', CFG_BIBCIRCULATION_LOAN_STATUS_ON_LOAN)
     res = run_sql(query_select)
-
     return res
 
 

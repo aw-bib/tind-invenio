@@ -4975,6 +4975,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
 
                 borrower_name = db.get_borrower_name(borrower_id)
                 library_name = db.get_library_name(library_id)
+                barcode = db.get_requested_barcode(request_id)
 
 
                 title_link = create_html_link(CFG_SITE_URL +
@@ -5026,7 +5027,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                 out += """
                         <select onchange="eval(this.options[this.selectedIndex].value)">
                             <option>Select an action</option>
-                            <option value="window.open('loan_return_confirm?barcode=95763305')">Return item</option>
+                            <option value="window.open('loan_return_confirm?barcode=%(barcode)s')">Return item</option>
                             <option value="window.open('/admin2/bibcirculation/update_item_info_step4?barcode=%(barcode)s')">Change status</option>
                             <option value="window.open('/admin2/bibcirculation/create_loan?request_id=%(request_id)s&recid=%(recid)s&borrower_id=%(borrower_id)s')">Create loan</option>
                             <option value="confirmation(%(request_id)s)">Delete request</option>

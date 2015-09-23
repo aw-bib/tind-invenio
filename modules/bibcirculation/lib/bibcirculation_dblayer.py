@@ -2279,9 +2279,9 @@ def get_library_items(library_id):
     """
     res = run_sql("""SELECT barcode, id_bibrec, collection, call_no,
                             loc.name as location, description, loan_period, status, number_of_requests
-                       FROM crcITEM, crcLOCATION loc
-                      WHERE id_location = loc.id
-                        AND id_crcLIBRARY=%s""",
+                       FROM crcITEM i, crcLOCATION loc
+                      WHERE i.id_location = loc.id
+                        AND i.id_crcLIBRARY=%s""",
                   (library_id, ))
 
     return res

@@ -1242,22 +1242,7 @@ class Template:
                  <td>%s</td>
                  <td>%s</td>
                  <td algin='center'>
-                 <input type="button" value='%s' style="background: url(/img/dialog-cancel.png)
-                 no-repeat #8DBDD8; width: 75px; text-align: right;"
-                 onClick="confirmation(%s)"
-                 onmouseover="this.className='bibcircbuttonover'"
-                 onmouseout="this.className='bibcircbutton'"
-                 class="bibcircbutton">
-
-                 <input type="button" value='%s' class="bibcircbutton"
-                        style="background: url(/img/dialog-yes.png) no-repeat #8DBDD8;
-                        width: 150px; text-align: right;"
-    onmouseover="this.className='bibcircbuttonover'"
-    onmouseout="this.className='bibcircbutton'"
-    onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s&recid=%s&borrower_id=%s'">
-                 </td>
-                </tr>
-                """ % (borrower_link,
+                 """ % (borrower_link,
                        title_link,
                        library,
                        call_no,
@@ -1266,14 +1251,23 @@ class Template:
                        edition,
                        date_from,
                        date_to,
-                       request_date,
-                       _("Delete"),
-                       request_id,
-                       _("Create loan"),
-                       CFG_SITE_URL, ln,
-                       request_id,
-                       recid,
-                       borrower_id)
+                       request_date)
+
+                out += """
+                        <select onchange="location = this.options[this.selectedIndex].value;">
+                            <option>Select an action</option>
+                            <option value="/admin2/bibcirculation/update_item_info_step4?barcode=%(barcode)s">Change status</option>
+                            <option value="/admin2/bibcirculation/create_loan?request_id=%(request_id)s&recid=%(recid)s&borrower_id=%(borrower_id)s">Create loan</option>
+                            <option onSelect="confirmation(%(request_id)s)">Delete request</option>
+                        </select>
+                 </td>
+                </tr>
+                """ % {
+                    'barcode': barcode,
+                    'request_id': request_id,
+                    'borrower_id': borrower_id,
+                    'recid': recid
+                }
 
             out += """
                     </tbody>

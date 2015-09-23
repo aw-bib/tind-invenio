@@ -4554,6 +4554,187 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
 
         return out
 
+    def tmpl_get_items_on_holdshelf(self, result, ln=CFG_SITE_LANG):
+         """
+        @param ln: language of the page
+        """
+
+        _ = gettext_set_language(ln)
+
+        out = load_menu(ln)
+
+        out += """
+            <style type="text/css"> @import url("/js/tablesorter/themes/blue/style.css"); </style>
+            <style type="text/css"> @import url("/js/tablesorter/addons/pager/jquery.tablesorter.pager.css"); </style>
+            <script src="/js/tablesorter/jquery.tablesorter.js" type="text/javascript"></script>
+            <script src="/js/tablesorter/addons/pager/jquery.tablesorter.pager.js" type="text/javascript"></script>
+            <script type="text/javascript">
+
+            $(document).ready(function(){
+                $("#table_all_loans")
+                    .tablesorter({sortList: [[4,0], [0,0]],widthFixed: true, widgets: ['zebra']})
+                    .bind("sortStart",function(){$("#overlay").show();})
+                    .bind("sortEnd",function(){$("#overlay").hide()})
+                    .tablesorterPager({container: $("#pager"), positionFixed: false});
+            });
+            </script>
+
+            <script type="text/javascript">
+                function confirmation(rqid) {
+                  var answer = confirm("%s")
+                  if (answer){
+            window.location = "%s/admin2/bibcirculation/get_pending_requests?request_id="+rqid;
+                    }
+                  else{
+                    alert("%s")
+                    }
+                 }
+            </script>
+
+            <br />
+
+            <div class="bibcircbottom">
+            """ % (_("Delete this request?"), CFG_SITE_URL,
+                   _("Request not deleted."))
+
+        if len(result) == 0:
+            out += """
+              <br />
+              <table class="bibcirctable">
+                <tr>
+                    <td class="bibcirccontent">%s</td>
+                </tr>
+                </table>
+                <br />
+                <table class="bibcirctable">
+                <tr>
+                  <td>
+                    <input type=button value='%s' onClick="history.go(-1)" class="formbutton">
+                  </td>
+                </tr>
+                </table>
+                <br />
+                <br />
+                </div>
+                """ % (_("No items on holdshelf."),
+                       _("Back"))
+
+        else:
+            out += """
+            <br />
+            <table id="table_all_loans" class="tablesorter"
+                   border="0" cellpadding="0" cellspacing="1">
+               <thead>
+                    <tr>
+                       <th>%s</th>
+                       <th>%s</th>
+                       <th>%s</th>
+                       <th>%s</th>
+                       <th>%s</th>
+                       <th>%s</th>
+                       <th>%s</th>
+                       <th>%s</th>
+                    </tr>
+              </thead>
+              <tbody>
+                    """ % (CFG_SITE_URL,
+                            _("Borrower."),
+                            _("Item"),
+                            _("Barcode"),
+                            _('Library'),
+                            _("Location"),
+                            _("Request date"),
+                            _("Request status"),
+                            _("Actions"))
+            for (barcode, recid, library, location, borrower, borrower_id, request_id, request_date, request_status) in result:
+
+                title_link = create_html_link(CFG_SITE_URL +
+                                    '/admin2/bibcirculation/get_item_details',
+                                    {'recid': recid, 'ln': ln},
+                                    (book_title_from_MARC(recid)))
+
+                borrower_link = create_html_link(CFG_SITE_URL +
+                                '/admin2/bibcirculation/get_borrower_details',
+                                {'borrower_id': borrower_id, 'ln': ln}, (name))
+
+                out += """
+                <tr>
+                 <td width='150'>%s</td>
+                 <td width='250'>%s</td>
+                 <td>%s</td>
+                 <td>%s</td>
+                 <td>%s</td>
+                 <td>%s</td>
+                 <td>%s</td>
+                 <td algin='center'>
+                 """ % (borrower_link,
+                       title_link,
+                       barcode,
+                       library,
+                       location,
+                       request_date,
+                       request_status)
+
+                out += """
+                        <select onchange="eval(this.options[this.selectedIndex].value)">
+                            <option>Select an action</option>
+                            <option value="window.open('/admin2/bibcirculation/update_item_info_step4?barcode=%(barcode)s')">Change status</option>
+                            <option value="window.open('/admin2/bibcirculation/create_loan?request_id=%(request_id)s&recid=%(recid)s&borrower_id=%(borrower_id)s')">Create loan</option>
+                            <option value="confirmation(%(request_id)s)">Delete request</option>
+                        </select>
+                 </td>
+                </tr>
+                """ % {
+                    'barcode': barcode,
+                    'request_id': request_id,
+                    'borrower_id': borrower_id,
+                    'recid': recid
+                }
+
+            out += """
+                    </tbody>
+                    </table>
+                    </form>
+
+                    <div id="pager" class="pager">
+                        <form>
+                            <br />
+                            <img src="/img/sb.gif" class="first" />
+                            <img src="/img/sp.gif" class="prev" />
+                            <input type="text" class="pagedisplay" />
+                            <img src="/img/sn.gif" class="next" />
+                            <img src="/img/se.gif" class="last" />
+                            <select class="pagesize">
+                                <option value="10" selected="selected">10</option>
+                                <option value="20">20</option>
+                                <option value="30">30</option>
+                                <option value="40">40</option>
+                            </select>
+                        </form>
+                    </div>
+                    """
+            out += """
+                    <div class="back" style="position: relative; top: 5px;">
+                        <br />
+                        <table class="bibcirctable">
+                            <tr>
+                                <td>
+                                    <input type=button
+                                           value='%s'
+                                           onClick="history.go(-1)"
+                                           class="formbutton">
+                                </td>
+                            </tr>
+                        </table>
+                    <br />
+                    <br />
+                    </form>
+                    </div>
+                    </div>
+                    """ % (_("Back"))
+
+        return out
+
     def tmpl_all_requests(self, result, ln=CFG_SITE_LANG):
         """
         @param ln: language of the page

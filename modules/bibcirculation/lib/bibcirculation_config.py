@@ -520,6 +520,8 @@ CFG_BIBCIRCULATION_WORKING_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday',
 
 # You can edit this variable if you want to have customized statuses
 
+# Custom/additional item statuses
+CFG_BIBCIRCULATION_ITEM_STATUS_ON_HOLDSHELF = "On holdshelf"
 
 CFG_BIBCIRCULATION_ITEM_STATUS = CFG_BIBCIRCULATION_ITEM_STATUS_OPTIONAL + \
                                  [CFG_BIBCIRCULATION_ITEM_STATUS_ON_SHELF,

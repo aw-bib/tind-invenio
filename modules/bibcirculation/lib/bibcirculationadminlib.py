@@ -67,6 +67,7 @@ from invenio.config import \
     CFG_BIBCIRCULATION_ITEM_STATUS_ON_SHELF, \
     CFG_BIBCIRCULATION_ITEM_STATUS_IN_PROCESS, \
     CFG_BIBCIRCULATION_ITEM_STATUS_UNDER_REVIEW, \
+    CFG_BIBCIRCULATION_ITEM_STATUS_ON_HOLDSHELF, \
     CFG_BIBCIRCULATION_LOAN_STATUS_ON_LOAN, \
     CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED, \
     CFG_BIBCIRCULATION_REQUEST_STATUS_WAITING, \
@@ -2462,6 +2463,47 @@ def get_item_loans_notes(req, loan_id, add_notes, new_note, ln=CFG_SITE_LANG):
 
 
 
+def get_items_on_holdshelf(req, request_id, ln=CFG_SITE_LANG):
+    """
+    Get all items with status "CFG_BIBCIRCULATION_ITEM_STATUS_ON_HOLDSHELF".
+
+
+    :param req:
+    :param ln:
+    :return:
+    """
+
+    id_user = getUid(req)
+    (auth_code, auth_message) = is_adminuser(req)
+    if auth_code != 0:
+        return mustloginpage(req, auth_message)
+
+    _ = gettext_set_language(ln)
+
+
+    elif request_id:
+        # Cancel a request too.
+        db.update_loan_request_status(CFG_BIBCIRCULATION_REQUEST_STATUS_CANCELLED,
+                                      request_id)
+        barcode = db.get_request_barcode(request_id)
+        update_requests_statuses(barcode)
+        result = db.get_requested_items_on_holdshelf()
+
+    else:
+        result = db.get_requested_items_on_holdshelf()
+
+    navtrail_previous_links = '<a class="navtrail" ' \
+                              'href="%s/help/admin">Admin Area' \
+                              '</a>' % (CFG_SITE_SECURE_URL,)
+
+    body = bc_templates.tmpl_get_items_on_holdshelf(result=result, ln=ln)
+
+    return page(title=_("Items on hold shelf"),
+                uid=id_user,
+                req=req,
+                body=body, language=ln,
+                navtrail=navtrail_previous_links,
+                lastupdated=__lastupdated__)
 
 ###
 ### Items and their copies' related .

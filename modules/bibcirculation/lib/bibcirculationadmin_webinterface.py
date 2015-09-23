@@ -54,6 +54,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
                 'get_pending_requests', 'get_waiting_requests',
                 'get_expired_loans_with_waiting_requests',
                 'get_loans_notes', 'get_item_loans_notes',
+                'get_items_on_holdshelf',
 
                 # "Item" related pages
                 'get_item_details', 'get_item_requests_details', 'get_item_loans_details',
@@ -521,6 +522,14 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         return bal.get_item_loans_notes(req, loan_id, add_notes,
                                         new_note, ln)
 
+    def get_items_on_holdshelf(self, req, form):
+        """http://cds.cern.ch/admin2/bibcirculation/get_items_on_holdshelf"""
+        argd = wash_urlargd(form, {'request_id': (str, None), 'ln': (str, "en")})
+
+        ln = argd['ln']
+        request_id = ardgd['request_id']
+
+        return bal.get_items_on_holdshelf(req, request_id, ln)
 
 
 # "Item" related pages

@@ -40,6 +40,7 @@ from MySQLdb import IntegrityError
 from invenio.dbquery import run_sql
 from invenio.bibcirculation_config import \
     CFG_BIBCIRCULATION_ITEM_STATUS_ON_LOAN, \
+    CFG_BIBCIRCULATION_ITEM_STATUS_ON_HOLDSHELF, \
     CFG_BIBCIRCULATION_LOAN_STATUS_ON_LOAN, \
     CFG_BIBCIRCULATION_LOAN_STATUS_EXPIRED, \
     CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED, \
@@ -1167,6 +1168,20 @@ def return_loan(barcode):
 ### 'Item' related functions ###
 ###
 
+def get_requested_items_on_holdshelf():
+    res = run_sql("""
+            SELECT i.barcode, i.id_bibrec, l.name, loc.name, b.name, b.id, lr.id, lr.date, lr.status
+            FROM crcITEM i
+            JOIN crcLIBRARY l ON i.id_crcLIBRARY = l.id
+            JOIN crcLOCATION loc ON i.id_location = loc.id
+            LEFT JOIN crcLOANREQUEST lr ON i.barcode = lr.barcode
+            LEFT JOIN crcBORROWER b ON lr.id_crcBORROWER = b.id
+            WHERE i.status = '%s'
+    """ % CFG_BIBCIRCULATION_ITEM_STATUS_ON_HOLDSHELF)
+    if res:
+        return res[0][0]
+    else:
+        return None
 
 
 def get_id_bibrec(barcode):

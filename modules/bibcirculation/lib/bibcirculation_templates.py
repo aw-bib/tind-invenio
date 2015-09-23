@@ -5013,17 +5013,6 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                   <td>%s</td>
                   <td>%s</td>
                   <td algin='center'>
-                    <input type="button" value='%s' style="background: url(/img/dialog-cancel.png)
-                        no-repeat #8DBDD8; width: 75px; text-align: right;"
-                        onClick="confirmation(%s)"
-                        onmouseover="this.className='bibcircbuttonover'" onmouseout="this.className='bibcircbutton'"
-                        class="bibcircbutton">
-                    <input type=button style="background: url(/img/dialog-yes.png) no-repeat #8DBDD8; width: 150px; text-align: right;"
-                        onClick="location.href='%s/admin2/bibcirculation/create_loan?request_id=%s&recid=%s&borrower_id=%s&ln=%s'"
-                        onmouseover="this.className='bibcircbuttonover'" onmouseout="this.className='bibcircbutton'"
-                        value='%s' class="bibcircbutton">
-                  </td>
-                </tr>
                 """ % (CFG_SITE_URL,
                        borrower_link,
                        title_link,
@@ -5032,16 +5021,24 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                        location,
                        date_from,
                        date_to,
-                       request_date,
-                       _("Delete"),
-                        request_id,
-                       CFG_SITE_URL,
-                       request_id,
-                       recid,
-                       borrower_id,
-                       ln,
-                       _("Create Loan"))
+                       request_date)
 
+                out += """
+                        <select onchange="eval(this.options[this.selectedIndex].value)">
+                            <option>Select an action</option>
+                            <option value="window.open('loan_return_confirm?barcode=95763305')">Return item</option>
+                            <option value="window.open('/admin2/bibcirculation/update_item_info_step4?barcode=%(barcode)s')">Change status</option>
+                            <option value="window.open('/admin2/bibcirculation/create_loan?request_id=%(request_id)s&recid=%(recid)s&borrower_id=%(borrower_id)s')">Create loan</option>
+                            <option value="confirmation(%(request_id)s)">Delete request</option>
+                        </select>
+                 </td>
+                </tr>
+                """ % {
+                    'barcode': barcode,
+                    'request_id': request_id,
+                    'borrower_id': borrower_id,
+                    'recid': recid
+                }
             out += """
                   </tbody>
                 </table>

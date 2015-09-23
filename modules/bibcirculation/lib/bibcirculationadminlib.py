@@ -67,7 +67,6 @@ from invenio.config import \
     CFG_BIBCIRCULATION_ITEM_STATUS_ON_SHELF, \
     CFG_BIBCIRCULATION_ITEM_STATUS_IN_PROCESS, \
     CFG_BIBCIRCULATION_ITEM_STATUS_UNDER_REVIEW, \
-    CFG_BIBCIRCULATION_ITEM_STATUS_ON_HOLDSHELF, \
     CFG_BIBCIRCULATION_LOAN_STATUS_ON_LOAN, \
     CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED, \
     CFG_BIBCIRCULATION_REQUEST_STATUS_WAITING, \
@@ -2465,7 +2464,7 @@ def get_item_loans_notes(req, loan_id, add_notes, new_note, ln=CFG_SITE_LANG):
 
 def get_items_on_holdshelf(req, request_id, ln=CFG_SITE_LANG):
     """
-    Get all items with status "CFG_BIBCIRCULATION_ITEM_STATUS_ON_HOLDSHELF".
+    Get all items on holdshelf
 
 
     :param req:

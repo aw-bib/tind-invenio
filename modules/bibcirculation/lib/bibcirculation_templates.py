@@ -1254,10 +1254,10 @@ class Template:
                        request_date)
 
                 out += """
-                        <select onchange="location = this.options[this.selectedIndex].value;">
+                        <select>
                             <option>Select an action</option>
-                            <option value="/admin2/bibcirculation/update_item_info_step4?barcode=%(barcode)s">Change status</option>
-                            <option value="/admin2/bibcirculation/create_loan?request_id=%(request_id)s&recid=%(recid)s&borrower_id=%(borrower_id)s">Create loan</option>
+                            <option onselect="location = '/admin2/bibcirculation/update_item_info_step4?barcode=%(barcode)s'">Change status</option>
+                            <option onselect="location = '/admin2/bibcirculation/create_loan?request_id=%(request_id)s&recid=%(recid)s&borrower_id=%(borrower_id)s'">Create loan</option>
                             <option onSelect="confirmation(%(request_id)s)">Delete request</option>
                         </select>
                  </td>

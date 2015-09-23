@@ -527,7 +527,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         argd = wash_urlargd(form, {'request_id': (str, None), 'ln': (str, "en")})
 
         ln = argd['ln']
-        request_id = ardgd['request_id']
+        request_id = argd['request_id']
 
         return bal.get_items_on_holdshelf(req, request_id, ln)
 

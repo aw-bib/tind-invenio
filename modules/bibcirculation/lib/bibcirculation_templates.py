@@ -8886,13 +8886,13 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
         _ = gettext_set_language(ln)
 
         if tup_infos:
-            (name, email, phone, address, mailbox, notes, p_id) = tup_infos
+            (name, ccid, email, phone, address, mailbox, notes, p_id) = tup_infos
             try:
                 p_id = int(p_id)
             except TypeError:
                 pass
         else:
-            (name, email, phone, address, mailbox, notes, p_id) = ('', '', '', '', '', '', None)
+            (name, ccid, email, phone, address, mailbox, notes, p_id) = ('', '', '', '', '', '', '', None)
 
         out = ''
 
@@ -8914,6 +8914,13 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                     <td class="bibcirccontent">
                       <input type="text" style='border: 1px solid #cfcfcf'
                              size=45 name="name" value="%s">
+                    </td>
+                </tr>
+                <tr>
+                    <td width="70">%s</td>
+                    <td class="bibcirccontent">
+                      <input type="text" style='border: 1px solid #cfcfcf'
+                             size=45 name="ccid" value="%s">
                     </td>
                 </tr>
                 <tr>
@@ -8950,6 +8957,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                       <select name="p_id">
                 """ % (CFG_SITE_URL,
                        _("Name"), name,
+                       _("User ID"), ccid,
                        _("Email"), email,
                        _("Phone"), phone,
                        _("Address"), address,
@@ -9001,7 +9009,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
         _ = gettext_set_language(ln)
 
-        (name, email, phone, address, mailbox, notes) = tup_infos
+        (name, ccid, email, phone, address, mailbox, notes) = tup_infos
 
         out = self.tmpl_infobox(infos, ln)
 
@@ -9026,6 +9034,9 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                 </tr>
                 <tr>
                     <td width="70">%s</td> <td class="bibcirccontent">%s</td>
+                </tr>
+                <tr>
+                    <td width="70">%s</td> <td class="bibcirccontent">%s</td>
                  </tr>
                  <tr>
                     <td width="70">%s</td> <td class="bibcirccontent">%s</td>
@@ -9037,6 +9048,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
                 """ % (CFG_SITE_URL,
                        _("Name"), name,
+                       _("User ID"), ccid,
                        _("Email"), email,
                        _("Phone"), phone,
                        _("Address"), address,
@@ -9125,7 +9137,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
         _ = gettext_set_language(ln)
 
-        (borrower_id, name, email, phone, address, mailbox, p_id) = tup_infos
+        (borrower_id, name, ccid, email, phone, address, mailbox, p_id) = tup_infos
         try:
             p_id = int(p_id)
         except TypeError:
@@ -9169,6 +9181,13 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                     <td width="70">%s</td>
                     <td class="bibcirccontent">
                         <input type="text" style='border: 1px solid #cfcfcf'
+                                size=45 name="ccid" value="%s">
+                    </td>
+                 </tr>
+                <tr>
+                    <td width="70">%s</td>
+                    <td class="bibcirccontent">
+                        <input type="text" style='border: 1px solid #cfcfcf'
                                 size=45 name="address" value="%s">
                     </td>
                  </tr>
@@ -9201,6 +9220,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                 """ % (CFG_SITE_URL, _("Borrower information"),
                        id_string, display_id,
                        _("Name"), name,
+                       _("User ID"), ccid,
                        _("Address"), address,
                        _("Mailbox"), mailbox,
                        _("Email"), email,

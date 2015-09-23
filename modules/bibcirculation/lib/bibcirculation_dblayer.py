@@ -1729,7 +1729,7 @@ def clean_data(data):
     return final_res
 
 
-def update_borrower_info(borrower_id, name, email, phone, address, mailbox, p_id):
+def update_borrower_info(borrower_id, name, ccid, email, phone, address, mailbox, p_id):
     """
     Update borrower info.
 
@@ -1738,13 +1738,14 @@ def update_borrower_info(borrower_id, name, email, phone, address, mailbox, p_id
     """
     run_sql("""UPDATE crcBORROWER
                              set name=%s,
+                                 ccid=%s,
                                  email=%s,
                                  id_patrontype=%s,
                                  phone=%s,
                                  address=%s,
                                  mailbox=%s
                           WHERE  id=%s""",
-                       (name, email, p_id, phone, address, mailbox, borrower_id))
+                       (name, ccid, email, p_id, phone, address, mailbox, borrower_id))
 
 def get_borrower_data(borrower_id):
     """

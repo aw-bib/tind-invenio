@@ -831,10 +831,11 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
 
     def add_new_borrower_step2(self, req, form):
         """http://cds.cern.ch/admin2/bibcirculation/add_new_borrower_step2"""
-        argd = wash_urlargd(form, {'name': (str, ''), 'email': (str, ''),
+        argd = wash_urlargd(form, {'name': (str, ''), 'ccid': (int, None), 'email': (str, ''),
             'phone': (str, ''), 'address': (str, ''), 'mailbox': (str, ''),
             'notes': (str, ''), 'p_id': (int, None), 'ln': (str, "en")})
         name = argd['name']
+        ccid = argd['ccid']
         email = argd['email']
         phone = argd['phone']
         address = argd['address']
@@ -850,7 +851,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         mailbox = mailbox.strip()
         notes = notes.strip()
 
-        return bal.add_new_borrower_step2(req, name, email, phone, address,
+        return bal.add_new_borrower_step2(req, name, ccid, email, phone, address,
                                           mailbox, notes, p_id, ln)
 
     def update_borrower_info_step1(self, req, form):
@@ -862,11 +863,12 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
 
     def update_borrower_info_step2(self, req, form):
         """http://cds.cern.ch/admin2/bibcirculation/update_borrower_info_step2"""
-        argd = wash_urlargd(form, {'borrower_id': (int, None), 'name': (str, ''),
+        argd = wash_urlargd(form, {'borrower_id': (int, None), 'ccid': (int, None), 'name': (str, ''),
             'email': (str, ''), 'phone': (str, ''), 'address': (str, ''),
             'mailbox': (str, ''), 'p_id': (int, None), 'ln': (str, "en")})
 
         name = argd['name']
+        ccid = argd['ccid']
         email = argd['email']
         phone = argd['phone']
         address = argd['address']
@@ -881,7 +883,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         address = address.strip()
         mailbox = mailbox.strip()
 
-        return bal.update_borrower_info_step2(req, borrower_id, name, email, phone, address,
+        return bal.update_borrower_info_step2(req, borrower_id, name, ccid, email, phone, address,
                                               mailbox, p_id, ln)
 
 

@@ -3477,12 +3477,13 @@ def add_new_borrower_step1(req, ln=CFG_SITE_LANG):
                 navtrail=navtrail_previous_links,
                 lastupdated=__lastupdated__)
 
-def add_new_borrower_step2(req, name, email, phone, address, mailbox,
+def add_new_borrower_step2(req, name, ccid, email, phone, address, mailbox,
                            notes, p_id, ln=CFG_SITE_LANG):
     """
     Add new borrower. Step 2.
 
     @type name:     string.
+    @type ccid:     int.
     @type email:    string.
     @type phone:    string.
     @type address:  string.
@@ -3503,7 +3504,7 @@ def add_new_borrower_step2(req, name, email, phone, address, mailbox,
         infos.append(_("Please, insert a name"))
 
     if not p_id:
-        infos.append(_("Please select a patrontype"))
+        infos.append(_("Please, select a patrontype"))
 
     if email == '':
         infos.append(_("Please, insert a valid email address"))
@@ -3516,7 +3517,12 @@ def add_new_borrower_step2(req, name, email, phone, address, mailbox,
             infos.append(_("There is already a borrower using the following email:")
                          + " <strong>%s</strong>" % (email))
 
-    tup_infos = (name, email, phone, address, mailbox, notes, p_id)
+        existing_ccid = db.get_borrower_id_by_ccid(ccid)
+        if existing_ccid is not None:
+            infos.append(_("There is already a borrower using the following user ID:")
+                         + " <strong>%s</strong>" % (ccid))
+
+    tup_infos = (name, ccid, email, phone, address, mailbox, notes, p_id)
 
     navtrail_previous_links = '<a class="navtrail" ' \
                               'href="%s/help/admin">Admin Area' \
@@ -3535,7 +3541,7 @@ def add_new_borrower_step2(req, name, email, phone, address, mailbox,
         else:
             borrower_notes = ''
 
-        borrower_id = db.new_borrower(None, name, email, phone,
+        borrower_id = db.new_borrower(ccid, name, email, phone,
                                       address, mailbox, borrower_notes, p_id)
 
         return redirect_to_url(req,
@@ -3614,7 +3620,7 @@ def update_borrower_info_step1(req, borrower_id, ln=CFG_SITE_LANG):
     borrower_details = db.get_borrower_details(borrower_id)
     patron_types = db.get_patron_types()
 
-    tup_infos = (borrower_details[0], borrower_details[2], borrower_details[3],
+    tup_infos = (borrower_details[0], borrower_details[2], borrower_details[1], borrower_details[3],
                  borrower_details[4], borrower_details[5], borrower_details[6], borrower_details[7])
 
     body = bc_templates.tmpl_update_borrower_info_step1(patron_types=patron_types, tup_infos=tup_infos,
@@ -3628,7 +3634,7 @@ def update_borrower_info_step1(req, borrower_id, ln=CFG_SITE_LANG):
                 navtrail=navtrail_previous_links,
                 lastupdated=__lastupdated__)
 
-def update_borrower_info_step2(req, borrower_id, name, email, phone, address,
+def update_borrower_info_step2(req, borrower_id, name, ccid, email, phone, address,
                                mailbox, p_id, ln=CFG_SITE_LANG):
     """
     Update the borrower's information.
@@ -3657,7 +3663,12 @@ def update_borrower_info_step2(req, borrower_id, name, email, phone, address,
             infos.append(_("There is already a borrower using the following email:")
                          + " <strong>%s</strong>" % (email))
 
-    tup_infos = (borrower_id, name, email, phone, address, mailbox, p_id)
+        existing_ccid = db.get_borrower_id_by_ccid(ccid)
+        if existing_ccid is not None:
+            infos.append(_("There is already a borrower using the following user ID:")
+                         + " <strong>%s</strong>" % (ccid))
+
+    tup_infos = (borrower_id, name, ccid, email, phone, address, mailbox, p_id)
 
     navtrail_previous_links = '<a class="navtrail" ' \
                               'href="%s/help/admin">Admin Area' \
@@ -3667,7 +3678,7 @@ def update_borrower_info_step2(req, borrower_id, name, email, phone, address,
         body = bc_templates.tmpl_update_borrower_info_step1(tup_infos=tup_infos,
                                                         infos=infos, ln=ln)
     else:
-        db.update_borrower_info(borrower_id, name, email,
+        db.update_borrower_info(borrower_id, name, ccid, email,
                                 phone, address, mailbox, p_id)
 
         return redirect_to_url(req,

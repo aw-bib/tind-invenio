@@ -1170,7 +1170,7 @@ def return_loan(barcode):
 
 def get_requested_items_on_holdshelf():
     res = run_sql("""
-            SELECT i.barcode, i.id_bibrec, l.name, loc.name, b.name, b.id, lr.id, lr.date, lr.status
+            SELECT i.barcode, i.id_bibrec, l.name, loc.name, b.name, b.id, lr.id, lr.request_date, lr.status
             FROM crcITEM i
             JOIN crcLIBRARY l ON i.id_crcLIBRARY = l.id
             JOIN crcLOCATION loc ON i.id_location = loc.id

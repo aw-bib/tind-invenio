@@ -2481,7 +2481,7 @@ def get_items_on_holdshelf(req, request_id, ln=CFG_SITE_LANG):
     _ = gettext_set_language(ln)
 
 
-    elif request_id:
+    if request_id:
         # Cancel a request too.
         db.update_loan_request_status(CFG_BIBCIRCULATION_REQUEST_STATUS_CANCELLED,
                                       request_id)

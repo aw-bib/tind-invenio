@@ -1,0 +1,28 @@
+git branch
+git fetch
+git pull
+sudo autoscan
+sudo aclocal
+sudo automake
+sudo autoconf
+sudo ./configure
+sudo pip install --no-cache-dir -r requirements.txt
+sudo -u www-data make
+sudo -u www-data make install
+cd ../invenio_themes
+git branch
+git fetch
+git pull
+sudo chmod +x ../invenio_themes/fancy/install.sh
+sudo -u www-data ../invenio_themes/fancy/install.sh
+cd ../invenio_templates
+git branch
+git fetch
+git pull
+sudo chmod +x ../invenio_templates/fancy/install.sh
+sudo -u www-data ../invenio_templates/fancy/install.sh
+sudo -u www-data cp -R bibedit_templates /opt/invenio/etc/bibedit/
+sudo /opt/invenio/bin/inveniocfg --update-all
+sudo chown  www-data:www-data -R /opt/invenio/
+sudo /etc/init.d/apache2 restart
+

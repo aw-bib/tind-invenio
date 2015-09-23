@@ -3517,7 +3517,7 @@ def add_new_borrower_step2(req, name, ccid, email, phone, address, mailbox,
             infos.append(_("There is already a borrower using the following email:")
                          + " <strong>%s</strong>" % (email))
 
-        existing_ccid = db.get_borrower_id_by_ccid(ccid)
+        existing_ccid = db.search_borrower_by_ccid(ccid)
         if existing_ccid is not None:
             infos.append(_("There is already a borrower using the following user ID:")
                          + " <strong>%s</strong>" % (ccid))
@@ -3663,7 +3663,7 @@ def update_borrower_info_step2(req, borrower_id, name, ccid, email, phone, addre
             infos.append(_("There is already a borrower using the following email:")
                          + " <strong>%s</strong>" % (email))
 
-        existing_ccid = db.get_borrower_id_by_ccid(ccid)
+        existing_ccid = db.search_borrower_by_ccid(ccid)
         if existing_ccid is not None:
             infos.append(_("There is already a borrower using the following user ID:")
                          + " <strong>%s</strong>" % (ccid))

@@ -1787,7 +1787,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
         """
         _ = gettext_set_language(ln)
 
-        id_string = 'ccid'
+        id_string = 'uid'
 
         out = self.tmpl_infobox(infos, ln)
 
@@ -8880,7 +8880,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
         (borrower_id, name, email, phone, address, mailbox) = tup_infos
 
         display_id = borrower_id
-        id_string = _("ID")
+        id_string = _("UID")
 
         out = ''
 

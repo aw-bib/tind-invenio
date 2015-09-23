@@ -7968,6 +7968,10 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
               <tr>
                 <th width="100">%s</th>
                 <td>%s</td>
+              </tr>
+              <tr>
+                <th width="100">%s</th>
+                <td>%s</td>
                </tr>
               <tr>
                 <th width="100">%s</th>
@@ -7981,6 +7985,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
             """ % (_("Personal details"),
                    id_string, display_id,
                    _("Name"), name,
+                   _("UID"), ccid,
                    _("Address"), address,
                    _("Mailbox"), mailbox,
                    _("Email"), email,
@@ -8957,7 +8962,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                       <select name="p_id">
                 """ % (CFG_SITE_URL,
                        _("Name"), name,
-                       _("User ID"), ccid,
+                       _("UID"), ccid,
                        _("Email"), email,
                        _("Phone"), phone,
                        _("Address"), address,
@@ -9048,7 +9053,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
                 """ % (CFG_SITE_URL,
                        _("Name"), name,
-                       _("User ID"), ccid,
+                       _("UID"), ccid,
                        _("Email"), email,
                        _("Phone"), phone,
                        _("Address"), address,
@@ -9220,7 +9225,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                 """ % (CFG_SITE_URL, _("Borrower information"),
                        id_string, display_id,
                        _("Name"), name,
-                       _("User ID"), ccid,
+                       _("UID"), ccid,
                        _("Address"), address,
                        _("Mailbox"), mailbox,
                        _("Email"), email,

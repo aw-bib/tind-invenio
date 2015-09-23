@@ -3519,7 +3519,7 @@ def add_new_borrower_step2(req, name, ccid, email, phone, address, mailbox,
 
         existing_ccid = db.search_borrower_by_ccid(ccid)
         if len(existing_ccid) > 0:
-            infos.append(_("There is already a borrower using the following user ID:")
+            infos.append(_("There is already a borrower using the following UID:")
                          + " <strong>%s</strong>" % (ccid))
 
     tup_infos = (name, ccid, email, phone, address, mailbox, notes, p_id)

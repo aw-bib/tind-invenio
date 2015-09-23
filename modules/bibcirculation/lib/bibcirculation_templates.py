@@ -1255,10 +1255,10 @@ class Template:
 
                 out += """
                         <select>
-                            <option>Select an action</option>
-                            <option onselect="location = '/admin2/bibcirculation/update_item_info_step4?barcode=%(barcode)s'">Change status</option>
-                            <option onselect="location = '/admin2/bibcirculation/create_loan?request_id=%(request_id)s&recid=%(recid)s&borrower_id=%(borrower_id)s'">Create loan</option>
-                            <option onSelect="confirmation(%(request_id)s)">Delete request</option>
+                            <option onchange="eval(this.options[this.selectedIndex].value)">Select an action</option>
+                            <option value="location = '/admin2/bibcirculation/update_item_info_step4?barcode=%(barcode)s'">Change status</option>
+                            <option value="location = '/admin2/bibcirculation/create_loan?request_id=%(request_id)s&recid=%(recid)s&borrower_id=%(borrower_id)s'">Create loan</option>
+                            <option value="confirmation(%(request_id)s)">Delete request</option>
                         </select>
                  </td>
                 </tr>

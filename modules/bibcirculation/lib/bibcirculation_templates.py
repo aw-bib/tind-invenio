@@ -4558,9 +4558,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
          """
         @param ln: language of the page
         """
-
         _ = gettext_set_language(ln)
-
         out = load_menu(ln)
 
         out += """

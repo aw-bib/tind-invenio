@@ -1873,7 +1873,7 @@ def search_borrower_by_ccid(string):
     """
     string: search pattern.
     """
-
+    string = string.lstrip("0")
     res = run_sql("""SELECT id, name
                        FROM crcBORROWER
                       WHERE ccid regexp %s

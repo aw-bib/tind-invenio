@@ -4413,7 +4413,7 @@ def register_ill_request_with_no_recid_step4(req, book_info, borrower_id,
         ill_request_notes[time.strftime("%Y-%m-%d %H:%M:%S")] = \
                                                             str(library_notes)
 
-### budget_code ###
+    ### budget_code ###
     if db.get_borrower_data_by_id(borrower_id) == None:
         _ = gettext_set_language(ln)
         infos = []

@@ -1813,8 +1813,8 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
              <table class="bibcirctable">
                <tr align="center">
                  <td class="bibcirctableheader">%s
-                   <input type="radio" name="column" value="id">%s
-                   <input type="radio" name="column" value="name" checked>%s
+                   <input type="radio" name="column" value="id" checked>%s
+                   <input type="radio" name="column" value="name">%s
                    <input type="radio" name="column" value="email">%s
                    <input type="hidden" name="redirect_to_new_request" value="%s">
                    <br>
@@ -2138,60 +2138,32 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
           <table class="bibcirctable" align="center">
             """ % (CFG_SITE_URL)
 
-        if CFG_CERN_SITE == 1:
+        out += """
+            <tr>
+               <td class="bibcirctableheader" align="center">%s
+               """ % (_("Search user by"))
 
+        if key == 'email':
             out += """
-                <tr>
-                   <td class="bibcirctableheader" align="center">%s
-                   """ % (_("Search user by"))
+               <input type="radio" name="key" value="ccid">%s
+               <input type="radio" name="key" value="name">%s
+               <input type="radio" name="key" value="email" checked>%s
+               """ % ('uid', _('name'), _('email'))
 
-            if key == 'email':
-                out += """
-                   <input type="radio" name="key" value="ccid">%s
-                   <input type="radio" name="key" value="name">%s
-                   <input type="radio" name="key" value="email" checked>%s
-                   """ % ('ccid', _('name'), _('email'))
-
-            elif key == 'name':
-                out += """
-                   <input type="radio" name="key" value="ccid">%s
-                   <input type="radio" name="key" value="name" checked>%s
-                   <input type="radio" name="key" value="email">%s
-                   """ % ('ccid', _('name'), _('email'))
-
-            else:
-                out += """
-                   <input type="radio" name="key" value="ccid" checked>%s
-                   <input type="radio" name="key" value="name">%s
-                   <input type="radio" name="key" value="email">%s
-                   """ % ('ccid', _('name'), _('email'))
+        elif key == 'name':
+            out += """
+               <input type="radio" name="key" value="ccid">%s
+               <input type="radio" name="key" value="name" checked>%s
+               <input type="radio" name="key" value="email">%s
+               """ % ('uid', _('name'), _('email'))
 
         else:
             out += """
-                 <tr>
-                   <td align="center" class="bibcirctableheader">%s
-                   """ % (_("Search borrower by"))
+               <input type="radio" name="key" value="ccid" checked>%s
+               <input type="radio" name="key" value="name">%s
+               <input type="radio" name="key" value="email">%s
+               """ % ('uid', _('name'), _('email'))
 
-            if key == 'email':
-                out += """
-                   <input type="radio" name="key" value="id">%s
-                   <input type="radio" name="key" value="name">%s
-                   <input type="radio" name="key" value="email" checked>%s
-                   """ % (_('id'), _('name'), _('email'))
-
-            elif key == 'id':
-                out += """
-                   <input type="radio" name="key" value="id" checked>%s
-                   <input type="radio" name="key" value="name">%s
-                   <input type="radio" name="key" value="email">%s
-                   """ % (_('id'), _('name'), _('email'))
-
-            else:
-                out += """
-                   <input type="radio" name="key" value="id">%s
-                   <input type="radio" name="key" value="name" checked>%s
-                   <input type="radio" name="key" value="email">%s
-                   """ % (_('id'), _('name'), _('email'))
 
         out += """
                     <br><br>
@@ -2270,10 +2242,9 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
         _ = gettext_set_language(ln)
 
         display_id = borrower_id
-        id_string = _("ID")
-        if CFG_CERN_SITE == 1:
-            display_id = ccid
-            id_string = _("CCID")
+
+        display_id = ccid
+        id_string = "UID"
 
         out = self.tmpl_infobox(infos, ln)
 
@@ -2385,11 +2356,8 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
         for book in list_of_books:
             list_of_barcodes.append(book[1])
 
-        display_id = borrower_id
-        id_string = _("ID")
-        if CFG_CERN_SITE == 1:
-            display_id = ccid
-            id_string = _("CCID")
+        display_id = ccid
+        id_string = _("UID")
 
         out += load_menu(ln)
 
@@ -2627,11 +2595,9 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
 
         _ = gettext_set_language(ln)
 
-        display_id = borrower_id
-        id_string = _("ID")
-        if CFG_CERN_SITE == 1:
-            display_id = ccid
-            id_string = _("CCID")
+
+        display_id = ccid
+        id_string = "UID"
 
         out = load_menu(ln)
         out += "<br />"
@@ -2746,11 +2712,8 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
 
         (borrower_id, ccid, name, email, phone, address, mailbox) = borrower
 
-        display_id = borrower_id
-        id_string = _("ID")
-        if CFG_CERN_SITE == 1:
-            display_id = ccid
-            id_string = _("CCID")
+        display_id = ccid
+        id_string = "UID"
 
         out += """
             <form name="create_new_loan_form1"
@@ -2880,11 +2843,8 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
 
         (borrower_id, ccid, name, email, phone, address, mailbox) = borrower
 
-        display_id = borrower_id
-        id_string = _("ID")
-        if CFG_CERN_SITE == 1:
-            display_id = ccid
-            id_string = _("CCID")
+        display_id = ccid
+        id_string = "UID"
 
         out += """
             <style type="text/css"> @import url("/img/tablesorter.css"); </style>
@@ -3387,60 +3347,33 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
 
             """ % (CFG_SITE_URL, barcode, recid)
 
-        if CFG_CERN_SITE == 1:
 
+        out += """
+             <tr>
+               <td class="bibcirctableheader" align="center">%s
+               """ % (_("Search user by"))
+
+        if key == 'email':
             out += """
-                 <tr>
-                   <td class="bibcirctableheader" align="center">%s
-                   """ % (_("Search user by"))
+               <input type="radio" name="key" value="ccid">%s
+               <input type="radio" name="key" value="name">%s
+               <input type="radio" name="key" value="email" checked>%s
+               """ % (_("uid"), _("name"), _("email"))
 
-            if key == 'email':
-                out += """
-                   <input type="radio" name="key" value="ccid">%s
-                   <input type="radio" name="key" value="name">%s
-                   <input type="radio" name="key" value="email" checked>%s
-                   """ % (_("ccid"), _("name"), _("email"))
-
-            elif key == 'name':
-                out += """
-                   <input type="radio" name="key" value="ccid">%s
-                   <input type="radio" name="key" value="name" checked>%s
-                   <input type="radio" name="key" value="email">%s
-                   """ % (_("ccid"), _("name"), _("email"))
-
-            else:
-                out += """
-                   <input type="radio" name="key" value="ccid" checked>%s
-                   <input type="radio" name="key" value="name">%s
-                   <input type="radio" name="key" value="email">%s
-                   """ % (_("ccid"), _("name"), _("email"))
+        elif key == 'name':
+            out += """
+               <input type="radio" name="key" value="ccid">%s
+               <input type="radio" name="key" value="name" checked>%s
+               <input type="radio" name="key" value="email">%s
+               """ % (_("uid"), _("name"), _("email"))
 
         else:
             out += """
-                 <tr>
-                   <td class="bibcirctableheader" align="center">%s
-                   """ % (_("Search borrower by"))
+               <input type="radio" name="key" value="ccid" checked>%s
+               <input type="radio" name="key" value="name">%s
+               <input type="radio" name="key" value="email">%s
+               """ % (_("uid"), _("name"), _("email"))
 
-            if key == 'email':
-                out += """
-                   <input type="radio" name="key" value="id">%s
-                   <input type="radio" name="key" value="name">%s
-                   <input type="radio" name="key" value="email" checked>%s
-                   """ % (_("ccid"), _("name"), _("email"))
-
-            elif key == 'id':
-                out += """
-                   <input type="radio" name="key" value="id" checked>%s
-                   <input type="radio" name="key" value="name">%s
-                   <input type="radio" name="key" value="email">%s
-                   """ % (_("ccid"), _("name"), _("email"))
-
-            else:
-                out += """
-                   <input type="radio" name="key" value="id">%s
-                   <input type="radio" name="key" value="name" checked>%s
-                   <input type="radio" name="key" value="email">%s
-                   """ % (_("ccid"), _("name"), _("email"))
 
         out += """
                     <br><br>
@@ -3651,7 +3584,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                 </td>
                 </table>
                 """ % (_("Borrower details"),
-                       _("ID"), ccid,
+                       _("UID"), ccid,
                        _("Name"), name,
                        _("Address"), address,
                        _("Mailbox"), mailbox,
@@ -3862,60 +3795,33 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
 
             """ % (CFG_SITE_URL, barcode, recid)
 
-        if CFG_CERN_SITE == 1:
 
+        out += """
+             <tr>
+               <td class="bibcirctableheader" align="center">%s
+               """ % (_("Search user by"))
+
+        if key == 'email':
             out += """
-                 <tr>
-                   <td class="bibcirctableheader" align="center">%s
-                   """ % (_("Search user by"))
+               <input type="radio" name="key" value="ccid">%s
+               <input type="radio" name="key" value="name">%s
+               <input type="radio" name="key" value="email" checked>%s
+               """ % (_("uid"), _("name"), _("email"))
 
-            if key == 'email':
-                out += """
-                   <input type="radio" name="key" value="ccid">%s
-                   <input type="radio" name="key" value="name">%s
-                   <input type="radio" name="key" value="email" checked>%s
-                   """ % (_("ccid"), _("name"), _("email"))
-
-            elif key == 'name':
-                out += """
-                   <input type="radio" name="key" value="ccid">%s
-                   <input type="radio" name="key" value="name" checked>%s
-                   <input type="radio" name="key" value="email">%s
-                   """ % (_("ccid"), _("name"), _("email"))
-
-            else:
-                out += """
-                   <input type="radio" name="key" value="ccid" checked>%s
-                   <input type="radio" name="key" value="name">%s
-                   <input type="radio" name="key" value="email">%s
-                   """ % (_("ccid"), _("name"), _("email"))
+        elif key == 'name':
+            out += """
+               <input type="radio" name="key" value="ccid">%s
+               <input type="radio" name="key" value="name" checked>%s
+               <input type="radio" name="key" value="email">%s
+               """ % (_("uid"), _("name"), _("email"))
 
         else:
             out += """
-                 <tr>
-                   <td class="bibcirctableheader" align="center">%s
-                   """ % (_("Search user by"))
+               <input type="radio" name="key" value="ccid" checked>%s
+               <input type="radio" name="key" value="name">%s
+               <input type="radio" name="key" value="email">%s
+               """ % (_("uid"), _("name"), _("email"))
 
-            if key == 'email':
-                out += """
-                   <input type="radio" name="key" value="id">%s
-                   <input type="radio" name="key" value="name">%s
-                   <input type="radio" name="key" value="email" checked>%s
-                   """ % (_("id"), _("name"), _("email"))
-
-            elif key == 'id':
-                out += """
-                   <input type="radio" name="key" value="id" checked>%s
-                   <input type="radio" name="key" value="name">%s
-                   <input type="radio" name="key" value="email">%s
-                   """ % (_("id"), _("name"), _("email"))
-
-            else:
-                out += """
-                   <input type="radio" name="key" value="id">%s
-                   <input type="radio" name="key" value="name" checked>%s
-                   <input type="radio" name="key" value="email">%s
-                   """ % (_("id"), _("name"), _("email"))
 
         out += """
                     <br><br>
@@ -4128,7 +4034,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                 </table>
                 <br />
                 """ % (_("Borrower details"),
-                       _("ID"), ccid,
+                       _("UID"), ccid,
                        _("Name"), name,
                        _("Address"), address,
                        _("Mailbox"), mailbox,
@@ -7654,12 +7560,8 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
         (borrower_id, ccid, name, email, phone, address, mailbox) = borrower
 
-        display_id = borrower_id
-        id_string = _("ID")
-        if CFG_CERN_SITE == 1:
-            display_id = ccid
-            id_string = _("CCID")
-
+        display_id = ccid
+        id_string = "UID"
 
         out += """
             <style type="text/css"> @import url("/img/tablesorter.css"); </style>
@@ -7800,11 +7702,9 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
         (borrower_id, ccid, name, email, phone, address, mailbox) = borrower
 
-        display_id = borrower_id
-        id_string = _("ID")
-        if CFG_CERN_SITE == 1:
-            display_id = ccid
-            id_string = _("CCID")
+
+        display_id = ccid
+        id_string = "UID"
 
         no_notes_link = create_html_link(CFG_SITE_URL +
                                     '/admin2/bibcirculation/get_borrower_notes',
@@ -9758,60 +9658,32 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
             """
 
-        if CFG_CERN_SITE == 1:
+
+        out += """
+            <tr>
+               <td class="bibcirctableheader" align="center">%s
+               """ % (_("Search user by"))
+
+        if key == 'email':
             out += """
-                <tr>
-                   <td class="bibcirctableheader" align="center">%s
-                   """ % (_("Search user by"))
+               <input type="radio" name="key" value="ccid">%s
+               <input type="radio" name="key" value="name">%s
+               <input type="radio" name="key" value="email" checked>%s
+               """ % ('uid', _('name'), _('email'))
 
-            if key == 'email':
-                out += """
-                   <input type="radio" name="key" value="ccid">%s
-                   <input type="radio" name="key" value="name">%s
-                   <input type="radio" name="key" value="email" checked>%s
-                   """ % ('ccid', _('name'), _('email'))
-
-            elif key == 'name':
-                out += """
-                   <input type="radio" name="key" value="ccid">%s
-                   <input type="radio" name="key" value="name" checked>%s
-                   <input type="radio" name="key" value="email">%s
-                   """ % ('ccid', _('name'), _('email'))
-
-            else:
-                out += """
-                   <input type="radio" name="key" value="ccid" checked>%s
-                   <input type="radio" name="key" value="name">%s
-                   <input type="radio" name="key" value="email">%s
-                   """ % ('ccid', _('name'), _('email'))
+        elif key == 'name':
+            out += """
+               <input type="radio" name="key" value="ccid">%s
+               <input type="radio" name="key" value="name" checked>%s
+               <input type="radio" name="key" value="email">%s
+               """ % ('uid', _('name'), _('email'))
 
         else:
             out += """
-                 <tr>
-                   <td align="center" class="bibcirctableheader">%s
-                   """ % (_("Search borrower by"))
-
-            if key == 'email':
-                out += """
-                   <input type="radio" name="key" value="id">%s
-                   <input type="radio" name="key" value="name">%s
-                   <input type="radio" name="key" value="email" checked>%s
-                   """ % (_('id'), _('name'), _('email'))
-
-            elif key == 'id':
-                out += """
-                   <input type="radio" name="key" value="id" checked>%s
-                   <input type="radio" name="key" value="name">%s
-                   <input type="radio" name="key" value="email">%s
-                   """ % (_('id'), _('name'), _('email'))
-
-            else:
-                out += """
-                   <input type="radio" name="key" value="id">%s
-                   <input type="radio" name="key" value="name" checked>%s
-                   <input type="radio" name="key" value="email">%s
-                   """ % (_('id'), _('name'), _('email'))
-
+               <input type="radio" name="key" value="ccid" checked>%s
+               <input type="radio" name="key" value="name">%s
+               <input type="radio" name="key" value="email">%s
+               """ % ('uid', _('name'), _('email'))
 
         out += """
                     <br><br>
@@ -9929,11 +9801,8 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
         (borrower_id, ccid, name, email, phone, address, mailbox) = user_info
 
-        display_id = borrower_id
-        id_string = _("ID")
-        if CFG_CERN_SITE == 1:
-            display_id = ccid
-            id_string = _("CCID")
+        display_id = ccid
+        id_string = _("UID")
 
         (budget_code, period_of_interest_from, period_of_interest_to,
          additional_comments, only_edition)= request_details
@@ -10647,59 +10516,33 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
             """
 
-        if CFG_CERN_SITE == 1:
+
+        out += """
+            <tr>
+               <td class="bibcirctableheader" align="center">%s
+               """ % (_("Search user by"))
+
+        if key == 'email':
             out += """
-                <tr>
-                   <td class="bibcirctableheader" align="center">%s
-                   """ % (_("Search user by"))
+               <input type="radio" name="key" value="ccid">%s
+               <input type="radio" name="key" value="name">%s
+               <input type="radio" name="key" value="email" checked>%s
+               """ % ('uid', _('name'), _('email'))
 
-            if key == 'email':
-                out += """
-                   <input type="radio" name="key" value="ccid">%s
-                   <input type="radio" name="key" value="name">%s
-                   <input type="radio" name="key" value="email" checked>%s
-                   """ % ('ccid', _('name'), _('email'))
-
-            elif key == 'name':
-                out += """
-                   <input type="radio" name="key" value="ccid">%s
-                   <input type="radio" name="key" value="name" checked>%s
-                   <input type="radio" name="key" value="email">%s
-                   """ % ('ccid', _('name'), _('email'))
-
-            else:
-                out += """
-                   <input type="radio" name="key" value="ccid" checked>%s
-                   <input type="radio" name="key" value="name">%s
-                   <input type="radio" name="key" value="email">%s
-                   """ % ('ccid', _('name'), _('email'))
+        elif key == 'name':
+            out += """
+               <input type="radio" name="key" value="ccid">%s
+               <input type="radio" name="key" value="name" checked>%s
+               <input type="radio" name="key" value="email">%s
+               """ % ('uid', _('name'), _('email'))
 
         else:
             out += """
-                 <tr>
-                   <td align="center" class="bibcirctableheader">%s
-                   """ % (_("Search borrower by"))
+               <input type="radio" name="key" value="ccid" checked>%s
+               <input type="radio" name="key" value="name">%s
+               <input type="radio" name="key" value="email">%s
+               """ % ('uid', _('name'), _('email'))
 
-            if key == 'email':
-                out += """
-                   <input type="radio" name="key" value="id">%s
-                   <input type="radio" name="key" value="name">%s
-                   <input type="radio" name="key" value="email" checked>%s
-                   """ % (_('id'), _('name'), _('email'))
-
-            elif key == 'id':
-                out += """
-                   <input type="radio" name="key" value="id" checked>%s
-                   <input type="radio" name="key" value="name">%s
-                   <input type="radio" name="key" value="email">%s
-                   """ % (_('id'), _('name'), _('email'))
-
-            else:
-                out += """
-                   <input type="radio" name="key" value="id">%s
-                   <input type="radio" name="key" value="name" checked>%s
-                   <input type="radio" name="key" value="email">%s
-                   """ % (_('id'), _('name'), _('email'))
 
         out += """
                     <br><br>
@@ -11191,59 +11034,32 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
          <table>
             """
 
-        if CFG_CERN_SITE == 1:
+        out += """
+            <tr>
+               <td class="bibcirctableheader" align="center">%s
+               """ % (_("Search user by"))
+
+        if f == 'email':
             out += """
-                <tr>
-                   <td class="bibcirctableheader" align="center">%s
-                   """ % (_("Search user by"))
+               <input type="radio" name="f" value="ccid">%s
+               <input type="radio" name="f" value="name">%s
+               <input type="radio" name="f" value="email" checked>%s
+               """ % ('uid', _('name'), _('email'))
 
-            if f == 'email':
-                out += """
-                   <input type="radio" name="f" value="ccid">%s
-                   <input type="radio" name="f" value="name">%s
-                   <input type="radio" name="f" value="email" checked>%s
-                   """ % ('ccid', _('name'), _('email'))
-
-            elif f == 'name':
-                out += """
-                   <input type="radio" name="f" value="ccid">%s
-                   <input type="radio" name="f" value="name" checked>%s
-                   <input type="radio" name="f" value="email">%s
-                   """ % ('ccid', _('name'), _('email'))
-
-            else:
-                out += """
-                   <input type="radio" name="f" value="ccid" checked>%s
-                   <input type="radio" name="f" value="name">%s
-                   <input type="radio" name="f" value="email">%s
-                   """ % ('ccid', _('name'), _('email'))
+        elif f == 'name':
+            out += """
+               <input type="radio" name="f" value="ccid">%s
+               <input type="radio" name="f" value="name" checked>%s
+               <input type="radio" name="f" value="email">%s
+               """ % ('uid', _('name'), _('email'))
 
         else:
             out += """
-                 <tr>
-                   <td align="center" class="bibcirctableheader">%s
-                   """ % (_("Search borrower by"))
+               <input type="radio" name="f" value="ccid" checked>%s
+               <input type="radio" name="f" value="name">%s
+               <input type="radio" name="f" value="email">%s
+               """ % ('uid', _('name'), _('email'))
 
-            if f == 'email':
-                out += """
-                   <input type="radio" name="f" value="id">%s
-                   <input type="radio" name="f" value="name">%s
-                   <input type="radio" name="f" value="email" checked>%s
-                   """ % (_('id'), _('name'), _('email'))
-
-            elif f == 'id':
-                out += """
-                   <input type="radio" name="f" value="id" checked>%s
-                   <input type="radio" name="f" value="name">%s
-                   <input type="radio" name="f" value="email">%s
-                   """ % (_('id'), _('name'), _('email'))
-
-            else:
-                out += """
-                   <input type="radio" name="f" value="id">%s
-                   <input type="radio" name="f" value="name" checked>%s
-                   <input type="radio" name="f" value="email">%s
-                   """ % (_('id'), _('name'), _('email'))
 
         out += """
                     <br><br>

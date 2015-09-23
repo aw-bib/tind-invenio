@@ -1169,7 +1169,7 @@ def return_loan(barcode):
 ###
 
 def get_requested_items_on_holdshelf():
-    res = run_sql("""
+    return run_sql("""
             SELECT i.barcode, i.id_bibrec, l.name, loc.name, b.name, b.id, lr.id, lr.request_date, lr.status
             FROM crcITEM i
             JOIN crcLIBRARY l ON i.id_crcLIBRARY = l.id
@@ -1178,10 +1178,6 @@ def get_requested_items_on_holdshelf():
             LEFT JOIN crcBORROWER b ON lr.id_crcBORROWER = b.id
             WHERE i.status = '%s'
     """ % CFG_BIBCIRCULATION_ITEM_STATUS_ON_HOLDSHELF)
-    if res:
-        return res[0][0]
-    else:
-        return None
 
 
 def get_id_bibrec(barcode):

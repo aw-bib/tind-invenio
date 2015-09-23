@@ -4555,9 +4555,10 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
         return out
 
     def tmpl_get_items_on_holdshelf(self, result, ln=CFG_SITE_LANG):
-         """
+        """
         @param ln: language of the page
         """
+
         _ = gettext_set_language(ln)
         out = load_menu(ln)
 

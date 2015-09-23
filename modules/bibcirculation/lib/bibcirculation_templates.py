@@ -1256,8 +1256,8 @@ class Template:
                 out += """
                         <select onchange="eval(this.options[this.selectedIndex].value)">
                             <option>Select an action</option>
-                            <option value="window.open('/admin2/bibcirculation/update_item_info_step4?barcode=%(barcode)s'">Change status</option>
-                            <option value="window.open('/admin2/bibcirculation/create_loan?request_id=%(request_id)s&recid=%(recid)s&borrower_id=%(borrower_id)s'">Create loan</option>
+                            <option value="window.open('/admin2/bibcirculation/update_item_info_step4?barcode=%(barcode)s')">Change status</option>
+                            <option value="window.open('/admin2/bibcirculation/create_loan?request_id=%(request_id)s&recid=%(recid)s&borrower_id=%(borrower_id)s')">Create loan</option>
                             <option value="confirmation(%(request_id)s)">Delete request</option>
                         </select>
                  </td>

@@ -3783,7 +3783,7 @@ def get_borrower_loans_details(req, recid, barcode, borrower_id,
                               '</a>' % (CFG_SITE_SECURE_URL,)
 
     loan_rule = db.get_matching_loan_rule(barcode, user_id=borrower_id)
-    if not loan_rule:
+    if barcode and not loan_rule:
         patron_type = db.get_patron_type_name_from_user_id(borrower_id) or "None"
         item_type = db.get_item_type_name_from_barcode(barcode) or "None"
         loc_code = db.get_location_code_from_barcode(barcode) or "None"

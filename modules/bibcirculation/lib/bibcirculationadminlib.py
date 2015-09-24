@@ -3202,7 +3202,7 @@ def update_item_info_step5(req, barcode, old_barcode, library, call_no, location
     library_name = db.get_library_name(library)
     item_type_name = db.get_item_type_name(item_type)
     tup_infos = (barcode, old_barcode, library, library_name, call_no,
-                 location, description, item_type, status, loc_exception
+                 location, description, item_type, status, loc_exception,
                  expected_arrival_date, recid, item_type_name)
 
     navtrail_previous_links = '<a class="navtrail"' \

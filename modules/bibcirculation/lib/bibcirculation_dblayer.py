@@ -1338,28 +1338,40 @@ def get_item_requests(recid):
                             lr.id_bibrec,
                             lr.barcode,
                             lr.status,
-                            lib.name,
+                            (CASE WHEN ex_lib.name IS NOT NULL THEN
+                                ex_lib.name
+                            ELSE
+                                lib.name
+                            END) AS library,
                             it.call_no,
-                            loc.name as location,
+                            (CASE WHEN ex_loc.name IS NOT NULL THEN
+                                ex_loc.name
+                            ELSE
+                                loc.name
+                            END) AS location,
                             it.description,
                             DATE_FORMAT(lr.period_of_interest_from,'%%Y-%%m-%%d'),
                             DATE_FORMAT(lr.period_of_interest_to,'%%Y-%%m-%%d'),
                             lr.id,
                             lr.request_date
-                     FROM   crcLOANREQUEST lr,
-                            crcBORROWER bor,
-                            crcITEM it,
-                            crcLOCATION loc,
-                            crcLIBRARY lib
-                     WHERE  bor.id = lr.id_crcBORROWER and lr.id_bibrec=%s
-                            and it.id_location = loc.id
-                            and lr.status!=%s and lr.status!=%s and lr.status!=%s
-                            and lr.barcode = it.barcode and lib.id = it.id_crcLIBRARY
+                       FROM crcLOANREQUEST lr
+                       JOIN crcBORROWER bor ON lr.id_crcBORROWER = bor.id
+                       JOIN crcITEM it ON lr.barcode = it.barcode
+                       JOIN crcLOCATION loc ON it.id_location = loc.id
+                       JOIN crcLIBRARY lib ON it.id_crcLIBRARY = lib.id
+                  LEFT JOIN crcLOCATION_EXCEPTIONS le ON it.loc_exception = le.id
+                  LEFT JOIN crcLOCATION ex_loc ON ex_loc.id = le.id_crcLOCATION
+                  LEFT JOIN crcLIBRARY ex_lib ON ex_loc.`id_crcLIBRARY` = ex_lib.id
+
+
+                      WHERE lr.id_bibrec=%s AND
+                            lr.status!=%s AND
+                            lr.status!=%s AND
+                            lr.status!=%s
                      """, (recid,
                            CFG_BIBCIRCULATION_REQUEST_STATUS_DONE,
                            CFG_BIBCIRCULATION_REQUEST_STATUS_CANCELLED,
                            CFG_BIBCIRCULATION_REQUEST_STATUS_PROPOSED))
-
     return res
 
 def get_item_purchases(status, recid):

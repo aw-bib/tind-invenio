@@ -2302,10 +2302,9 @@ def get_library_items(library_id):
                        FROM crcITEM i
                   LEFT JOIN crcLOCATION_EXCEPTIONS le ON i.loc_exception = le.id
                   LEFT JOIN crcLOCATION ex_loc ON ex_loc.id = le.id_crcLOCATION
-                  LEFT JOIN crcLIBRARY ex_lib ON ex_loc.`id_crcLIBRARY` = ex_lib.id
                        JOIN crcLOCATION loc on i.id_location = loc.id
-                      WHERE (CASE WHEN ex_lib.id IS NOT NULL THEN
-                                ex_lib.id ={0}
+                      WHERE (CASE WHEN ex_loc.id_crcLIBRARY IS NOT NULL THEN
+                                ex_loc.id_crcLIBRARY = {0}
                             ELSE
                                 i.id_crcLIBRARY = {0}
                             END)

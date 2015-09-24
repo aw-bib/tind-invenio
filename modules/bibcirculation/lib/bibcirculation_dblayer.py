@@ -996,25 +996,33 @@ def get_all_expired_loans():
     return res
 
 def get_expired_loans_with_waiting_requests():
-
     res = run_sql("""SELECT DISTINCT
                             lr.id,
                             lr.id_bibrec,
                             lr.id_crcBORROWER,
-                            it.id_crcLIBRARY,
+                            (CASE WHEN ex_loc.id_crcLIBRARY IS NOT NULL THEN
+                                ex_loc.id_crcLIBRARY
+                            ELSE
+                                it.id_crcLIBRARY
+                            END) AS id_crcLIBRARY,
                             it.call_no,
-                            loc.name as location,
+                            (CASE WHEN ex_loc.name IS NOT NULL THEN
+                                ex_loc.name
+                            ELSE
+                                loc.name
+                            END) AS location,
                             DATE_FORMAT(lr.period_of_interest_from,'%%d-%%m-%%Y'),
                             DATE_FORMAT(lr.period_of_interest_to,'%%d-%%m-%%Y'),
                             lr.request_date
-                       FROM crcLOANREQUEST lr,
-                            crcITEM it,
-                            crcLOCATION loc,
-                            crcLOAN l
-                      WHERE it.barcode=l.barcode
-                        AND it.id_location = loc.id
-                        AND lr.id_bibrec=it.id_bibrec
-                        AND (lr.status=%s or lr.status=%s)
+
+                       FROM crcLOANREQUEST lr
+                       JOIN crcITEM it ON lr.id_bibrec=it.id_bibrec
+                       JOIN crcLOCATION loc ON it.id_location = loc.id
+                       JOIN crcLOAN l ON it.barcode=l.barcode
+                  LEFT JOIN crcLOCATION_EXCEPTIONS le ON it.loc_exception = le.id
+                  LEFT JOIN crcLOCATION ex_loc ON ex_loc.id = le.id_crcLOCATION
+
+                      WHERE (lr.status=%s or lr.status=%s)
                         AND (l.status=%s or (l.status=%s
                         AND l.due_date < CURDATE()))
                         AND lr.period_of_interest_from <= NOW()

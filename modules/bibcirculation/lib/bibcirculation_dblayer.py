@@ -840,10 +840,13 @@ def get_all_loans(limit=None, sort= None, libraries=(), sort_by=-1, sort_dir="as
     if libraries:
         if not isinstance(libraries, list):
             libraries = [libraries]
-        where_addition += " and lib.name IN ('"
-        for library in libraries:
-            where_addition += library + "','"
-        where_addition += "') "
+        where_addition += """
+                and (CASE WHEN ex_lib.name IS NOT NULL THEN
+                    ex_lib.name IN ('%(libraries)s')
+                ELSE
+                    lib.name IN ('%(libraries)s')
+                END)
+        """ % {'libraries': "','".join(libraries)}
     if sort_by > -1:
         criteria = ["bor.name", "bi.value", "l.barcode",
                     "l.loaned_on", "l.due_date",
@@ -853,31 +856,44 @@ def get_all_loans(limit=None, sort= None, libraries=(), sort_by=-1, sort_dir="as
     if type_l:
         type_addition += " and lib.type IN {0} ".format(str(type_l).replace("[","(").replace("]",")"))
     query_select = """
-    SELECT bor.id,
-           bor.name,
-           it.id_bibrec,
-           bi.value,
-           l.barcode,
-           DATE_FORMAT(l.loaned_on,'%d-%m-%Y'),
-           DATE_FORMAT(l.due_date,'%d-%m-%Y'),
-           l.number_of_renewals,
-           l.overdue_letter_number,
-           DATE_FORMAT(l.overdue_letter_date,'%d-%m-%Y'),
-           l.notes,
-           l.id,
-           lib.name,
-           loc.name
-    FROM crcLOAN l, crcBORROWER bor, crcITEM it, bib24x bi, bibrec_bib24x bibrec, crcLOCATION loc, crcLIBRARY lib
-    WHERE l.id_crcBORROWER = bor.id
-          and it.id_crcLIBRARY = lib.id
-          and it.id_location = loc.id
-          and l.barcode = it.barcode
-          and bibrec.id_bibrec = it.id_bibrec
-          and bibrec.id_bibxxx = bi.id
-          and bi.tag like '%a'
-          and l.status = '{4}'
-          {0}{2}{1}
-          {3}
+                SELECT bor.id,
+                       bor.name,
+                       it.id_bibrec,
+                       bi.value,
+                       l.barcode,
+                       DATE_FORMAT(l.loaned_on,'%d-%m-%Y'),
+                       DATE_FORMAT(l.due_date,'%d-%m-%Y'),
+                       l.number_of_renewals,
+                       l.overdue_letter_number,
+                       DATE_FORMAT(l.overdue_letter_date,'%d-%m-%Y'),
+                       l.notes,
+                       l.id,
+                       (CASE WHEN ex_lib.name IS NOT NULL THEN
+                           ex_lib.name
+                       ELSE
+                           lib.name
+                       END) AS library,
+                       (CASE WHEN ex_loc.name IS NOT NULL THEN
+                           ex_loc.name
+                       ELSE
+                           loc.name
+                       END) AS location
+
+                  FROM crcLOAN l
+                  JOIN crcBORROWER bor ON l.id_crcBORROWER = bor.id
+                  JOIN crcITEM it ON l.barcode = it.barcode
+                  JOIN bibrec_bib24x bibrec ON it.id_bibrec = bibrec.id_bibrec
+                  JOIN bib24x bi ON bibrec.id_bibxxx = bi.id
+                  JOIN crcLOCATION loc ON it.id_location = loc.id
+                  JOIN crcLIBRARY lib ON it.id_crcLIBRARY = lib.id
+             LEFT JOIN crcLOCATION_EXCEPTIONS le ON it.loc_exception = le.id
+             LEFT JOIN crcLOCATION ex_loc ON ex_loc.id = le.id_crcLOCATION
+             LEFT JOIN crcLIBRARY ex_lib ON ex_loc.`id_crcLIBRARY` = ex_lib.id
+
+                 WHERE bi.tag like '%a'
+                       and l.status = '{4}'
+                       {0}{2}{1}
+                       {3}
     """.format(where_addition, order_addition, type_addition,
                'LIMIT {0}'.format(limit) if limit else '', CFG_BIBCIRCULATION_LOAN_STATUS_ON_LOAN)
     res = run_sql(query_select)

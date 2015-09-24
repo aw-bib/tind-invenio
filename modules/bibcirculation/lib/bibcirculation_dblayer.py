@@ -2482,9 +2482,16 @@ def get_library_holding_barcode(barcode):
     barcode: the primary key for crcITEM
     """
 
-    res = run_sql("""SELECT id_crcLIBRARY
-                     FROM crcITEM
-                     WHERE barcode=%s""", (barcode, ))
+    res = run_sql("""SELECT
+                     (CASE WHEN ex_loc.id_crcLIBRARY IS NOT NULL THEN
+                         ex_loc.id_crcLIBRARY
+                     ELSE
+                         it.id_crcLIBRARY
+                     END) AS id_crcLIBRARY
+                     FROM crcITEM it
+                     LEFT JOIN crcLOCATION_EXCEPTIONS le ON it.loc_exception = le.id
+                     LEFT JOIN crcLOCATION ex_loc ON ex_loc.id = le.id_crcLOCATION
+                     WHERE it.barcode=%s""", (barcode, ))
 
     if res:
         return res[0]

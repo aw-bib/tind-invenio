@@ -2210,32 +2210,39 @@ def get_borrower_request_details(borrower_id):
     """
     borrower_id: identify the borrower. It is also the primary key of
                  the table crcBORROWER.
-
     This function is also used by the Aleph Service for the display of loan
     requests of the user for the termination sheet.
     """
-
     res = run_sql("""SELECT lr.id_bibrec,
                             lr.status,
-                            lib.name,
+                            (CASE WHEN ex_lib.name IS NOT NULL THEN
+                                ex_lib.name
+                            ELSE
+                                lib.name
+                            END) AS library,
                             it.call_no,
-                            loc.name as location,
+                            (CASE WHEN ex_loc.name IS NOT NULL THEN
+                                ex_loc.name
+                            ELSE
+                                loc.name
+                            END) AS location,
                             DATE_FORMAT(lr.period_of_interest_from,'%%d-%%m-%%Y'),
                             DATE_FORMAT(lr.period_of_interest_to,'%%d-%%m-%%Y'),
                             lr.request_date,
                             lr.id
-                     FROM   crcLOANREQUEST lr,
-                            crcITEM it,
-                            crcLIBRARY lib,
-                            crcLOCATION loc
+                       FROM crcLOANREQUEST lr
+                       JOIN crcITEM it ON lr.barcode = it.barcode
+                       JOIN crcLIBRARY lib ON it.id_crcLIBRARY = lib.id
+                       JOIN crcLOCATION loc ON it.id_location = loc.id
+                  LEFT JOIN crcLOCATION_EXCEPTIONS le ON it.loc_exception = le.id
+                  LEFT JOIN crcLOCATION ex_loc ON ex_loc.id = le.id_crcLOCATION
+                  LEFT JOIN crcLIBRARY ex_lib ON ex_loc.`id_crcLIBRARY` = ex_lib.id
+
                      WHERE  lr.id_crcBORROWER=%s
                        AND  (lr.status=%s OR lr.status=%s)
-                       AND  it.id_location = loc.id
-                            and lib.id = it.id_crcLIBRARY and lr.barcode = it.barcode
                             """, (borrower_id,
                                   CFG_BIBCIRCULATION_REQUEST_STATUS_WAITING,
                                   CFG_BIBCIRCULATION_REQUEST_STATUS_PENDING))
-
     return res
 
 def get_borrower_requests(borrower_id):

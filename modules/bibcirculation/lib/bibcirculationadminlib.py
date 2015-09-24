@@ -3155,6 +3155,7 @@ def update_item_info_step4(req, barcode, ln=CFG_SITE_LANG):
     libraries = db.get_internal_libraries()
     libraries += db.get_hidden_libraries()
     item_types = db.get_item_types()
+    loc_exceptions = db.get_loc_exceptions()
 
     navtrail_previous_links = '<a class="navtrail" ' \
                               'href="%s/help/admin">Admin Area' \
@@ -3172,6 +3173,7 @@ def update_item_info_step4(req, barcode, ln=CFG_SITE_LANG):
                                                     result=result,
                                                     libraries=libraries,
                                                     item_types=item_types,
+                                                    loc_exceptions=loc_exceptions,
                                                     infos=infos,
                                                     ln=ln)
 
@@ -3184,7 +3186,7 @@ def update_item_info_step4(req, barcode, ln=CFG_SITE_LANG):
                 lastupdated=__lastupdated__)
 
 def update_item_info_step5(req, barcode, old_barcode, library, call_no, location,
-                           description, item_type, status,
+                           description, item_type, status, loc_exception,
                            expected_arrival_date, recid, ln=CFG_SITE_LANG):
 
     """
@@ -3200,7 +3202,7 @@ def update_item_info_step5(req, barcode, old_barcode, library, call_no, location
     library_name = db.get_library_name(library)
     item_type_name = db.get_item_type_name(item_type)
     tup_infos = (barcode, old_barcode, library, library_name, call_no,
-                 location, description, item_type, status,
+                 location, description, item_type, status, loc_exception
                  expected_arrival_date, recid, item_type_name)
 
     navtrail_previous_links = '<a class="navtrail"' \
@@ -3231,7 +3233,7 @@ def update_item_info_step6(req, tup_infos, ln=CFG_SITE_LANG):
 
     # tuple containing information for the update process.
     (barcode, old_barcode, library_id, call_no, location,
-     description, item_type, status, expected_arrival_date, recid) = tup_infos
+     description, item_type, status, loc_exception, expected_arrival_date, recid) = tup_infos
 
     is_on_loan = db.is_on_loan(old_barcode)
     #is_requested = db.is_requested(old_barcode)
@@ -3248,7 +3250,7 @@ def update_item_info_step6(req, tup_infos, ln=CFG_SITE_LANG):
 
     # update item information. FIXME add functionality for adding locations
     db.update_item_info(old_barcode, library_id, call_no, location, description.strip(),
-                        item_type, status, expected_arrival_date)
+                        item_type, status, loc_exception, expected_arrival_date)
     update_requests_statuses(old_barcode)
     navtrail_previous_links = '<a class="navtrail"' \
                               'href="%s/help/admin">Admin Area' \

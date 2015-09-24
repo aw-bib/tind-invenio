@@ -6341,7 +6341,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
         return out
 
-    def tmpl_update_item_info_step4(self, recid, result, libraries, item_types, infos=None,
+    def tmpl_update_item_info_step4(self, recid, result, libraries, item_types, loc_exceptions, infos=None,
                                     ln=CFG_SITE_LANG):
         """
         @param recid: identify the record. Primary key of bibrec
@@ -6599,7 +6599,25 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                            name="expected_arrival_date" value="%s">
                   </td>
                 </tr>
-                </table>
+                <tr>
+                  <th width="100">%s</th>
+                  <td>
+                    <select name="loc_exception" style='border: 1px solid #cfcfcf'>
+                        <option>None</option>
+                  """ % (_("Expected arrival date"), expected_arrival_date,
+                         _("Location exception"))
+        for ex in loc_exceptions:
+            if ex[0] == result[9]:
+                out += """<option selected="selected" value="%s">%s</option>
+                       """ % (ex[0], ex[1])
+            else:
+                out += """<option value="%s">%s</option>
+                       """ % (ex[0], ex[1])
+
+        out += """  </select>
+                  </td>
+                </tr>
+            </table>
            <br />
            <table class="bibcirctable">
                 <tr>
@@ -6615,8 +6633,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
            <br />
            </div>
            </form>
-           """ % (_("Expected arrival date"), expected_arrival_date,
-                  _("Back"), _("Continue"), recid)
+           """ % (_("Back"), _("Continue"), recid)
 
         return out
 
@@ -6673,6 +6690,9 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                 <tr>
                     <th width="100">%s</th> <td>%s</td>
                 </tr>
+                <tr>
+                    <th width="100">%s</th> <td>%s</td>
+                </tr>
               </table>
               <br />
               <table class="bibcirctable">
@@ -6690,6 +6710,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                      <input type=hidden name=description value="%s">
                      <input type=hidden name=item_type value="%s">
                      <input type=hidden name=status value="%s">
+                     <input type=hidden name=loc_exception value="%s">
                      <input type=hidden name=expected_arrival_date value="%s">
                      <input type=hidden name=recid value="%s">
                   </td>
@@ -6707,7 +6728,8 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                     _("Description"), cgi.escape(tup_infos[6], True),
                     _("Item type"), cgi.escape(tup_infos[11], True),
                     _("Status"), cgi.escape(tup_infos[8], True),
-                    _("Expected arrival date"), cgi.escape(tup_infos[9], True),
+                    _("Location exception"), cgi.escape(tup_infos[9], True),
+                    _("Expected arrival date"), cgi.escape(tup_infos[10], True),
                     _("Back"), _("Confirm"),
                     cgi.escape(tup_infos[0], True),
                     cgi.escape(tup_infos[1], True),
@@ -6716,7 +6738,8 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                     cgi.escape(tup_infos[6], True),
                     tup_infos[7],
                     cgi.escape(tup_infos[8], True),
-                    cgi.escape(tup_infos[9], True), tup_infos[10])
+                    tup_infos[9],
+                    cgi.escape(tup_infos[10], True), tup_infos[11])
 
         return out
 

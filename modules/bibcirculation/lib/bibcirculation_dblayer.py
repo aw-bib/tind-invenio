@@ -1205,7 +1205,8 @@ def get_item_info(barcode, for_update=False):
                                 loc.name as location,
                                 it.description,
                                 it.id_itemtype,
-                                it.status
+                                it.status,
+                                it.loc_exception
                            FROM crcITEM it
                            JOIN crcLOCATION loc on it.id_location = loc.id
                            JOIN crcLIBRARY lib ON it.id_crcLIBRARY = lib.id
@@ -1229,6 +1230,7 @@ def get_item_info(barcode, for_update=False):
                                 it.description,
                                 it.id_itemtype,
                                 it.status
+                                it.loc_exception
                            FROM crcITEM it
                       LEFT JOIN crcLOCATION_EXCEPTIONS le ON it.loc_exception = le.id
                       LEFT JOIN crcLOCATION ex_loc ON ex_loc.id = le.id_crcLOCATION
@@ -3688,6 +3690,13 @@ def del_location(id):
         res = run_sql("DELETE FROM crcLOCATION WHERE id = %s", (id,))
         if res == 0:
             raise DatabaseError("No such id")
+
+def get_loc_exceptions():
+    return run_sql("""
+                    SELECT le.id, loc.name
+                    FROM crcLOCATION_EXCEPTIONS le
+                    JOIN crcLOCATION loc ON le.id_crcLOCATION = loc.id
+                  """)
 
 def item_has_loc_exception(barcode):
     res = run_sql("SELECT (loc_exception is not null) FROM crcITEM where barcode = %s", (barcode,))

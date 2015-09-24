@@ -3681,7 +3681,8 @@ def add_location(code, name, lib_id):
 
 def del_location(id):
     res = run_sql("SELECT count(*) FROM crcITEM where id_location = %s", (id,))
-    if res[0][0] != 0:
+    res2 = run_sql("SELECT count(*) FROM crcLOCATION_EXCEPTIONS where id_crcLOCATION = %s", (id,))
+    if res[0][0] != 0 or res2[0][0] != 0:
         raise IntegrityError("Location in use")
     else:
         res = run_sql("DELETE FROM crcLOCATION WHERE id = %s", (id,))

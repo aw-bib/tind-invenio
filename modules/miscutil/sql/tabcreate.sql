@@ -5163,6 +5163,15 @@ CREATE TABLE IF NOT EXISTS `aulAUTHOR_IDENTIFIERS` (
 ALTER TABLE crcITEM ENGINE = InnoDB;
 ALTER TABLE crcBORROWER ENGINE = InnoDB;
 
+-- Add fields to existing tables:
+ALTER TABLE crcITEM ADD COLUMN `loc_exception` int(11) unsigned DEFAULT NULL,
+
+CREATE TABLE `crcLOCATION_EXCEPTIONS` (
+  `id` int(15) unsigned NOT NULL AUTO_INCREMENT,
+  `id_crcLOCATION` int(15) unsigned NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 CREATE TABLE `crcLOCATION` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `code` varchar(32) DEFAULT NULL,

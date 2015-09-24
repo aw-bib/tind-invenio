@@ -1422,23 +1422,33 @@ def get_item_loans_historical_overview(recid):
     res = run_sql("""SELECT bor.name,
                             bor.id,
                             l.barcode,
-                            lib.name,
+                            (CASE WHEN ex_lib.name IS NOT NULL THEN
+                                ex_lib.name
+                            ELSE
+                                lib.name
+                            END) AS library,
                             it.call_no,
-                            loc.name as location,
+                            (CASE WHEN ex_loc.name IS NOT NULL THEN
+                                ex_loc.name
+                            ELSE
+                                loc.name
+                            END) AS location,
                             DATE_FORMAT(l.loaned_on,'%%d-%%m-%%Y'),
                             DATE_FORMAT(l.due_date,'%%d-%%m-%%Y'),
                             l.returned_on,
                             l.number_of_renewals,
                             l.overdue_letter_number
-                     FROM crcLOAN l, crcBORROWER bor, crcITEM it, crcLIBRARY lib, crcLOCATION loc
-                     WHERE l.id_crcBORROWER=bor.id and
-                           lib.id = it.id_crcLIBRARY and
-                           it.barcode = l.barcode and
-                           it.id_location = loc.id and
-                           l.id_bibrec = %s and
+                       FROM crcLOAN l
+                       JOIN crcBORROWER bor ON l.id_crcBORROWER=bor.id
+                       JOIN crcITEM it ON l.barcode = it.barcode
+                       JOIN crcLIBRARY lib ON it.id_crcLIBRARY = lib.id
+                       JOIN crcLOCATION loc ON it.id_location = loc.id
+                  LEFT JOIN crcLOCATION_EXCEPTIONS le ON it.loc_exception = le.id
+                  LEFT JOIN crcLOCATION ex_loc ON ex_loc.id = le.id_crcLOCATION
+                  LEFT JOIN crcLIBRARY ex_lib ON ex_loc.`id_crcLIBRARY` = ex_lib.id
+                     WHERE l.id_bibrec = %s and
                            l.status = %s """
                   , (recid, CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED))
-
     return res
 
 def get_item_requests_historical_overview(recid):

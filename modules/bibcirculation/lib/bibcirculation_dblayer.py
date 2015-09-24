@@ -1707,59 +1707,70 @@ def set_item_description(barcode, description):
 def get_holdings_information(recid, include_hidden_libraries=True):
     """
     Get information about holdings, using recid.
-
     @param recid: identify the record. Primary key of bibrec.
     @type recid:  int
-
     @return holdings information
     """
-
     if include_hidden_libraries:
         res = run_sql("""SELECT it.barcode,
-                                lib.name,
+                                (CASE WHEN ex_lib.name IS NOT NULL THEN
+                                    ex_lib.name
+                                ELSE
+                                    lib.name
+                                END) AS library,
                                 it.collection,
                                 it.call_no,
-                                loc.name as location,
+                                (CASE WHEN ex_loc.name IS NOT NULL THEN
+                                    ex_loc.name
+                                ELSE
+                                    loc.name
+                                END) AS location,
                                 it.description,
                                 itt.name AS item_type,
                                 it.status,
                                 DATE_FORMAT(ln.due_date, '%%Y-%%m-%%d')
                            FROM crcITEM it
-                                left join crcLOAN ln
-                                on it.barcode = ln.barcode and ln.status != %s
-                                left join crcLIBRARY lib
-                                on lib.id = it.id_crcLIBRARY
-                                left join crcITEMTYPES itt
-                                on it.id_itemtype = itt.id
-                                left join crcLOCATION loc
-                                on it.id_location = loc.id
-                          WHERE it.id_bibrec=%s
-                    """, (CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED, recid))
+                                left join crcLOAN ln on it.barcode = ln.barcode and ln.status != %s
+                                left join crcLIBRARY lib on lib.id = it.id_crcLIBRARY
+                                left join crcITEMTYPES itt on it.id_itemtype = itt.id
+                                left join crcLOCATION loc on it.id_location = loc.id
+                                LEFT JOIN crcLOCATION_EXCEPTIONS le ON it.loc_exception = le.id
+                                LEFT JOIN crcLOCATION ex_loc ON ex_loc.id = le.id_crcLOCATION
+                                LEFT JOIN crcLIBRARY ex_lib ON ex_loc.`id_crcLIBRARY` = ex_lib.id
 
+                                WHERE it.id_bibrec=%s
+                    """, (CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED, recid))
     else:
         res = run_sql("""SELECT it.barcode,
-                                lib.name,
+                                (CASE WHEN ex_lib.name IS NOT NULL THEN
+                                    ex_lib.name
+                                ELSE
+                                    lib.name
+                                END) AS library,
                                 it.collection,
                                 it.call_no,
-                                loc.name as location,
+                                (CASE WHEN ex_loc.name IS NOT NULL THEN
+                                    ex_loc.name
+                                ELSE
+                                    loc.name
+                                END) AS location,
                                 it.description,
                                 itt.name AS item_type,
                                 it.status,
                                 DATE_FORMAT(ln.due_date, '%%Y-%%m-%%d')
                            FROM crcITEM it
-                                left join crcLOAN ln
-                                on it.barcode = ln.barcode and ln.status != %s
-                                left join crcLIBRARY lib
-                                on lib.id = it.id_crcLIBRARY
-                                left join crcITEMTYPES itt
-                                on it.id_itemtype = itt.id
-                                left join crcLOCATION loc
-                                on it.id_location = loc.id
+                                left join crcLOAN ln on it.barcode = ln.barcode and ln.status != %s
+                                left join crcLIBRARY lib on lib.id = it.id_crcLIBRARY
+                                left join crcITEMTYPES itt on it.id_itemtype = itt.id
+                                left join crcLOCATION loc on it.id_location = loc.id
+                                LEFT JOIN crcLOCATION_EXCEPTIONS le ON it.loc_exception = le.id
+                                LEFT JOIN crcLOCATION ex_loc ON ex_loc.id = le.id_crcLOCATION
+                                LEFT JOIN crcLIBRARY ex_lib ON ex_loc.`id_crcLIBRARY` = ex_lib.id
+
                           WHERE it.id_bibrec=%s
                             AND lib.type<>%s
                     """, (CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED, recid,
                           CFG_BIBCIRCULATION_LIBRARY_TYPE_HIDDEN))
-
     return res
 
 def get_number_copies(recid):

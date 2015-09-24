@@ -1504,66 +1504,126 @@ def get_nb_copies_on_loan(recid):
 
 def get_item_copies_details(recid, patrontype=None):
     if type(patrontype) is int:
-        qry = """SELECT it.barcode, lrv.loan_period, lib.name,
-                                    lib.id, it.call_no, loc.name as location, it.number_of_requests,
-                                    it.status, it.collection, it.description,
-                                    DATE_FORMAT(ln.due_date,'%%d-%%m-%%Y'), lrv.code,
-                                    itt.name AS itemtype
-                             FROM crcITEM it
-                                    LEFT JOIN crcLOAN ln
-                                    ON it.barcode = ln.barcode AND ln.status != "%s"
-                                    LEFT JOIN crcLIBRARY lib
-                                    ON lib.id = it.id_crcLIBRARY
-                                    LEFT JOIN crcITEMTYPES itt
-                                    ON it.id_itemtype = itt.id
-                                    LEFT JOIN crcLOANRULES_MATCH_VIEW lrv
-                                    ON it.barcode = lrv.barcode
-                                    LEFT JOIN crcLOCATION loc
-                                    ON it.id_location = loc.id
-                             WHERE it.id_bibrec=%s
-                             AND lrv.`patrontype_id` = %s
-                             GROUP BY it.barcode
+        qry = """SELECT it.barcode,
+                        lrv.loan_period,
+                        (CASE WHEN ex_lib.name IS NOT NULL THEN
+                            ex_lib.name
+                        ELSE
+                            lib.name
+                        END) AS library,
+                        (CASE WHEN ex_lib.id IS NOT NULL THEN
+                            ex_lib.id
+                        ELSE
+                            lib.id
+                        END) AS lib_id,
+                        it.call_no,
+                        (CASE WHEN ex_loc.name IS NOT NULL THEN
+                            ex_loc.name
+                        ELSE
+                            loc.name
+                        END) AS location,
+                        it.number_of_requests,
+                        it.status,
+                        it.collection,
+                        it.description,
+                        DATE_FORMAT(ln.due_date,'%%d-%%m-%%Y'), lrv.code,
+                        itt.name AS itemtype
+
+                        FROM crcITEM it
+                        LEFT JOIN crcLOAN ln ON it.barcode = ln.barcode AND ln.status != "%s"
+                        LEFT JOIN crcLIBRARY lib ON lib.id = it.id_crcLIBRARY
+                        LEFT JOIN crcITEMTYPES itt ON it.id_itemtype = itt.id
+                        LEFT JOIN crcLOANRULES_MATCH_VIEW lrv ON it.barcode = lrv.barcode
+                        LEFT JOIN crcLOCATION loc ON it.id_location = loc.id
+                        LEFT JOIN crcLOCATION_EXCEPTIONS le ON it.loc_exception = le.id
+                        LEFT JOIN crcLOCATION ex_loc ON ex_loc.id = le.id_crcLOCATION
+                        LEFT JOIN crcLIBRARY ex_lib ON ex_loc.`id_crcLIBRARY` = ex_lib.id
+
+                        WHERE it.id_bibrec=%s
+                        AND lrv.`patrontype_id` = %s
+                        GROUP BY it.barcode
                 UNION ALL
-                SELECT it.barcode, NULL AS loan_period, lib.name,
-                                    lib.id, it.call_no, loc.name as location, it.number_of_requests,
-                                    it.status, it.collection, it.description,
-                                    DATE_FORMAT(ln.due_date,'%%d-%%m-%%Y'), NULL,
-                                    itt.name AS itemtype
-                            FROM crcITEM it
-                                    LEFT JOIN crcLOAN ln
-                                    ON it.barcode = ln.barcode AND ln.status != "%s"
-                                    LEFT JOIN crcLIBRARY lib
-                                    ON lib.id = it.id_crcLIBRARY
-                                    LEFT JOIN crcITEMTYPES itt
-                                    ON it.id_itemtype = itt.id
-                                    LEFT JOIN crcLOCATION loc
-                                    ON it.id_location = loc.id
-                            WHERE it.id_bibrec=%s
-                            AND it.barcode NOT IN (SELECT it.barcode FROM crcITEM AS it
-                            					JOIN crcLOANRULES_MATCH_VIEW AS lrv
-                            					ON it.barcode = lrv.barcode
-                            					WHERE patrontype_id = %s
-                            					)
-                            GROUP BY it.barcode;
+                SELECT it.barcode,
+                       NULL AS loan_period,
+                       (CASE WHEN ex_lib.name IS NOT NULL THEN
+                           ex_lib.name
+                       ELSE
+                           lib.name
+                       END) AS library,
+                       (CASE WHEN ex_lib.id IS NOT NULL THEN
+                           ex_lib.id
+                       ELSE
+                           lib.id
+                       END) AS lib_id,
+                       it.call_no,
+                       (CASE WHEN ex_loc.name IS NOT NULL THEN
+                           ex_loc.name
+                       ELSE
+                           loc.name
+                       END) AS location,
+                       it.number_of_requests,
+                       it.status,
+                       it.collection,
+                       it.description,
+                       DATE_FORMAT(ln.due_date,'%%d-%%m-%%Y'),
+                       NULL,
+                       itt.name AS itemtype
+
+                       FROM crcITEM it
+                       LEFT JOIN crcLOAN ln ON it.barcode = ln.barcode AND ln.status != "%s"
+                       LEFT JOIN crcLIBRARY lib ON lib.id = it.id_crcLIBRARY
+                       LEFT JOIN crcITEMTYPES itt ON it.id_itemtype = itt.id
+                       LEFT JOIN crcLOCATION loc ON it.id_location = loc.id
+                       LEFT JOIN crcLOCATION_EXCEPTIONS le ON it.loc_exception = le.id
+                       LEFT JOIN crcLOCATION ex_loc ON ex_loc.id = le.id_crcLOCATION
+                       LEFT JOIN crcLIBRARY ex_lib ON ex_loc.`id_crcLIBRARY` = ex_lib.id
+
+                       WHERE it.id_bibrec=%s
+                       AND it.barcode NOT IN (SELECT it.barcode FROM crcITEM AS it
+                                              JOIN crcLOANRULES_MATCH_VIEW AS lrv
+                                              ON it.barcode = lrv.barcode
+                                              WHERE patrontype_id = %s)
+                       GROUP BY it.barcode;
               """ % (CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED, recid, patrontype,
                              CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED, recid, patrontype)
         return run_sql(qry)
     else:
         qry = """
-             SELECT it.barcode, NULL, lib.name,
-                    lib.id, it.call_no, loc.name as location, it.number_of_requests,
-                    it.status, it.collection, it.description,
-                    DATE_FORMAT(ln.due_date,'%%d-%%m-%%Y'), NULL,
+             SELECT it.barcode,
+                    NULL,
+                    (CASE WHEN ex_lib.name IS NOT NULL THEN
+                        ex_lib.name
+                    ELSE
+                        lib.name
+                    END) AS library,
+                    (CASE WHEN ex_lib.id IS NOT NULL THEN
+                        ex_lib.id
+                    ELSE
+                        lib.id
+                    END) AS lib_id,
+                    it.call_no,
+                    (CASE WHEN ex_loc.name IS NOT NULL THEN
+                        ex_loc.name
+                    ELSE
+                        loc.name
+                    END) AS location,
+                    it.number_of_requests,
+                    it.status,
+                    it.collection,
+                    it.description,
+                    DATE_FORMAT(ln.due_date,'%%d-%%m-%%Y'),
+                    NULL,
                     itt.name as item_type
-             FROM crcITEM it
-                    left join crcLOAN ln
-                    on it.barcode = ln.barcode and ln.status != "%s"
-                    left join crcLIBRARY lib
-                    on lib.id = it.id_crcLIBRARY
-                    left join crcITEMTYPES itt
-                    on it.id_itemtype = itt.id
-                    left join crcLOCATION loc
-                    on it.id_location = loc.id
+
+                    FROM crcITEM it
+                    left join crcLOAN ln on it.barcode = ln.barcode and ln.status != "%s"
+                    left join crcLIBRARY lib on lib.id = it.id_crcLIBRARY
+                    left join crcITEMTYPES itt on it.id_itemtype = itt.id
+                    left join crcLOCATION loc on it.id_location = loc.id
+                    LEFT JOIN crcLOCATION_EXCEPTIONS le ON it.loc_exception = le.id
+                    LEFT JOIN crcLOCATION ex_loc ON ex_loc.id = le.id_crcLOCATION
+                    LEFT JOIN crcLIBRARY ex_lib ON ex_loc.`id_crcLIBRARY` = ex_lib.id
+
              WHERE it.id_bibrec=%s
              ORDER BY barcode
              """ % (CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED, recid)

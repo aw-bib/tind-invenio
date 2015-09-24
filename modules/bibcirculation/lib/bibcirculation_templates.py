@@ -6726,7 +6726,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                     _("Call no"), cgi.escape(tup_infos[4], True),
                     _("Location"), loc_name,
                     _("Description"), cgi.escape(tup_infos[6], True),
-                    _("Item type"), cgi.escape(tup_infos[11], True),
+                    _("Item type"), tup_infos[11],
                     _("Status"), cgi.escape(tup_infos[8], True),
                     _("Location exception"), cgi.escape(tup_infos[9], True),
                     _("Expected arrival date"), cgi.escape(tup_infos[10], True),

@@ -617,7 +617,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         """http://cds.cern.ch/admin2/bibcirculation/add_new_copy_step4"""
         argd = wash_urlargd(form, {'barcode': (str, None), 'library': (int, ''),
             'call_no': (str, ''), 'location': (str, ''), 'description': (str, '-'),
-            'item_type': (int, ''), 'status': (str, ''),
+            'item_type': (int, ''), 'status': (str, ''), 'loc_exception': (int, None),
             'expected_arrival_date': (str, ''), 'recid': (str, None), 'ln': (str, "en")})
 
         barcode     = argd['barcode']
@@ -627,6 +627,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         description = argd['description']
         item_type   = argd['item_type']
         status      = argd['status']
+        loc_exception      = argd['loc_exception']
         expected_arrival_date = argd['expected_arrival_date']
         recid       = argd['recid']
         ln          = argd['ln']
@@ -644,14 +645,14 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
             recid = recid.strip()
 
         return bal.add_new_copy_step4(req, barcode, library, call_no, location,
-                                      description, item_type, status,
+                                      description, item_type, status, loc_exception,
                                       expected_arrival_date, recid, ln)
 
     def add_new_copy_step5(self, req, form):
 
         argd = wash_urlargd(form, {'barcode': (str, None), 'library': (int, None),
             'location': (str, None), 'call_no': (str, None), 'description': (str, '-'),
-            'item_type': (int, None), 'status': (str, None),
+            'item_type': (int, None), 'status': (str, None), 'loc_exception': (int, None),
             'expected_arrival_date': (str, None), 'recid': (str, None), 'ln': (str, "en")})
 
         barcode = argd['barcode']
@@ -661,11 +662,12 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         description = argd['description']
         item_type = argd['item_type']
         status = argd['status']
+        loc_exception = argd['loc_exception']
         expected_arrival_date = argd['expected_arrival_date']
         recid = argd['recid']
         ln = argd['ln']
         return bal.add_new_copy_step5(req, barcode, library, call_no, location,
-                            description, item_type, status, expected_arrival_date, recid, ln)
+                            description, item_type, status, loc_exception, expected_arrival_date, recid, ln)
 
 
     def delete_copy_step1(self, req, form):

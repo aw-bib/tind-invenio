@@ -6868,7 +6868,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
         """ % (_("Back"))
         return out
 
-    def tmpl_add_new_copy_step3(self, recid, result, libraries, item_types,
+    def tmpl_add_new_copy_step3(self, recid, result, libraries, loc_exceptions, item_types,
                                 original_copy_barcode, tmp_barcode,
                                 infos, tup_infos=None, ln=CFG_SITE_LANG):
         """
@@ -7128,12 +7128,12 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
         if tup_infos:
             (given_barcode, given_library, given_library_name, given_call_no, given_location,
-             given_description, given_item_type, given_status, given_expected_arrival_date,
+             given_description, given_item_type, given_status, given_loc_exception, given_expected_arrival_date,
              given_recid, given_item_type_name) = tup_infos
         else:
             (given_barcode, given_library, given_library_name, given_call_no, given_location,
-             given_description, given_item_type, given_status, given_expected_arrival_date,
-             given_recid, given_item_type_name) = [None for i in range(11)]
+             given_description, given_item_type, given_status, given_loc_exception, given_expected_arrival_date,
+             given_recid, given_item_type_name) = [None for i in range(12)]
 
 
         out += """
@@ -7279,6 +7279,24 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                            name="expected_arrival_date" value="">
                   </td>
                  </tr>
+
+                <tr>
+                  <th width="100">%s</th>
+                  <td>
+                    <select name="loc_exception" style='border: 1px solid #cfcfcf'>
+                        <option>None</option>
+                  """ % (_("Expected arrival date"), colspan, _("Location exception"))
+        for ex in loc_exceptions:
+            if ex[0] == given_loc_exception:
+                out += """<option selected="selected" value="%s">%s</option>
+                       """ % (ex[0], ex[1])
+            else:
+                out += """<option value="%s">%s</option>
+                       """ % (ex[0], ex[1])
+
+        out += """  </select>
+                  </td>
+                </tr>
                 </table>
            <br />
            <table class="bibcirctable">
@@ -7295,8 +7313,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
            <br />
            </div>
            </form>
-           """ % (_("Expected arrival date"), colspan, _("Back"),
-                  _("Continue"), given_recid or recid)
+           """ % ( _("Back"), _("Continue"), given_recid or recid)
 
         return out
 
@@ -7311,8 +7328,10 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
         _ = gettext_set_language(ln)
 
         (barcode, library, _library_name, call_no, location, description,
-         item_type, status, expected_arrival_date, recid, item_type_name) = tup_infos
+         item_type, status, loc_exception, expected_arrival_date, recid, item_type_name) = tup_infos
         loc_name = db.get_location_name(location)
+        loc_ex_name = db.get_location_name(loc_exception)
+
 
         out = """ """
 
@@ -7351,6 +7370,9 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                  <tr>
                     <th width="90">%s</th> <td class="bibcirccontent">%s</td>
                  </tr>
+                 <tr>
+                    <th width="90">%s</th> <td class="bibcirccontent">%s</td>
+                 </tr>
                 </table>
                 <br />
                 <table class="bibcirctable">
@@ -7369,6 +7391,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                        <input type=hidden name=description value="%s">
                        <input type=hidden name=item_type value="%s">
                        <input type=hidden name=status value="%s">
+                       <input type=hidden name=loc_exception value="%s">
                        <input type=hidden name=expected_arrival_date value="%s">
                        <input type=hidden name=recid value="%s">
 
@@ -7387,10 +7410,11 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                        _("Description"), tup_infos[5],
                        _("Item type"), tup_infos[10],
                        _("Status"), tup_infos[7],
+                       _("Location exception"), loc_ex_name,
                        _("Expected arrival date"), expected_arrival_date,
                        _("Back"), _("Continue"),
                        barcode, library, call_no, location, description,
-                       item_type, status, expected_arrival_date, recid)
+                       item_type, status, loc_exception, expected_arrival_date, recid)
 
         return out
 

@@ -1811,14 +1811,14 @@ def has_copies(recid):
     return (get_number_copies(recid) != 0)
 
 def add_new_copy(barcode, recid, library_id, call_no, location_id, description,
-                 item_type, status, expected_arrival_date):
+                 item_type, status, loc_exception, expected_arrival_date):
     run_sql("""insert into crcITEM (barcode, id_bibrec, id_crcLIBRARY,
                                 call_no, id_itemtype, id_location, description,
-                                status, expected_arrival_date, creation_date,
+                                status, loc_exception, expected_arrival_date, creation_date,
                                 modification_date)
-                values (%s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())""",
+                values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())""",
             (barcode, recid, library_id, call_no, item_type, location_id, description or '-',
-             status, expected_arrival_date))
+             status, loc_exception, expected_arrival_date))
 
 def delete_copy(barcode):
     res = run_sql("""delete FROM crcITEM WHERE barcode=%s""", (barcode, ))

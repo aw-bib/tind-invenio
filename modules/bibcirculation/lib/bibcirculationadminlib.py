@@ -2794,6 +2794,8 @@ def add_new_copy_step3(req, recid, barcode, ln=CFG_SITE_LANG):
     result = db.get_item_copies_details(recid)
     libraries = db.get_internal_libraries()
     item_types = db.get_item_types()
+    loc_exceptions = db.get_loc_exceptions()
+
 
     navtrail_previous_links = '<a class="navtrail"' \
                               ' href="%s/help/admin">Admin Area' \
@@ -2808,6 +2810,7 @@ def add_new_copy_step3(req, recid, barcode, ln=CFG_SITE_LANG):
     body = bc_templates.tmpl_add_new_copy_step3(recid=recid,
                                                 result=result,
                                                 libraries=libraries,
+                                                loc_exceptions=loc_exceptions,
                                                 item_types=item_types,
                                                 original_copy_barcode=barcode,
                                                 tmp_barcode=tmp_barcode,
@@ -2822,7 +2825,7 @@ def add_new_copy_step3(req, recid, barcode, ln=CFG_SITE_LANG):
                 lastupdated=__lastupdated__)
 
 def add_new_copy_step4(req, barcode, library, call_no, location, description,
-                       item_type, status, expected_arrival_date, recid,
+                       item_type, status, loc_exception, expected_arrival_date, recid,
                        ln=CFG_SITE_LANG):
 
     """
@@ -2845,12 +2848,14 @@ def add_new_copy_step4(req, barcode, library, call_no, location, description,
     library_name = db.get_library_name(library)
     item_type_name = db.get_item_type_name(item_type) if item_type else ''
     tup_infos = (barcode, library, library_name, call_no, location,
-                 description, item_type, status, expected_arrival_date,
+                 description, item_type, status, loc_exception, expected_arrival_date,
                  recid, item_type_name)
 
     result = db.get_item_copies_details(recid)
     libraries = db.get_internal_libraries()
     item_types = db.get_item_types()
+    loc_exceptions = db.get_loc_exceptions()
+
 
     if db.barcode_in_use(barcode):
         infos.append(_("The given barcode <strong>%s</strong> is already in use." % barcode))
@@ -2858,6 +2863,7 @@ def add_new_copy_step4(req, barcode, library, call_no, location, description,
         body  = bc_templates.tmpl_add_new_copy_step3(recid=recid,
                                                     result=result,
                                                     libraries=libraries,
+                                                    loc_exceptions=loc_exceptions,
                                                     item_types=item_types,
                                                     original_copy_barcode=None,
                                                     tmp_barcode=None,
@@ -2870,6 +2876,7 @@ def add_new_copy_step4(req, barcode, library, call_no, location, description,
         body  = bc_templates.tmpl_add_new_copy_step3(recid=recid,
                                                     result=result,
                                                     libraries=libraries,
+                                                    loc_exceptions=loc_exceptions,
                                                     item_types=item_types,
                                                     original_copy_barcode=None,
                                                     tmp_barcode=None,
@@ -2882,6 +2889,7 @@ def add_new_copy_step4(req, barcode, library, call_no, location, description,
         body  = bc_templates.tmpl_add_new_copy_step3(recid=recid,
                                                     result=result,
                                                     libraries=libraries,
+                                                    loc_exceptions=loc_exceptions,
                                                     item_types=item_types,
                                                     original_copy_barcode=None,
                                                     tmp_barcode=barcode,
@@ -2898,6 +2906,7 @@ def add_new_copy_step4(req, barcode, library, call_no, location, description,
         body  = bc_templates.tmpl_add_new_copy_step3(recid=recid,
                                                     result=result,
                                                     libraries=libraries,
+                                                    loc_exceptions=loc_exceptions,
                                                     item_types=item_types,
                                                     original_copy_barcode=None,
                                                     tmp_barcode=tmp_barcode,
@@ -2921,7 +2930,7 @@ def add_new_copy_step4(req, barcode, library, call_no, location, description,
                 lastupdated=__lastupdated__)
 
 def add_new_copy_step5(req, barcode, library, call_no, location, description,
-                        item_type, status, expected_arrival_date, recid,
+                        item_type, status, loc_exception, expected_arrival_date, recid,
                         ln=CFG_SITE_LANG):
     """
     Add a new copy.
@@ -2936,7 +2945,7 @@ def add_new_copy_step5(req, barcode, library, call_no, location, description,
     infos = []
     if not db.barcode_in_use(barcode):
         db.add_new_copy(barcode, recid, library, call_no, location, description.strip() or '-',
-                        item_type, status, expected_arrival_date)
+                        item_type, status, loc_exception, expected_arrival_date)
         update_requests_statuses(barcode)
     else:
         infos.append(_("The given barcode <strong>%s</strong> is already in use.") % barcode)

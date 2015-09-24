@@ -3569,7 +3569,11 @@ def get_item_types():
     return run_sql("SELECT id, name FROM crcITEMTYPES")
 
 def get_item_type_name(id):
-    return run_sql("SELECT name FROM crcITEMTYPES WHERE id = %s", (id, ))[0][0]
+    res = run_sql("SELECT name FROM crcITEMTYPES WHERE id = %s", (id, ))
+    if res:
+        return res[0][0]
+    else:
+        return None
 
 def get_item_type_name_from_barcode(barcode):
     res = run_sql("""

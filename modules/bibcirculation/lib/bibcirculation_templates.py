@@ -6648,6 +6648,8 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
         _ = gettext_set_language(ln)
 
         loc_name = db.get_location_name(tup_infos[5])
+        itemtype_name = db.get_item_type_name(tup_infos[11])
+        loc_ex_name = db.get_location_name(tup_infos[9])
 
         out = """ """
 
@@ -6726,9 +6728,9 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                     _("Call no"), cgi.escape(tup_infos[4], True),
                     _("Location"), loc_name,
                     _("Description"), cgi.escape(tup_infos[6], True),
-                    _("Item type"), tup_infos[11],
+                    _("Item type"), itemtype_name,
                     _("Status"), cgi.escape(tup_infos[8], True),
-                    _("Location exception"), tup_infos[9],
+                    _("Location exception"), loc_ex_name,
                     _("Expected arrival date"), cgi.escape(tup_infos[10], True),
                     _("Back"), _("Confirm"),
                     cgi.escape(tup_infos[0], True),

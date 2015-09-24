@@ -1263,7 +1263,7 @@ def get_loan_period(barcode):
         return None
 
 def update_item_info(barcode, library_id, call_no, location_id, description,
-                 item_type, status, expected_arrival_date):
+                 item_type, status, loc_exception, expected_arrival_date):
     int(run_sql("""UPDATE crcITEM
                       set barcode=%s,
                           id_crcLIBRARY=%s,
@@ -1272,11 +1272,12 @@ def update_item_info(barcode, library_id, call_no, location_id, description,
                           id_itemtype=%s,
                           description=%s,
                           status=%s,
+                          loc_exception=%s,
                           expected_arrival_date=%s,
                           modification_date=NOW()
                    WHERE  barcode=%s""",
                 (barcode, library_id, call_no, location_id, item_type, description,
-                 status, expected_arrival_date, barcode)))
+                 status, loc_exception, expected_arrival_date, barcode)))
 
 def update_barcode(old_barcode, barcode):
 

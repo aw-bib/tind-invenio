@@ -2283,17 +2283,33 @@ def merge_libraries(library_from, library_to):
 def get_library_items(library_id):
     """
     Get all items which belong to a library.
-
     library_id: identify the library. It is also the primary key of
                 the table crcLIBRARY.
     """
-    res = run_sql("""SELECT barcode, id_bibrec, collection, call_no,
-                            loc.name as location, description, loan_period, status, number_of_requests
-                       FROM crcITEM i, crcLOCATION loc
-                      WHERE i.id_location = loc.id
-                        AND i.id_crcLIBRARY=%s""",
-                  (library_id, ))
-
+    res = run_sql("""SELECT barcode,
+                            id_bibrec,
+                            collection,
+                            call_no,
+                            (CASE WHEN ex_loc.name IS NOT NULL THEN
+                                ex_loc.name
+                            ELSE
+                                loc.name
+                            END) AS location,
+                            description,
+                            loan_period,
+                            status,
+                            number_of_requests
+                       FROM crcITEM i
+                  LEFT JOIN crcLOCATION_EXCEPTIONS le ON i.loc_exception = le.id
+                  LEFT JOIN crcLOCATION ex_loc ON ex_loc.id = le.id_crcLOCATION
+                  LEFT JOIN crcLIBRARY ex_lib ON ex_loc.`id_crcLIBRARY` = ex_lib.id
+                       JOIN crcLOCATION loc on i.id_location = loc.id
+                      WHERE (CASE WHEN ex_lib.id IS NOT NULL THEN
+                                ex_lib.id ={0}
+                            ELSE
+                                i.id_crcLIBRARY = {0}
+                            END)
+                """.format(library_id))
     return res
 
 def get_library_details(library_id):

@@ -7703,8 +7703,8 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
         (borrower_id, ccid, name, email, phone, address, mailbox) = borrower
 
 
-        display_id = ccid
-        id_string = "UID"
+        display_id = borrower_id
+        id_string = "ID"
 
         no_notes_link = create_html_link(CFG_SITE_URL +
                                     '/admin2/bibcirculation/get_borrower_notes',

@@ -2360,13 +2360,22 @@ def get_library_name(library_id):
         return None
 
 def get_lib_location(barcode):
-
-    res = run_sql("""SELECT i.id_crcLIBRARY, loc.name
+    return run_sql("""SELECT (CASE WHEN ex_loc.id_crcLIBRARY IS NOT NULL THEN
+                                ex_loc.id_crcLIBRARY
+                            ELSE
+                                i.id_crcLIBRARY
+                            END) AS id_crcLIBRARY,
+                            (CASE WHEN ex_loc.name IS NOT NULL THEN
+                                ex_loc.name
+                            ELSE
+                                loc.name
+                            END) AS location
                        FROM crcITEM i
+                  LEFT JOIN crcLOCATION_EXCEPTIONS le ON i.loc_exception = le.id
+                  LEFT JOIN crcLOCATION ex_loc ON ex_loc.id = le.id_crcLOCATION
                        JOIN crcLOCATION loc on i.id_location = loc.id
                       WHERE barcode=%s""",
                   (barcode, ))
-
     if res:
         return res[0]
     else:

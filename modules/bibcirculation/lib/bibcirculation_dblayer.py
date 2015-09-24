@@ -910,54 +910,62 @@ def get_expired_loans_with_parameters(sort= None, libraries=(), sort_by=-1, sort
     if libraries:
         if not isinstance(libraries, list):
             libraries = [libraries]
-        where_addition += " and lib.name IN ('"
-        for library in libraries:
-            where_addition += library + "','"
-
-        where_addition += "') "
+        where_addition += """
+                and (CASE WHEN ex_lib.name IS NOT NULL THEN
+                    ex_lib.name IN ('%(libraries)s')
+                ELSE
+                    lib.name IN ('%(libraries)s')
+                END)
+        """ % {'libraries': "','".join(libraries)}
     if sort_by > -1:
         criteria = ["bor.name", "bi.value", "l.barcode",
                     "l.loaned_on", "l.due_date",
                     "l.number_of_renewals", "l.overdue_letter_number",
                     "lib.name", "loc.name"]
         order_addition += " ORDER BY {0} {1}".format(criteria[int(sort_by)], sort_dir.capitalize())
-
     if type_l:
         type_addition += " and lib.type IN {0} ".format(str(type_l).replace("[","(").replace("]",")"))
-
     query_select = """
-    SELECT bor.id,
-           bor.name,
-           it.id_bibrec,
-           bi.value,
-           l.barcode,
-           DATE_FORMAT(l.loaned_on,'%d-%m-%Y'),
-           DATE_FORMAT(l.due_date,'%d-%m-%Y'),
-           l.number_of_renewals,
-           l.overdue_letter_number,
-           DATE_FORMAT(l.overdue_letter_date,'%d-%m-%Y'),
-           l.notes,
-           l.id,
-           lib.name,
-           loc.name
-    FROM crcLOAN l, crcBORROWER bor, crcITEM it, bib24x bi, bibrec_bib24x bibrec, crcLOCATION loc, crcLIBRARY lib
-    WHERE l.id_crcBORROWER = bor.id
-          and it.id_crcLIBRARY = lib.id
-          and it.id_location = loc.id
-          and l.barcode = it.barcode
-          and ((l.status = "{0}" and l.due_date < CURDATE())
-                  or l.status = "{1}" )
-          and bibrec.id_bibrec = it.id_bibrec
-          and bibrec.id_bibxxx = bi.id
-          and bi.tag like '%a'
-          {2}{4}{3}
+                SELECT bor.id,
+                       bor.name,
+                       it.id_bibrec,
+                       bi.value,
+                       l.barcode,
+                       DATE_FORMAT(l.loaned_on,'%d-%m-%Y'),
+                       DATE_FORMAT(l.due_date,'%d-%m-%Y'),
+                       l.number_of_renewals,
+                       l.overdue_letter_number,
+                       DATE_FORMAT(l.overdue_letter_date,'%d-%m-%Y'),
+                       l.notes,
+                       l.id,
+                       (CASE WHEN ex_lib.name IS NOT NULL THEN
+                           ex_lib.name
+                       ELSE
+                           lib.name
+                       END) AS library,
+                       (CASE WHEN ex_loc.name IS NOT NULL THEN
+                           ex_loc.name
+                       ELSE
+                           loc.name
+                       END) AS location
+                  FROM crcLOAN l
+                  JOIN crcBORROWER bor ON l.id_crcBORROWER = bor.id
+                  JOIN crcITEM it ON l.barcode = it.barcode
+                  JOIN bibrec_bib24x bibrec ON it.id_bibrec = bibrec.id_bibrec
+                  JOIN bib24x bi ON bibrec.id_bibxxx = bi.id
+                  JOIN crcLOCATION loc ON it.id_location = loc.id
+                  JOIN crcLIBRARY lib ON it.id_crcLIBRARY = lib.id
+             LEFT JOIN crcLOCATION_EXCEPTIONS le ON it.loc_exception = le.id
+             LEFT JOIN crcLOCATION ex_loc ON ex_loc.id = le.id_crcLOCATION
+             LEFT JOIN crcLIBRARY ex_lib ON ex_loc.`id_crcLIBRARY` = ex_lib.id
+
+                 WHERE ((l.status = "{0}" and l.due_date < CURDATE()) or l.status = "{1}" )
+                       and bi.tag like '%a'
+                       {2}{4}{3}
     """.format(CFG_BIBCIRCULATION_LOAN_STATUS_ON_LOAN,
           CFG_BIBCIRCULATION_LOAN_STATUS_EXPIRED,
           where_addition, order_addition, type_addition )
-
-
     res = run_sql(query_select)
-
     return res
 
 def get_all_expired_loans():

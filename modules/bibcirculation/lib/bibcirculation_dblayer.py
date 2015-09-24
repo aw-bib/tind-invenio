@@ -598,22 +598,31 @@ def get_pdf_request_data(status):
     res = run_sql("""SELECT DISTINCT
                             lr.id_bibrec,
                             bor.name,
-                            lib.name,
+                            (CASE WHEN ex_lib.name IS NOT NULL THEN
+                                ex_lib.name
+                            ELSE
+                                lib.name
+                            END) AS library,
                             it.call_no,
-                            loc.name as location,
+                            (CASE WHEN ex_loc.name IS NOT NULL THEN
+                                ex_loc.name
+                            ELSE
+                                loc.name
+                            END) AS location,
                             DATE_FORMAT(lr.period_of_interest_from,'%%d-%%m-%%Y'),
                             DATE_FORMAT(lr.period_of_interest_to,'%%d-%%m-%%Y'),
                             lr.request_date
-                     FROM   crcLOANREQUEST lr,
-                            crcBORROWER bor,
-                            crcITEM it,
-                            crcLOCATION loc,
-                            crcLIBRARY lib
-                     WHERE  lr.id_crcBORROWER=bor.id AND
-                            it.id_bibrec=lr.id_bibrec AND
-                            lib.id = it.id_crcLIBRARY AND
-                            it.id_location = loc.id AND
-                            lr.status=%s;
+
+                       FROM crcLOANREQUEST lr
+                       JOIN crcBORROWER bor ON lr.id_crcBORROWER = bor.id
+                       JOIN crcITEM it ON lr.barcode = it.barcode
+                       JOIN crcLOCATION loc ON it.id_location = loc.id
+                       JOIN crcLIBRARY lib ON it.id_crcLIBRARY = lib.id
+                  LEFT JOIN crcLOCATION_EXCEPTIONS le ON it.loc_exception = le.id
+                  LEFT JOIN crcLOCATION ex_loc ON ex_loc.id = le.id_crcLOCATION
+                  LEFT JOIN crcLIBRARY ex_lib ON ex_loc.`id_crcLIBRARY` = ex_lib.id
+
+                      WHERE lr.status=%s;
                   """ , (status,))
     return res
 

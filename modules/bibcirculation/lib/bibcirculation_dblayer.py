@@ -2447,12 +2447,17 @@ def get_library_for_loan(loan_id):
     loan_id: the primary key in crcLOAN
     """
 
-    res = run_sql("""SELECT id_crcLIBRARY
-                     FROM crcITEM
-                     LEFT JOIN crcLOAN
-                     ON crcITEM.barcode = crcLOAN.barcode
-                     WHERE crcLOAN.id = %s""", (loan_id, ))
+    res = run_sql("""SELECT (CASE WHEN ex_loc.id_crcLIBRARY IS NOT NULL THEN
+                         ex_loc.id_crcLIBRARY
+                     ELSE
+                         it.id_crcLIBRARY
+                     END) AS id_crcLIBRARY
 
+                     FROM crcITEM it
+                     LEFT JOIN crcLOAN l ON it.barcode = l.barcode
+                     LEFT JOIN crcLOCATION_EXCEPTIONS le ON it.loc_exception = le.id
+                     LEFT JOIN crcLOCATION ex_loc ON ex_loc.id = le.id_crcLOCATION
+                     WHERE l.id = %s""", (loan_id, ))
     if res:
         return res[0]
 

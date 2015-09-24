@@ -345,31 +345,40 @@ def get_loan_request_details(req_id):
         return None
 
 def get_loan_request_by_status(status):
-
     query = """SELECT DISTINCT
-                        lr.id,
-                        lr.id_bibrec,
-                        lr.barcode,
-                        bor.name,
-                        bor.id,
-                        lib.name,
-                        it.call_no,
-                        loc.name as location,
-                        DATE_FORMAT(lr.period_of_interest_from,'%%d-%%m-%%Y'),
-                        DATE_FORMAT(lr.period_of_interest_to,'%%d-%%m-%%Y'),
-                        DATE_FORMAT(lr.request_date,'%%d-%%m-%%Y %%T')
-                   FROM crcLOANREQUEST lr,
-                        crcBORROWER bor,
-                        crcITEM it,
-                        crcLOCATION loc,
-                        crcLIBRARY lib
-                  WHERE lr.id_crcBORROWER=bor.id AND it.barcode=lr.barcode AND
-                        lib.id = it.id_crcLIBRARY AND lr.status=%s
-                        AND it.id_location = loc.id
+                            lr.id,
+                            lr.id_bibrec,
+                            lr.barcode,
+                            bor.name,
+                            bor.id,
+                            (CASE WHEN ex_lib.name IS NOT NULL THEN
+                                ex_lib.name
+                            ELSE
+                                lib.name
+                            END) AS library,
+                            it.call_no,
+                            (CASE WHEN ex_loc.name IS NOT NULL THEN
+                                ex_loc.name
+                            ELSE
+                                loc.name
+                            END) AS location,
+                            DATE_FORMAT(lr.period_of_interest_from,'%%d-%%m-%%Y'),
+                            DATE_FORMAT(lr.period_of_interest_to,'%%d-%%m-%%Y'),
+                            DATE_FORMAT(lr.request_date,'%%d-%%m-%%Y %%T')
+
+                       FROM crcLOANREQUEST lr
+                       JOIN crcBORROWER bor ON lr.id_crcBORROWER = bor.id
+                       JOIN crcITEM it ON lr.barcode = it.barcode
+                       JOIN crcLOCATION loc ON it.id_location = loc.id
+                       JOIN crcLIBRARY lib ON it.id_crcLIBRARY = lib.id
+                  LEFT JOIN crcLOCATION_EXCEPTIONS le ON it.loc_exception = le.id
+                  LEFT JOIN crcLOCATION ex_loc ON ex_loc.id = le.id_crcLOCATION
+                  LEFT JOIN crcLIBRARY ex_lib ON ex_loc.`id_crcLIBRARY` = ex_lib.id
+
+                      WHERE lr.status=%s
                         AND lr.period_of_interest_from <= NOW()
                         AND lr.period_of_interest_to >= NOW()
-               ORDER BY lr.request_date"""
-
+                   ORDER BY lr.request_date"""
     res = run_sql(query , (status, ))
     return res
 

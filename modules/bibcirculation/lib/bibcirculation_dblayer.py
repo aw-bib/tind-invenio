@@ -1189,29 +1189,54 @@ def get_id_bibrec(barcode):
     else:
         return None
 
-def get_item_info(barcode):
+def get_item_info(barcode, for_update=False):
     """
     Get item's information.
 
     barcode: identify the item. It is the primary key of the table
              crcITEM.
     """
-
-    res = run_sql("""SELECT it.barcode,
-                            it.id_crcLIBRARY,
-                            lib.name,
-                            it.collection,
-                            it.call_no,
-                            loc.name as location,
-                            it.description,
-                            it.id_itemtype,
-                            it.status
-                       FROM crcITEM it
-                       JOIN crcLOCATION loc on it.id_location = loc.id
-                       JOIN crcLIBRARY lib ON it.id_crcLIBRARY = lib.id
-                      WHERE it.barcode=%s""",
-                  (barcode, ))
-
+    if for_update:
+        res = run_sql("""SELECT it.barcode,
+                                it.id_crcLIBRARY,
+                                lib.name,
+                                it.collection,
+                                it.call_no,
+                                loc.name as location,
+                                it.description,
+                                it.id_itemtype,
+                                it.status
+                           FROM crcITEM it
+                           JOIN crcLOCATION loc on it.id_location = loc.id
+                           JOIN crcLIBRARY lib ON it.id_crcLIBRARY = lib.id
+                          WHERE it.barcode=%s""",
+                      (barcode, ))
+    else:
+        res = run_sql("""SELECT it.barcode,
+                                it.id_crcLIBRARY,
+                                (CASE WHEN ex_lib.name IS NOT NULL THEN
+                                    ex_lib.name
+                                ELSE
+                                    lib.name
+                                END) AS library,
+                                it.collection,
+                                it.call_no,
+                            (CASE WHEN ex_loc.name IS NOT NULL THEN
+                                ex_loc.name
+                            ELSE
+                                loc.name
+                            END) AS location,
+                                it.description,
+                                it.id_itemtype,
+                                it.status
+                           FROM crcITEM it
+                      LEFT JOIN crcLOCATION_EXCEPTIONS le ON it.loc_exception = le.id
+                      LEFT JOIN crcLOCATION ex_loc ON ex_loc.id = le.id_crcLOCATION
+                      LEFT JOIN crcLIBRARY ex_lib ON ex_loc.`id_crcLIBRARY` = ex_lib.id
+                           JOIN crcLOCATION loc on it.id_location = loc.id
+                           JOIN crcLIBRARY lib ON it.id_crcLIBRARY = lib.id
+                          WHERE it.barcode=%s""",
+                      (barcode, ))
     if res:
         return res[0]
     else:
@@ -3532,3 +3557,9 @@ def del_location(id):
         res = run_sql("DELETE FROM crcLOCATION WHERE id = %s", (id,))
         if res == 0:
             raise DatabaseError("No such id")
+
+def item_has_loc_exception(barcode):
+    res = run_sql("SELECT (loc_exception is not null) FROM crcITEM where barcode = %s", (barcode,))
+    if res:
+        return res[0][0]
+    return False

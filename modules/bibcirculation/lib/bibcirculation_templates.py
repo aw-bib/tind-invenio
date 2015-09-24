@@ -6341,7 +6341,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
         return out
 
-    def tmpl_update_item_info_step4(self, recid, result, libraries, item_types,
+    def tmpl_update_item_info_step4(self, recid, result, libraries, item_types, infos=None,
                                     ln=CFG_SITE_LANG):
         """
         @param recid: identify the record. Primary key of bibrec
@@ -6358,7 +6358,11 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
         _ = gettext_set_language(ln)
 
-        out = load_menu(ln)
+        out = ''
+        if infos:
+            out += self.tmpl_infobox(infos, ln)
+
+        out += load_menu(ln)
 
         (title, year, author, isbn, editor) = book_information_from_MARC(recid)
 

@@ -3148,8 +3148,10 @@ def update_item_info_step4(req, barcode, ln=CFG_SITE_LANG):
 
     _ = gettext_set_language(ln)
 
+    infos = []
+
     recid = db.get_id_bibrec(barcode)
-    result = db.get_item_info(barcode)
+    result = db.get_item_info(barcode, for_update=True)
     libraries = db.get_internal_libraries()
     libraries += db.get_hidden_libraries()
     item_types = db.get_item_types()
@@ -3160,15 +3162,17 @@ def update_item_info_step4(req, barcode, ln=CFG_SITE_LANG):
 
     if recid == None:
         _ = gettext_set_language(ln)
-        infos = []
         infos.append(_("Barcode <strong>%s</strong> not found" % barcode))
         return item_search(req, infos, ln)
 
+    if db.item_has_loc_exception(barcode):
+        infos.append(_("<strong>Note:</strong> This items library and location is overriden by an exception rule."))
 
     body = bc_templates.tmpl_update_item_info_step4(recid=recid,
                                                     result=result,
                                                     libraries=libraries,
                                                     item_types=item_types,
+                                                    infos=infos,
                                                     ln=ln)
 
     return page(title=_("Update item information"),

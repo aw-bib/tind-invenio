@@ -2286,27 +2286,37 @@ def get_borrower_proposals(borrower_id):
 def bor_loans_historical_overview(borrower_id):
     """
     Get loans historical overview of a given borrower_id.
-
     @param borrower_id: identify the borrower. Primary key of crcBORROWER.
     @type borrower_id: int
-
     @return list with loans historical overview.
     """
     res = run_sql("""SELECT l.id_bibrec,
                             l.barcode,
-                            lib.name,
+                            (CASE WHEN ex_lib.name IS NOT NULL THEN
+                                ex_lib.name
+                            ELSE
+                                lib.name
+                            END) AS library,
                             it.call_no,
-                            loc.name as location,
+                            (CASE WHEN ex_loc.name IS NOT NULL THEN
+                                ex_loc.name
+                            ELSE
+                                loc.name
+                            END) AS location,
                             DATE_FORMAT(l.loaned_on,'%%d-%%m-%%Y'),
                             DATE_FORMAT(l.due_date,'%%d-%%m-%%Y'),
                             l.returned_on,
                             l.number_of_renewals,
                             l.overdue_letter_number
-                     FROM crcLOAN l, crcITEM it, crcLIBRARY lib, crcLOCATION loc
+                       FROM crcLOAN l
+                       JOIN crcITEM it ON l.barcode = it.barcode
+                       JOIN crcLIBRARY lib ON it.id_crcLIBRARY = lib.id
+                       JOIN crcLOCATION loc ON it.id_location = loc.id
+                  LEFT JOIN crcLOCATION_EXCEPTIONS le ON it.loc_exception = le.id
+                  LEFT JOIN crcLOCATION ex_loc ON ex_loc.id = le.id_crcLOCATION
+                  LEFT JOIN crcLIBRARY ex_lib ON ex_loc.`id_crcLIBRARY` = ex_lib.id
+
                      WHERE l.id_crcBORROWER=%s and
-                           it.id_location = loc.id and
-                           lib.id = it.id_crcLIBRARY and
-                           it.barcode = l.barcode and
                            l.status = %s
                 """, (borrower_id, CFG_BIBCIRCULATION_LOAN_STATUS_RETURNED))
     return res

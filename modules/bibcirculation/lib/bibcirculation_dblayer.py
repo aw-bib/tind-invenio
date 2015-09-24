@@ -3635,9 +3635,19 @@ def get_location_name(id=None, code=None):
         return None
 
 def get_location_code_from_barcode(barcode):
-    res = run_sql("""SELECT code FROM crcLOCATION l
-                       JOIN crcITEM i on i.id_location = l.id
-                      WHERE i.barcode = '%s'""" % barcode)
+    res = run_sql("""SELECT
+                        (CASE WHEN ex_loc.code IS NOT NULL THEN
+                            ex_loc.code
+                        ELSE
+                            loc.code
+                        END) AS code
+
+                       FROM crcITEM it
+                       JOIN crcLOCATION loc on it.id_location = loc.id
+                  LEFT JOIN crcLOCATION_EXCEPTIONS le ON it.loc_exception = le.id
+                  LEFT JOIN crcLOCATION ex_loc ON ex_loc.id = le.id_crcLOCATION
+
+                      WHERE it.barcode = '%s'""" % barcode)
     if res:
         return res[0][0]
     else:

@@ -1726,6 +1726,7 @@ def clean_data(data):
     for i in range(0, len(final_res)):
         if isinstance(final_res[i], str):
             final_res[i] = final_res[i].replace(",", " ")
+            final_res[i] = final_res[i].replace("#", "%23")
     return final_res
 
 
@@ -2122,25 +2123,34 @@ def bor_loans_historical_overview(borrower_id):
 def bor_requests_historical_overview(borrower_id):
     """
     Get requests historical overview of a given borrower_id.
-
     @param borrower_id: identify the borrower. Primary key of crcBORROWER.
     @type borrower_id: int
-
     @return list with requests historical overview.
     """
     res = run_sql("""SELECT lr.id_bibrec,
                             lr.barcode,
-                            lib.name,
+                            (CASE WHEN ex_lib.name IS NOT NULL THEN
+                                ex_lib.name
+                            ELSE
+                                lib.name
+                            END) AS library,
                             it.call_no,
-                            loc.name as location,
+                            (CASE WHEN ex_loc.name IS NOT NULL THEN
+                                ex_loc.name
+                            ELSE
+                                loc.name
+                            END) AS location,
                             DATE_FORMAT(lr.period_of_interest_from,'%%d-%%m-%%Y'),
                             DATE_FORMAT(lr.period_of_interest_to,'%%d-%%m-%%Y'),
                             lr.request_date
-                       FROM crcLOANREQUEST lr, crcITEM it, crcLIBRARY lib, crcLOCATION loc
+                       FROM crcLOANREQUEST lr
+                       JOIN crcITEM it on lr.barcode = it.barcode
+                  LEFT JOIN crcLOCATION_EXCEPTIONS le ON it.loc_exception = le.id
+                  LEFT JOIN crcLOCATION ex_loc ON ex_loc.id = le.id_crcLOCATION
+                  LEFT JOIN crcLIBRARY ex_lib ON ex_loc.`id_crcLIBRARY` = ex_lib.id
+                       JOIN crcLOCATION loc on it.id_location = loc.id
+                       JOIN crcLIBRARY lib on it.id_crcLIBRARY = lib.id
                       WHERE lr.id_crcBORROWER=%s and
-                            lib.id = it.id_crcLIBRARY and
-                            it.barcode = lr.barcode and
-                            it.id_location = loc.id and
                             lr.status =%s
                 """, (borrower_id, CFG_BIBCIRCULATION_REQUEST_STATUS_DONE))
     return res

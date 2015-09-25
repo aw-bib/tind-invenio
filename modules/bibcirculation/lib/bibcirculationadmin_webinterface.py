@@ -2085,8 +2085,8 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
 
         ln = argd['ln']
         barcode = argd['barcode']
-        id = argd['name']
-        loc_id = argd['lib_id']
+        id = argd['id']
+        loc_id = argd['loc_id']
         delete = argd['delete']
 
         return bal.location_exceptions(req, barcode=barcode, id=id, loc_id=loc_id, delete=delete, ln=ln)

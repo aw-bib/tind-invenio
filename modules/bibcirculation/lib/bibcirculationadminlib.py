@@ -6956,7 +6956,6 @@ def location_exceptions(req, barcode, id, loc_id, delete, ln=CFG_SITE_LANG):
 
     elif id:
         # Display admin form for location exception
-        items = db.get_loc_exception_items(id)
         location = db.get_location_name
 
         if barcode:
@@ -6974,6 +6973,7 @@ def location_exceptions(req, barcode, id, loc_id, delete, ln=CFG_SITE_LANG):
                                   'x_strong_tag_close': '</strong>'
                                   }))
 
+        items = db.get_loc_exception_items(id)
         body = bc_templates.tmpl_location_exceptions_details(id=id, barcode=barcode, items=items, infos=infos, ln=ln)
         return page(title=_("Manage items for %s") % db.get_loc_name_from_loc_exception(id),
                 uid=id_user,

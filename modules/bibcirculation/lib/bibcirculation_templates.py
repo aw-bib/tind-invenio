@@ -16913,7 +16913,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
             item_link = create_html_link(CFG_SITE_URL +
                                     '/admin2/bibcirculation/get_item_details',
                                     {'recid': recid, 'ln': ln},
-                                    barcode)
+                                    str(barcode))
 
             out += """
                     <tr>

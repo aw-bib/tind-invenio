@@ -6905,7 +6905,7 @@ def locations(req, code, name, lib_id, delete, ln=CFG_SITE_LANG):
                 navtrail=navtrail_previous_links,
                 lastupdated=__lastupdated__)
 
-def location_exceptions(req, barcode, id, loc_id, delete, ln=CFG_SITE_LANG)
+def location_exceptions(req, barcode, id, loc_id, delete, ln=CFG_SITE_LANG):
     """
     Lists all existing location exceptions, and displays form for adding new rule
     """

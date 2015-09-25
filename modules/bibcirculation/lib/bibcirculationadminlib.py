@@ -6918,6 +6918,10 @@ def location_exceptions(req, barcode, id, loc_id, delete, ln=CFG_SITE_LANG):
     _ = gettext_set_language(ln)
     infos = []
 
+    navtrail_previous_links = '<a class="navtrail" ' \
+                              'href="%s/help/admin">Admin Area' \
+                              '</a>' % (CFG_SITE_SECURE_URL,)
+
     location = db.get_location_name(id=loc_id)
 
     if type(delete) == int:
@@ -6950,12 +6954,26 @@ def location_exceptions(req, barcode, id, loc_id, delete, ln=CFG_SITE_LANG):
                               'x_strong_tag_close': '</strong>'
                               }))
 
+    elif id:
+        # Display admin form for location exception
+        items = db.get_loc_exception_items(id)
+        location = db.get_location_name
+
+        if barcode:
+            db.add_item_to_loc_exception(barcode)
+            infos.add(_("Barcode <strong>%s</strong>added.") % barcode)
+
+        body = bc_templates.tmpl_location_exceptions_details(id=id, barcode=barcode, items=items, infos=infos, ln=ln)
+        return page(title=_("Manage items for %s") % get_loc_name_from_loc_exception(id),
+                uid=id_user,
+                req=req,
+                body=body, language=ln,
+                navtrail=navtrail_previous_links,
+                lastupdated=__lastupdated__)
+
+
     result = db.get_loc_exceptions_list()
     body = bc_templates.tmpl_location_exceptions(result=result, infos=infos, ln=ln)
-
-    navtrail_previous_links = '<a class="navtrail" ' \
-                              'href="%s/help/admin">Admin Area' \
-                              '</a>' % (CFG_SITE_SECURE_URL,)
 
     return page(title=_("Location exceptions"),
                 uid=id_user,

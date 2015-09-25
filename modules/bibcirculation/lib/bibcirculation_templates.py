@@ -16746,7 +16746,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                                 <td><input type="text" name="code" style="width:50px"></td>
                                 <td><input type="text" name="name" style="width:140px"></td>
                                 <td><select name="lib_id">
-                    """ % (_("Add new item type"),
+                    """ % (_("Add new location"),
                           CFG_SITE_URL,
                           _("Code"),
                           _("Name"),
@@ -16769,11 +16769,11 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                      </table>
                      </form>
                      </td></tr></table>
-                   """ % (_("Add rule"))
+                   """ % (_("Add location"))
 
         return out
 
-    def tmpl_location_exceptions(self, result, infos, ln=CFG_SITE_NAME):
+    def tmpl_location_exceptions(self, result, infos, ln=CFG_SITE_LANG):
         _ = gettext_set_language(ln)
         out = self.tmpl_infobox(infos, ln)
         out += load_menu(ln)
@@ -16816,6 +16816,11 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
         for (id, location, library, item_count) in result:
 
+
+            location_link = create_html_link(CFG_SITE_URL +
+                                    '/admin2/bibcirculation/location_exceptions',
+                                    {'id': id, 'ln': ln},
+                                    location)
             out += """
                     <tr>
                         <td>%s</td>
@@ -16824,7 +16829,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                         <td><input type="button" value="%s" class="bibcircbutton" onClick="window.location='location_exceptions?delete=%s'"></td>
                     </tr>
 
-                    """ % (location, library, item_count, _("Delete"), id)
+                    """ % (location_link, library, item_count, _("Delete"), id)
 
         out += """
                     </tbody>
@@ -16862,5 +16867,92 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                      </form>
                      </td></tr></table>
                    """ % (_("Add exception"))
+
+        return out
+
+    def tmpl_location_exceptions_details(self, id, barcode, items, infos, ln=CFG_SITE_LANG):
+        _ = gettext_set_language(ln)
+        out = self.tmpl_infobox(infos, ln)
+        out += load_menu(ln)
+
+        out += """
+
+            <style type="text/css"> @import url("/js/tablesorter/themes/blue/style.css"); </style>
+            <style>
+                table#new_type input[type="text"] {
+                    padding: 2px;
+                }
+                table#new_type td {
+                    border: none;
+                    padding-top: 0px !important;
+                }
+                table#new_type th {
+
+                }
+            </style>
+
+            <br />
+
+            <div class="bibcircbottom">
+            """
+
+        out += """
+            <table style="width:800px"><tr><td style="width:50%%">
+            <table id="table_item_types" class="tablesorter"
+                   border="0" cellpadding="0" cellspacing="1">
+               <thead>
+                    <tr>
+                       <th>%s</th>
+                    </tr>
+               </thead>
+              <tbody>
+              """ % (_("Barcodes"))
+
+        for (recid, barcode) in items:
+
+            item_link = create_html_link(CFG_SITE_URL +
+                                    '/admin2/bibcirculation/get_item_details',
+                                    {'recid': recid, 'ln': ln},
+                                    barcode)
+
+            out += """
+                    <tr>
+                        <td>%s</td>
+                    </tr>
+
+                    """ % (item_link)
+
+        out += """
+                    </tbody>
+                    </table>
+                    </td><td style="padding-left:50px;vertical-align:top;">
+                    """
+
+        out += """
+                    <h3 style="margin-bottom: 5px">%s</h3>
+                    <form name="add_location" action="%s/admin2/bibcirculation/location_exceptions" method="get">
+                    <table id="new_type" class="tablesorter">
+                       <thead>
+                            <tr>
+                               <th>%s</th>
+                               <th></th>
+                            </tr>
+                       </thead>
+                       <tbody>
+                            <tr>
+                                <td><input type="text" name="barcode"></td>
+
+                                <td><input type="submit" value="%s" class="bibcircbutton"></td>
+                             </tr>
+                         </tbody>
+                     </table>
+                     <input type="hidden" name="id" value="%s">
+                     </form>
+                     </td></tr></table>
+                   """ % (_("Add new barcode"),
+                          CFG_SITE_URL,
+                          _("Barcode"),
+                          _("Add exception"),
+                          id)
 
         return out

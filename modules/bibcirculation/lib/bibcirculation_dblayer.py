@@ -3723,6 +3723,11 @@ def add_loc_exception(loc_id):
             VALUES(%s)
     """, (loc_id,))
 
+def get_loc_name_from_loc_exception(id):
+    return run_sql("""SELECT loc.name FROM crcLOCATION_EXCEPTIONS le
+                        JOIN crcLOCATION loc on loc.id = le.id_crcLOCATION
+                       WHERE le.id = %s""", (id,))[0][0]
+
 def del_loc_exception(id):
     res = run_sql("SELECT COUNT(*) FROM crcITEM WHERE loc_exception = %s", (id,))[0][0]
     if res > 0:
@@ -3731,6 +3736,16 @@ def del_loc_exception(id):
         res = run_sql("DELETE FROM crcLOCATION_EXCEPTIONS WHERE id = %s", (id,))
         if res == 0:
             raise DatabaseError("No such id")
+
+def get_loc_exception_items(loc_ex_id):
+    return run_sql("SELECT barcode, id_bibrec from crcITEM WHERE loc_exception = %s", (loc_ex_id,))
+
+def add_item_to_loc_exception(id, barcode):
+    res = run_sql("select (loc_exception is not null) from crcITEM where barcode = %s", (barcode,))
+    if res[0][0]:
+        raise IntegrityError("Item already has a location exception")
+    else:
+        run_sql("UPDATE crcITEM set loc_exception = %s WHERE barcode = %s", (id, barcode))
 
 def item_has_loc_exception(barcode):
     res = run_sql("SELECT (loc_exception is not null) FROM crcITEM where barcode = %s", (barcode,))

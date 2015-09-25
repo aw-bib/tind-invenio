@@ -6961,7 +6961,7 @@ def location_exceptions(req, barcode, id, loc_id, delete, ln=CFG_SITE_LANG):
 
         if barcode:
             db.add_item_to_loc_exception(id, barcode)
-            infos.add(_("Barcode <strong>%s</strong>added.") % barcode)
+            infos.append(_("Barcode <strong>%s</strong>added.") % barcode)
 
         body = bc_templates.tmpl_location_exceptions_details(id=id, barcode=barcode, items=items, infos=infos, ln=ln)
         return page(title=_("Manage items for %s") % db.get_loc_name_from_loc_exception(id),

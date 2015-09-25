@@ -3703,6 +3703,20 @@ def get_loc_exceptions():
                     JOIN crcLOCATION loc ON le.id_crcLOCATION = loc.id
                   """)
 
+def get_loc_exceptions_list():
+    return run_sql("""
+                    SELECT le.id,
+                    loc.name AS location,
+                    lib.name AS library,
+                    count(it.barcode) AS item_count
+
+                    FROM crcLOCATION_EXCEPTIONS le
+                    JOIN crcLOCATION loc ON le.id_crcLOCATION = loc.id
+                    JOIN crcLIBRARY lib ON loc.id_crcLIBRARY = lib.id
+                    LEFT JOIN crcITEM it ON it.loc_exception = le.id
+                    GROUP BY le.id;
+                    """)
+
 def item_has_loc_exception(barcode):
     res = run_sql("SELECT (loc_exception is not null) FROM crcITEM where barcode = %s", (barcode,))
     if res:

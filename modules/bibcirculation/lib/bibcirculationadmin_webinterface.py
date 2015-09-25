@@ -95,7 +95,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
                 'add_new_library_step3', 'update_library_info_step1', 'update_library_info_step2',
                 'update_library_info_step3', 'update_library_info_step4', 'update_library_info_step5',
                 'get_library_notes', 'search_library_step1', 'search_library_step2', 'get_locations',
-                'locations',
+                'locations', 'location_exceptions',
 
                 # "Vendor related pages
                 'get_vendor_details', 'add_new_vendor_step1', 'add_new_vendor_step2',
@@ -2077,6 +2077,19 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         delete = argd['delete']
 
         return bal.locations(req, code=code, name=name, lib_id=lib_id, delete=delete, ln=ln)
+
+    def location_exceptions(self, req, form):
+        """http://cds.cern.ch/admin2/bibcirculation/location_exceptions"""
+        argd = wash_urlargd(form, {'barcode': (str, None), 'id': (str, None), 'loc_id': (int, None),
+                                   'delete': (int, None), 'ln': (str, "en")})
+
+        ln = argd['ln']
+        barcode = argd['barcode']
+        id = argd['name']
+        loc_id = argd['lib_id']
+        delete = argd['delete']
+
+        return bal.location_exceptions(req, barcode=barcode, id=id, loc_id=loc_id, delete=delete, ln=ln)
 
 
     def __call__(self, req, form):

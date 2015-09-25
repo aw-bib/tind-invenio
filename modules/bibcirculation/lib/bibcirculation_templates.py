@@ -16808,15 +16808,14 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                        <th>%s</th>
                        <th>%s</th>
                        <th>%s</th>
+                       <th>%s</th>
                        <th></th>
                     </tr>
                </thead>
               <tbody>
-              """ % (_("Location"), _("Library"), _("Items"))
+              """ % (_("Code"), _("Location"), _("Library"), _("Items"))
 
-        for (id, location, library, item_count) in result:
-
-
+        for (id, code, location, library, item_count) in result:
             location_link = create_html_link(CFG_SITE_URL +
                                     '/admin2/bibcirculation/location_exceptions',
                                     {'id': id, 'ln': ln},
@@ -16826,10 +16825,11 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                         <td>%s</td>
                         <td>%s</td>
                         <td>%s</td>
+                        <td>%s</td>
                         <td><input type="button" value="%s" class="bibcircbutton" onClick="window.location='location_exceptions?delete=%s'"></td>
                     </tr>
 
-                    """ % (location_link, library, item_count, _("Delete"), id)
+                    """ % (code, location_link, library, item_count, _("Delete"), id)
 
         out += """
                     </tbody>

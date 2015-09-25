@@ -3706,6 +3706,7 @@ def get_loc_exceptions():
 def get_loc_exceptions_list():
     return run_sql("""
                     SELECT le.id,
+                    loc.code,
                     loc.name AS location,
                     lib.name AS library,
                     count(it.barcode) AS item_count

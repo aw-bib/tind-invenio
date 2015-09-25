@@ -3664,7 +3664,7 @@ def get_locations(library_id=None):
     if library_id:
         locations = run_sql("""
                     SELECT id, code, name FROM crcLOCATION
-                     WHERE id_crcLIBRARY = %s
+                     WHERE id_crcLIBRARY = %s ORDER BY name ASC
         """, (library_id,))
         return_list = []
         for location in locations:
@@ -3677,7 +3677,7 @@ def get_locations(library_id=None):
     else:
         return run_sql("""
                     SELECT loc.id, loc.code, loc.name, lib.name as library FROM crcLOCATION loc
-                      JOIN crcLIBRARY lib ON loc.id_crcLIBRARY = lib.id
+                      JOIN crcLIBRARY lib ON loc.id_crcLIBRARY = lib.id ORDER BY loc.name ASC
                       """)
 
 def add_location(code, name, lib_id):

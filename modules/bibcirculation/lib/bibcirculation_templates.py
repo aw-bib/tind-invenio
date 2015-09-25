@@ -16908,7 +16908,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
               <tbody>
               """ % (_("Barcodes"))
 
-        for (recid, barcode) in items:
+        for (barcode, recid) in items:
 
             item_link = create_html_link(CFG_SITE_URL +
                                     '/admin2/bibcirculation/get_item_details',

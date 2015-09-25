@@ -1241,9 +1241,6 @@ class Template:
                  <td>%s</td>
                  <td>%s</td>
                  <td>%s</td>
-                 <td>%s</td>
-                 <td>%s</td>
-                 <td>%s</td>
                  <td algin='center'>
                  """ % (borrower_link,
                        title_link,

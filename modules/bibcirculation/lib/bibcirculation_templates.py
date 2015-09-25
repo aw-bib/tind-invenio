@@ -16731,7 +16731,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
         out += """
                     <h3 style="margin-bottom: 5px">%s</h3>
-                    <form name="add_location" action="%s/admin2/bibcirculation/locations" method="get">
+                    <form name="add_location" action="%s/admin2/bibcirculation/location_exceptions" method="get">
                     <table id="new_type" class="tablesorter">
                        <thead>
                             <tr>

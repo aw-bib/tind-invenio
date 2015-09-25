@@ -6960,8 +6960,14 @@ def location_exceptions(req, barcode, id, loc_id, delete, ln=CFG_SITE_LANG):
         location = db.get_location_name
 
         if barcode:
-            db.add_item_to_loc_exception(id, barcode)
-            infos.append(_("Barcode <strong>%s</strong>added.") % barcode)
+            try:
+                db.add_item_to_loc_exception(id, barcode)
+                infos.append(_("Barcode <strong>%s</strong>added.") % barcode)
+            except IntegrityError:
+                infos.append(_("%(x_strong_tag_open)sError:%(x_strong_tag_close)s barcode already has an exception."
+                               % {'x_strong_tag_open': '<strong>',
+                                  'x_strong_tag_close': '</strong>'
+                                  }))
 
         body = bc_templates.tmpl_location_exceptions_details(id=id, barcode=barcode, items=items, infos=infos, ln=ln)
         return page(title=_("Manage items for %s") % db.get_loc_name_from_loc_exception(id),

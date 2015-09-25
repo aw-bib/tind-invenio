@@ -6962,9 +6962,14 @@ def location_exceptions(req, barcode, id, loc_id, delete, ln=CFG_SITE_LANG):
         if barcode:
             try:
                 db.add_item_to_loc_exception(id, barcode)
-                infos.append(_("Barcode <strong>%s</strong>added.") % barcode)
+                infos.append(_("Barcode <strong>%s</strong> added.") % barcode)
             except IntegrityError:
                 infos.append(_("%(x_strong_tag_open)sError:%(x_strong_tag_close)s barcode already has an exception."
+                               % {'x_strong_tag_open': '<strong>',
+                                  'x_strong_tag_close': '</strong>'
+                                  }))
+            except DatabaseError:
+                infos.append(_("%(x_strong_tag_open)sError:%(x_strong_tag_close)s barcode not found."
                                % {'x_strong_tag_open': '<strong>',
                                   'x_strong_tag_close': '</strong>'
                                   }))

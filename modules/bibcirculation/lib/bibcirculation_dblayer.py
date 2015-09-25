@@ -3742,6 +3742,8 @@ def get_loc_exception_items(loc_ex_id):
 
 def add_item_to_loc_exception(id, barcode):
     res = run_sql("select (loc_exception is not null) from crcITEM where barcode = %s", (barcode,))
+    if not res:
+        raise DatabaseError("Barcode not found")
     if res[0][0]:
         raise IntegrityError("Item already has a location exception")
     else:

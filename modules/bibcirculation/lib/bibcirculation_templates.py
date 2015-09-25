@@ -16731,7 +16731,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
         out += """
                     <h3 style="margin-bottom: 5px">%s</h3>
-                    <form name="add_location" action="%s/admin2/bibcirculation/location_exceptions" method="get">
+                    <form name="add_location" action="%s/admin2/bibcirculation/location" method="get">
                     <table id="new_type" class="tablesorter">
                        <thead>
                             <tr>
@@ -16821,7 +16821,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                         <td>%s</td>
                         <td>%s</td>
                         <td>%s</td>
-                        <td><input type="button" value="%s" class="bibcircbutton" onClick="window.location='locations?delete=%s'"></td>
+                        <td><input type="button" value="%s" class="bibcircbutton" onClick="window.location='location_exceptions?delete=%s'"></td>
                     </tr>
 
                     """ % (location, library, item_count, _("Delete"), id)
@@ -16839,21 +16839,15 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                        <thead>
                             <tr>
                                <th>%s</th>
-                               <th>%s</th>
-                               <th>%s</th>
                                <th></th>
                             </tr>
                        </thead>
                        <tbody>
                             <tr>
-                                <td><input type="text" name="code" style="width:50px"></td>
-                                <td><input type="text" name="name" style="width:140px"></td>
                                 <td><select name="loc_id">
                     """ % (_("Add new location exception"),
                           CFG_SITE_URL,
-                          _("Code"),
-                          _("Name"),
-                          _("Library"))
+                          _("Location"))
         locations = db.get_locations()
 
         for id, code, location, library in locations:

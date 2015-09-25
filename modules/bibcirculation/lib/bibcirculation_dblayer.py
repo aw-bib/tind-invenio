@@ -3717,6 +3717,21 @@ def get_loc_exceptions_list():
                     GROUP BY le.id;
                     """)
 
+def add_loc_exception(loc_id):
+    return run_sql("""
+            INSERT INTO crcLOCATION_EXCEPTIONS(id_crcLOCATION)
+            VALUES(%s)
+    """, (loc_id,))
+
+def del_loc_exception(id):
+    res = run_sql("SELECT COUNT(*) FROM crcITEM WHERE loc_exception = %s", (id,))[0][0]
+    if res > 0:
+        raise IntegrityError("Location exception in use")
+    else:
+        res = run_sql("DELETE FROM crcLOCATION_EXCEPTIONS WHERE id = %s", (id,))
+        if res == 0:
+            raise DatabaseError("No such id")
+
 def item_has_loc_exception(barcode):
     res = run_sql("SELECT (loc_exception is not null) FROM crcITEM where barcode = %s", (barcode,))
     if res:

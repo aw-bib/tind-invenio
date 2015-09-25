@@ -1113,6 +1113,11 @@ a.langinfo:hover {
   color: #666;
   background: transparent;
 }
+form input[type="text"], form input[type="password"], form select, select {
+    color: #000;
+    background: #fff;
+    border: 1px solid #555;
+}
 .warning {
   color: #603;
   background: transparent;
@@ -1132,11 +1137,7 @@ hr {
   background-color: #999;
   border-width: 0;
 }
-form input[type="text"], form input[type="password"], form select {
-  color: #000;
-  background: #fff;
-  border: 1px solid #555;
-}
+
 form input[disabled], form input[disabled="true"]{
   /* <http://reference.sitepoint.com/css/attributeselector#compatibilitysection> */
   color: #666;

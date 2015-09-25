@@ -26,7 +26,7 @@ import cgi
 import urllib
 from time import localtime
 import invenio.dateutils as dateutils
-from invenio.urlutils import create_html_link
+from invenio.urlutils import create_html_link, create_url
 from invenio.messages import gettext_set_language
 from invenio.search_engine import get_fieldvalues
 from invenio.config import CFG_SITE_URL, CFG_SITE_LANG, \
@@ -86,7 +86,10 @@ from invenio.bibcirculation_config import \
     CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_MINUTE_OVERNIGHT, \
     CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_MINUTE, \
     CFG_BIBCIRCULATION_LOAN_RULE_CODE_NON_CIRC, \
-    CFG_BIBCIRCULATION_LOAN_RULE_CODES
+    CFG_BIBCIRCULATION_LOAN_RULE_CODES, \
+    CFG_BIBCIRCULATION_TEMPLATES
+from invenio.bibformat_engine import BibFormatObject
+
 
 def load_menu(ln=CFG_SITE_LANG):
 
@@ -133,6 +136,7 @@ def load_menu(ln=CFG_SITE_LANG):
         <ul class="submenu">
             <li><a href="%(url)s/admin2/bibcirculation/all_loans?ln=%(ln)s">%(Last_loans)s</a></li>
             <li><a href="%(url)s/admin2/bibcirculation/all_expired_loans?ln=%(ln)s">%(Overdue_loans)s</a></li>
+            <li><a href="%(url)s/admin2/bibcirculation/get_items_on_holdshelf?ln=%(ln)s">%(Items_on_holdshelf)s</a></li>
             <li><a href="%(url)s/admin2/bibcirculation/get_pending_requests?ln=%(ln)s">%(Items_on_shelf_with_holds)s</a></li>
             <li><a href="%(url)s/admin2/bibcirculation/get_waiting_requests?ln=%(ln)s">%(Items_on_loan_with_holds)s</a></li>
             <li><a href="%(url)s/admin2/bibcirculation/get_expired_loans_with_waiting_requests?ln=%(ln)s">%(Overdue_loans_with_holds)s</a></li>
@@ -160,6 +164,7 @@ def load_menu(ln=CFG_SITE_LANG):
     """ % {'url': CFG_SITE_URL, 'Lists': _("Loan Lists"),
            'Last_loans': _("Last loans"),
            'Overdue_loans': _("Overdue loans"),
+           'Items_on_holdshelf': _("Items on holdshelf"),
            'Items_on_shelf_with_holds': _("Items on shelf with holds"),
            'Items_on_loan_with_holds': _("Items on loan with holds"),
            'Overdue_loans_with_holds': _("Overdue loans with holds"),
@@ -1257,6 +1262,18 @@ class Template:
                                 '/admin2/bibcirculation/get_borrower_details',
                                 {'borrower_id': borrower_id, 'ln': ln}, (name))
 
+                (book_title, book_year, book_author,
+                book_isbn, book_editor) = book_information_from_MARC(int(recid))
+                pickup_notification = create_url(CFG_SITE_SECURE_URL +
+                                          '/admin2/bibcirculation/borrower_notification',
+                                          {'borrower_id': borrower_id,
+                                           'subject': "You can now pickup {0}".format(book_title),
+                                           'load_msg_template': True,
+                                           'message': CFG_BIBCIRCULATION_TEMPLATES["PICKUP"] % (library, book_title, book_author, book_editor, book_year, book_isbn),
+                                           'from_address': CFG_BIBCIRCULATION_ILLS_EMAIL,
+                                           'send_message': True,
+                                           }
+                                          )
                 volume = db.get_item_description(barcode)
                 edition = get_fieldvalues(recid, "250__a")
 
@@ -1290,11 +1307,32 @@ class Template:
                        request_date)
 
                 out += """
-                        <select onchange="eval(this.options[this.selectedIndex].value)">
+                        <select onchange="if(this.selectedIndex == 0)
+                                            {
+                                            }
+                                            else if(this.selectedIndex == 1)
+                                            {
+                                                window.open('/admin2/bibcirculation/update_item_info_step4?barcode=%(barcode)s')
+                                            }
+                                            else if(this.selectedIndex == 2)
+                                            {
+                                                window.open('%(pickup)s');
+                                            }
+                                            else if(this.selectedIndex == 3)
+                                            {
+                                                window.open('/admin2/bibcirculation/create_loan?request_id=%(request_id)s&recid=%(recid)s&borrower_id=%(borrower_id)s');
+                                            }
+                                            else if(this.selectedIndex == 4)
+                                            {
+                                                confirmation(%(request_id)s);
+                                            }
+
+                                            this.selectedIndex=0">
                             <option>Select an action</option>
-                            <option value="window.open('/admin2/bibcirculation/update_item_info_step4?barcode=%(barcode)s')">Change status</option>
-                            <option value="window.open('/admin2/bibcirculation/create_loan?request_id=%(request_id)s&recid=%(recid)s&borrower_id=%(borrower_id)s')">Create loan</option>
-                            <option value="confirmation(%(request_id)s)">Delete request</option>
+                            <option>Change status</option>
+                            <option>Send pickup note</option>
+                            <option>Create loan</option>
+                            <option>Delete request</option>
                         </select>
                  </td>
                 </tr>
@@ -1302,7 +1340,9 @@ class Template:
                     'barcode': barcode,
                     'request_id': request_id,
                     'borrower_id': borrower_id,
-                    'recid': recid
+                    'recid': recid,
+                    'pickup':pickup_notification,
+                    'send_message': 1,
                 }
 
             out += """
@@ -1429,7 +1469,7 @@ class Template:
                _("From"),
                _("To"),
                _("Request date"),
-               _("Options"))
+               _("Actions"))
 
             out += """
                 <script type="text/javascript">
@@ -1468,18 +1508,6 @@ class Template:
                  <td>%s</td>
                  <td>%s</td>
                  <td align="center">
-                 <input type="button" value='%s' style="background: url(/img/dialog-cancel.png)
-                 no-repeat #8DBDD8; width: 75px; text-align: right;"
-                 onClick="confirmation(%s)"
-                 class="bibcircbutton">
-
-                 <input type=button
-                        style="background: url(/img/dialog-yes.png) no-repeat #8DBDD8;
-                               width: 150px; text-align: right;"
-onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s&recid=%s&borrower_id=%s'"
-                 value='%s' class="bibcircbutton">
-                 </td>
-                </tr>
                 """ % (borrower_link,
                        title_link,
                        library,
@@ -1487,15 +1515,38 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                        location,
                        date_from,
                        date_to,
-                       request_date,
-                       _("Cancel"),
-                       request_id,
-                       CFG_SITE_URL, ln,
-                       request_id,
-                       recid,
-                       borrower_id,
-                       _("Create Loan"))
+                       request_date)
+                out += """
+                        <select onchange="if(this.selectedIndex == 0)
+                                                        {
+                                                        }
+                                                        else if(this.selectedIndex == 1)
+                                                        {
+                                                            window.open('/admin2/bibcirculation/update_item_info_step4?barcode=%(barcode)s')
+                                                        }
+                                                        else if(this.selectedIndex == 2)
+                                                        {
+                                                            window.open('/admin2/bibcirculation/create_loan?request_id=%(request_id)s&recid=%(recid)s&borrower_id=%(borrower_id)s')
+                                                        }
+                                                        else if(this.selectedIndex == 3)
+                                                        {
+                                                            confirmation(%(request_id)s)
+                                                        }
 
+                                                        this.selectedIndex=0">
+                                        <option>Select an action</option>
+                                        <option>Change status</option>
+                                        <option>Create loan</option>
+                                        <option>Delete request</option>
+                                    </select>
+                             </td>
+                            </tr>
+                            """ % {
+                                'barcode': _barcode,
+                                'request_id': request_id,
+                                'borrower_id': borrower_id,
+                                'recid': recid,
+                            }
             out += """
                     </tbody>
                     </table>
@@ -4636,8 +4687,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                     </tr>
               </thead>
               <tbody>
-                    """ % (CFG_SITE_URL,
-                            _("Borrower."),
+                    """ % ( _("Borrower."),
                             _("Item"),
                             _("Barcode"),
                             _('Library'),
@@ -4654,8 +4704,19 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
 
                 borrower_link = create_html_link(CFG_SITE_URL +
                                 '/admin2/bibcirculation/get_borrower_details',
-                                {'borrower_id': borrower_id, 'ln': ln}, (name))
-
+                                {'borrower_id': borrower_id, 'ln': ln}, (borrower if borrower else ""))
+                (book_title, book_year, book_author,
+                book_isbn, book_editor) = book_information_from_MARC(int(recid))
+                pickup_notification = create_url(CFG_SITE_SECURE_URL +
+                                                 '/admin2/bibcirculation/borrower_notification',
+                                                 {'borrower_id': borrower_id,
+                                                  'subject': "notification",
+                                                  'load_msg_template': True,
+                                                  'message': CFG_BIBCIRCULATION_TEMPLATES["PICKUP"] % (library, book_title, book_author, book_editor, book_year, book_isbn),
+                                                  'from_address': CFG_BIBCIRCULATION_ILLS_EMAIL,
+                                                  'send_message': True,
+                                                  }
+                                                 )
                 out += """
                 <tr>
                  <td width='150'>%s</td>
@@ -4667,19 +4728,40 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                  <td>%s</td>
                  <td algin='center'>
                  """ % (borrower_link,
-                       title_link,
-                       barcode,
-                       library,
-                       location,
-                       request_date,
-                       request_status)
+                        title_link,
+                        barcode,
+                        library,
+                        location,
+                        request_date,
+                        request_status)
 
                 out += """
-                        <select onchange="eval(this.options[this.selectedIndex].value)">
+            <select onchange="if(this.selectedIndex == 0)
+                                            {
+                                            }
+                                            else if(this.selectedIndex == 1)
+                                            {
+                                                window.open('/admin2/bibcirculation/update_item_info_step4?barcode=%(barcode)s')
+                                            }
+                                            else if(this.selectedIndex == 2)
+                                            {
+                                                window.open('%(pickup)s')
+                                            }
+                                            else if(this.selectedIndex == 3)
+                                            {
+                                                window.open('/admin2/bibcirculation/create_loan?request_id=%(request_id)s&recid=%(recid)s&borrower_id=%(borrower_id)s')
+                                            }
+                                            else if(this.selectedIndex == 4)
+                                            {
+                                                confirmation(%(request_id)s)
+                                            }
+
+                                            this.selectedIndex=0">
                             <option>Select an action</option>
-                            <option value="window.open('/admin2/bibcirculation/update_item_info_step4?barcode=%(barcode)s')">Change status</option>
-                            <option value="window.open('/admin2/bibcirculation/create_loan?request_id=%(request_id)s&recid=%(recid)s&borrower_id=%(borrower_id)s')">Create loan</option>
-                            <option value="confirmation(%(request_id)s)">Delete request</option>
+                            <option>Change status</option>
+                            <option>Send pickup note</option>
+                            <option>Create loan</option>
+                            <option>Delete request</option>
                         </select>
                  </td>
                 </tr>
@@ -4687,7 +4769,8 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                     'barcode': barcode,
                     'request_id': request_id,
                     'borrower_id': borrower_id,
-                    'recid': recid
+                    'recid': recid,
+                    'pickup': pickup_notification
                 }
 
             out += """
@@ -5155,6 +5238,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
             <style type="text/css"> @import url("/js/tablesorter/themes/blue/style.css"); </style>
             <style type="text/css"> @import url("/js/tablesorter/addons/pager/jquery.tablesorter.pager.css"); </style>
             <script src="/js/tablesorter/jquery.tablesorter.js" type="text/javascript"></script>
+            <script src="/js/bibcirculation.js" type="text/javascript"></script>
             <script src="/js/tablesorter/addons/pager/jquery.tablesorter.pager.js" type="text/javascript"></script>
             <script type="text/javascript">
 
@@ -5248,22 +5332,35 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                        date_from,
                        date_to,
                        request_date)
+                out += """<select onchange="if(this.selectedIndex == 0){
+                                            } else if(this.selectedIndex == 1) {
+                                               window.open('loan_return_confirm?barcode=%(barcode)s')
+                                            } else if(this.selectedIndex == 2) {
+                                                window.open('/admin2/bibcirculation/update_item_info_step4?barcode=%(barcode)s')
+                                            } else if(this.selectedIndex == 3) {
+                                               window.open('/admin2/bibcirculation/create_loan?request_id=%(request_id)s&recid=%(recid)s&borrower_id=%(borrower_id)s')
+                                            } else if(this.selectedIndex == 4) {
+                                                confirmation(%(request_id)s)
+                                            } else if(this.selectedIndex == 5) {
+                                                recall_x_days(%(loan_id)s, 'claim_return', 7);
+                                            }
 
-                out += """
-                        <select onchange="eval(this.options[this.selectedIndex].value)">
+
+                                            this.selectedIndex=0">
                             <option>Select an action</option>
-                            <option value="window.open('loan_return_confirm?barcode=%(barcode)s')">Return item</option>
-                            <option value="window.open('/admin2/bibcirculation/update_item_info_step4?barcode=%(barcode)s')">Change status</option>
-                            <option value="window.open('/admin2/bibcirculation/create_loan?request_id=%(request_id)s&recid=%(recid)s&borrower_id=%(borrower_id)s')">Create loan</option>
-                            <option value="confirmation(%(request_id)s)">Delete request</option>
+                            <option>Return item</option>
+                            <option>Change status</option>
+                            <option>Create loan</option>
+                            <option>Delete request</option>
+                            <option>Recall</option>
                         </select>
                  </td>
-                </tr>
-                """ % {
+                </tr>""" % {
                     'barcode': barcode,
                     'request_id': request_id,
                     'borrower_id': borrower_id,
-                    'recid': recid
+                    'recid': recid,
+                    'loan_id': db.get_current_loan_id(barcode)
                 }
             out += """
                   </tbody>

@@ -244,6 +244,18 @@ else:
                     'the Library to do so.\n\n'
 
                     'Sincerely,',
+        'PICKUP': 'Dear patron,\n\n'
+                  'The following item is now ready for pickup at %s:\n\n'
+                  '\tTitle: %s\n'
+                  '\tAuthor(s): %s\n'
+                  '\tPublisher: %s\n'
+                  '\tYear: %s\n'
+                  '\tIsbn: %s\n\n'
+                  'Please come to the library to check out your item.\n\n'
+                  'Sincerely,\n'
+                  'Sherman Fairchild Library\n'
+                  'library@caltech.edu\n'
+                  '626-395-3405\n',
 
         'NOTIFICATION': 'Hello,\n'
                         'This is an automatic email to confirm the request '

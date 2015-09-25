@@ -54,7 +54,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
                 'get_pending_requests', 'get_waiting_requests',
                 'get_expired_loans_with_waiting_requests',
                 'get_loans_notes', 'get_item_loans_notes',
-                'get_items_on_holdshelf',
+                'recall_loan', 'get_items_on_holdshelf',
 
                 # "Item" related pages
                 'get_item_details', 'get_item_requests_details', 'get_item_loans_details',
@@ -230,6 +230,16 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         argd = wash_urlargd(form, {'ln': (str, "en")})
         ln = argd['ln']
         return bal.loan_return(req, ln)
+
+    def recall_loan(self, req, form):
+        """http://cds.cern.ch/admin2/bibcirculation/recall_loan"""
+        argd = wash_urlargd(form, {'loan_id': (str, None), 'ln': (str, "en"), 'template': (str, None), 'days': (int, None), })
+        loan_id = argd['loan_id']
+        template = argd['template']
+        days = argd['days']
+        ln = argd['ln']
+
+        return bal.recall_loan(req, loan_id, template, days, ln)
 
     def loan_return_confirm(self, req, form):
         """http://cds.cern.ch/admin2/bibcirculation/loan_return_confirm"""

@@ -210,7 +210,30 @@ def index(req, ln=CFG_SITE_LANG):
 ###
 
 
+def recall_loan(req, loan_id, template, days, ln=CFG_SITE_LANG):
+    result =0
+    try:
+        (auth_code, auth_message) = is_adminuser(req)
+        if auth_code != 0:
+            return mustloginpage(req, auth_message)
 
+
+        _ = gettext_set_language(ln)
+        loan = db.get_loan_all_infos(loan_id)
+        borrower_id = loan[1]
+        recid = loan[2]
+
+        email_body = generate_email_body(load_template(template), loan_id)
+
+        subject = book_title_from_MARC(int(recid))
+        db.update_due_date(loan_id, loan[6] + datetime.timedelta(days=days))
+        borrower_notification(req, borrower_id, message=email_body,load_msg_template="False",
+                              template=None, subject=subject, send_message=True,
+                              from_address=CFG_BIBCIRCULATION_ILLS_EMAIL)
+    except:
+        result = 1
+
+    return json.dumps({"result": result})
 
 def loan_on_desk_step1(req, key, string, ln=CFG_SITE_LANG):
     """
@@ -2067,13 +2090,27 @@ def all_loans_data(req, msg=None, ln=CFG_SITE_LANG, library=(), loans_per_page=0
                         {'loan_id': loan_id, 'ln': ln}, (_("no notes")))
 
         actions_dropdown = """
-                            <select onchange="location = this.options[this.selectedIndex].value;">
-                                <option>Select an action</option>
-                                <option value="get_borrower_loans_details?borrower_id=%(borrower_id)s&barcode=%(barcode)s&loan_id=%(loan_id)s&recid=%(recid)s">Renew</option>
-                                <option value="loan_return_confirm?barcode=%(barcode)s">Return</option>
-                                <option value="change_due_date_step1?barcode=%(barcode)s&borrower_id=%(borrower_id)s">Change due date</option>
-                                <option value="claim_book_return?borrower_id=%(borrower_id)s&recid=%(recid)s&loan_id=%(loan_id)s&template=claim_return">Recall</option>
-                            </select>
+         <select onchange="if(this.selectedIndex == 0){
+                                            } else if(this.selectedIndex == 1) {
+                                                window.open('/get_borrower_loans_details?borrower_id=%(borrower_id)s&barcode=%(barcode)s&loan_id=%(loan_id)s&recid=%(recid)s');
+                                            } else if(this.selectedIndex == 2) {
+                                                window.open('/loan_return_confirm?barcode=%(barcode)s');
+                                            } else if(this.selectedIndex == 3) {
+                                                window.open('/change_due_date_step1?barcode=%(barcode)s&borrower_id=%(borrower_id)s');
+                                            } else if(this.selectedIndex == 4) {
+                                                window.open('/claim_book_return?borrower_id=%(borrower_id)s&recid=%(recid)s&loan_id=%(loan_id)s&template=claim_return');
+                                            } else if(this.selectedIndex == 5) {
+                                                recall_x_days(%(loan_id)s, 'claim_return', 7);
+                                            }
+
+                                            this.selectedIndex=0">
+                            <option>Select an action</option>
+                            <option>Renew</option>
+                            <option>Return</option>
+                            <option>Change due date</option>
+                            <option>Notification</option>
+                            <option>Recall</option>
+                        </select>
                     """ % {
                             'borrower_id': borrower_id,
                             'barcode': barcode,
@@ -2157,13 +2194,28 @@ def all_expired_loans_data(req, ln=CFG_SITE_LANG):
 
 
                 actions_dropdown = """
-                                    <select onchange="location = this.options[this.selectedIndex].value;">
-                                        <option>Select an action</option>
-                                        <option value="get_borrower_loans_details?borrower_id=%(borrower_id)s&barcode=%(barcode)s&loan_id=%(loan_id)s&recid=%(recid)s">Renew</option>
-                                        <option value="loan_return_confirm?barcode=%(barcode)s">Return</option>
-                                        <option value="change_due_date_step1?barcode=%(barcode)s&borrower_id=%(borrower_id)s">Change due date</option>
-                                        <option value="claim_book_return?borrower_id=%(borrower_id)s&recid=%(recid)s&loan_id=%(loan_id)s&template=claim_return">Recall</option>
-                                    </select>
+                         <select onchange="if(this.selectedIndex == 0)
+                                            {
+                                            } else if(this.selectedIndex == 1) {
+                                                window.open('/get_borrower_loans_details?borrower_id=%(borrower_id)s&barcode=%(barcode)s&loan_id=%(loan_id)s&recid=%(recid)s');
+                                            } else if(this.selectedIndex == 2) {
+                                                window.open('/loan_return_confirm?barcode=%(barcode)s');
+                                            } else if(this.selectedIndex == 3) {
+                                                window.open('/change_due_date_step1?barcode=%(barcode)s&borrower_id=%(borrower_id)s');
+                                            } else if(this.selectedIndex == 4) {
+                                                window.open('/claim_book_return?borrower_id=%(borrower_id)s&recid=%(recid)s&loan_id=%(loan_id)s&template=claim_return');
+                                            } else if(this.selectedIndex == 5) {
+                                                recall_x_days(%(loan_id)s, 'claim_return', 7);
+                                            }
+
+                                            this.selectedIndex=0">
+                            <option>Select an action</option>
+                            <option>Renew</option>
+                            <option>Return</option>
+                            <option>Change due date</option>
+                            <option>Notification</option>
+                            <option>Recall</option>
+                        </select>
                             """ % {
                                     'borrower_id': borrower_id,
                                     'barcode': barcode,

@@ -686,6 +686,20 @@ def is_item_on_loan(barcode):
     except IndexError:
         return None
 
+
+def get_loan_all_infos(loan_id):
+    """
+    loan_id: identify a loan. It is the primery key of the table
+             crcLOAN.
+    """
+
+    res = run_sql("""SELECT * FROM crcLOAN WHERE id=%s""", (loan_id, ))
+
+    if res:
+        return res[0]
+    else:
+        return None
+
 def get_loan_infos(loan_id):
     """
     loan_id: identify a loan. It is the primery key of the table

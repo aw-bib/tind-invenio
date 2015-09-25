@@ -18,13 +18,49 @@ function changelength() {
 }
 
 
+function recall_x_days(loan_id, template, days ){
+    $.ajax("/admin2/bibcirculation/recall_loan?loan_id=" + loan_id + "&template=" + template + "&days="+days).done(function( data)
+    {
+         alert(data);
+         if(data["result"]==1) {
+            print_notification("An error occured during recall process. Please try again later or contact tech@tind.io");
+         } else {
+            print_notification("Item recalled sucessfully");
+         }
+     });
+}
+
+function print_notification(message, type) {
+
+    var list = $(".infobox, .warningbox, .errorbox, .headline_div");
+    var highs = list.map(function(){return $(this).prop("offsetTop");}).get();
+    var highest = Math.max.apply(null, highs)
+    var selector = $(list[highs.indexOf(highest)])
+
+
+    if(type == "info") {
+        box = "<div class='infobox'>" + message + "</div>"
+    } else if (type == "warning") {
+            box = "<div class='warningbox'>" + message + "</div>"
+    } else if (type == "error") { 
+            box = "<div class='errorbox'>" + message + "</div>"
+    } else {
+        box = "<div class='infobox'>" + message + "</div>"
+    }
+    selector.after(box);
+    setTimeout(function(){selector.next().fadeOut() }, 3000);
+
+}
+
 $(document).ready(function(){
-    var elems = Array.prototype.slice.call(document.querySelectorAll('.js-switch'));
-    elems.forEach(function(html) {
-      var switchery = new Switchery(html, { color:'#006FB7', size:'small' });
-    });
-    $('.checkboxes_exp_loan').wrap('<span style="text-align: left; margin-bottom: 5px; font-size: 14px;">');
+
+
     if ($("#table_all_loans").length > 0) {
+        $('.checkboxes_exp_loan').wrap('<span style="text-align: left; margin-bottom: 5px; font-size: 14px;">');
+         var elems = Array.prototype.slice.call(document.querySelectorAll('.js-switch'));
+        elems.forEach(function(html) {
+          var switchery = new Switchery(html, { color:'#006FB7', size:'small' });
+        });
         $("#table_all_loans").DataTable({
             "columns": [
             null,
@@ -54,7 +90,7 @@ $(document).ready(function(){
         },
 
         }});
-    }
+
 
     $("input[type='checkbox']").on("change", function() {
         scrollPos =  $(window).scrollTop();
@@ -86,5 +122,5 @@ $(document).ready(function(){
       $('.pagesize').on('change', function() {
         changelength();
       });
-
+    }
 });

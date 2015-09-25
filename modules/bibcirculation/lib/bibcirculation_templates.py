@@ -16856,7 +16856,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
         locations = db.get_locations()
 
         for id, code, location, library in locations:
-                out += """<option value="%s">%s</option>""" % (id, location)
+                out += """<option value="%s">%s - %s</option>""" % (id, code, location)
 
         out += """
                                 </select></td>

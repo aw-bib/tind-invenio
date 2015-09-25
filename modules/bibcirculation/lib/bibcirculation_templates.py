@@ -16940,7 +16940,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                        </thead>
                        <tbody>
                             <tr>
-                                <td><input type="text" name="barcode"></td>
+                                <td><input type="text" name="barcode" autofocus></td>
 
                                 <td><input type="submit" value="%s" class="bibcircbutton"></td>
                              </tr>

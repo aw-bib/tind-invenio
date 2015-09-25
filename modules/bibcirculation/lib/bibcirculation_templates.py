@@ -16774,19 +16774,8 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
         return out
 
     def tmpl_location_exceptions(self, result, infos, ln=CFG_SITE_NAME):
-         """
-        @param results: all current item types
-        @type results: tuple
-
-        @param ln: language of the page
-
-        """
-
-
         _ = gettext_set_language(ln)
-
         out = self.tmpl_infobox(infos, ln)
-
         out += load_menu(ln)
 
         out += """

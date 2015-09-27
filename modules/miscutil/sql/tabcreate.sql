@@ -5220,8 +5220,8 @@ CREATE TABLE IF NOT EXISTS `crcLOANRULES` (
 CREATE TABLE IF NOT EXISTS `crcRULES_SELECTION` (
   `rule_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `active` varchar(1) NOT NULL DEFAULT '',
-  `itemtype_id` int(11) unsigned NOT NULL,
-  `patrontype_id` int(11) unsigned NOT NULL,
+  `itemtype_id` int(11)  NOT NULL,
+  `patrontype_id` int(11)  NOT NULL,
   `location` varchar(20) NOT NULL DEFAULT '',
   PRIMARY KEY (`itemtype_id`,`patrontype_id`,`location`),
   KEY `rule_fk` (`rule_id`),

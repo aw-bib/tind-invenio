@@ -5248,7 +5248,14 @@ FROM `crcRULES_SELECTION` `r_s`
   join `crcITEM` `i` on (case when (`r_s`.`itemtype_id` <> -(1)) then (`r_s`.`itemtype_id` = `i`.`id_itemtype`) else 1 end)
   join `crcBORROWER` `b` on (case when (`r_s`.`patrontype_id` <> -(1)) then (`r_s`.`patrontype_id` = `b`.`id_patrontype`) else 1 end)
   join `crcLOCATION` `loc` on `i`.`id_location` = `loc`.`id`
-WHERE (`loc`.`code` like `r_s`.`location` or `r_s`.`location` = '') and ucase(`r_s`.`active`) = 'Y';
+  left join `crcLOCATION_EXCEPTIONS` `le` on `i`.`loc_exception` = `le`.`id`
+  left join `crcLOCATION` `ex_loc` on `le`.`id_crcLOCATION` = `ex_loc`.`id`
+WHERE
+  CASE WHEN (`i`.`loc_exception` is not null)
+    THEN (TRIM(`ex_loc`.`code`) like `r_s`.`location` or `r_s`.`location` = '')
+    ELSE (TRIM(`loc`.`code`) like `r_s`.`location` or `r_s`.`location` = '')
+  END
+  and ucase(`r_s`.`active`) = 'Y';
 
 -- tables for invenio_upgrader
 CREATE TABLE IF NOT EXISTS upgrade (

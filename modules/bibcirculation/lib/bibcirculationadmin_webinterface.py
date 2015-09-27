@@ -2062,6 +2062,8 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         # Replace * wildcard with SQL %
         loc = loc.replace("*", "%")
 
+        loc = loc.strip()
+
         return bal.rules_selection(req, r_id=r_id, i_id=i_id, p_id=p_id, loc=loc, active=active,
                                    toggle=toggle, delete=delete, ln=ln)
 
@@ -2075,6 +2077,8 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         name = argd['name']
         lib_id = argd['lib_id']
         delete = argd['delete']
+
+        code = code.strip()
 
         return bal.locations(req, code=code, name=name, lib_id=lib_id, delete=delete, ln=ln)
 

@@ -5252,8 +5252,8 @@ FROM `crcRULES_SELECTION` `r_s`
   left join `crcLOCATION` `ex_loc` on `le`.`id_crcLOCATION` = `ex_loc`.`id`
 WHERE
   CASE WHEN (`i`.`loc_exception` is not null)
-    THEN (TRIM(`ex_loc`.`code`) like `r_s`.`location` or `r_s`.`location` = '')
-    ELSE (TRIM(`loc`.`code`) like `r_s`.`location` or `r_s`.`location` = '')
+    THEN (`ex_loc`.`code` like `r_s`.`location` or `r_s`.`location` = '')
+    ELSE (`loc`.`code` like `r_s`.`location` or `r_s`.`location` = '')
   END
   and ucase(`r_s`.`active`) = 'Y';
 

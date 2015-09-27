@@ -356,11 +356,19 @@ def generate_new_due_date(value, hours=False, minutes=False, absolute=False):
 def render_loan_period(loan_period, admin_display=False):
     if isinstance(loan_period, dict):
         if ('value' and 'type') in loan_period:
-             return str(loan_period['value']) + " " + loan_period['type']
+            if type == CFG_BIBCIRCULATION_LOAN_RULE_CODE_ABSOLUTE:
+                date = datetime(datetime.today().timetuple().tm_year, 1, 1) + timedelta(loan_period['value'] - 1)
+                return pretty_strftime('%B {S}, %Y', date)
+            return str(loan_period['value']) + " " + loan_period['type']
     if admin_display:
         return "No loan rule"
     return "Not available"
 
+# Prettyprint date helper functions
+def suffix(d):
+    return 'th' if 11<=d<=13 else {1:'st',2:'nd',3:'rd'}.get(d%10, 'th')
+def pretty_strftime(format, t):
+    return t.strftime(format).replace('{S}', str(t.day) + suffix(t.day))
 
 
 def renew_loan_for_X_days(barcode, borrower_id=None):

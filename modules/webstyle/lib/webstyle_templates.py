@@ -542,8 +542,25 @@ template function generated it.
         """
         try:
             from invenio.config import CFG_PIWIK
+            tracking_code = """<!-- Piwik -->
+                                <script type='text/javascript'>
+                                  var _paq = _paq || [];
+                                  _paq.push(['trackPageView']);
+                                  _paq.push(['enableLinkTracking']);
+                                  (function() {{
+                                    var u='//piwik.tind.io/';
+                                    _paq.push(['setTrackerUrl', u+'piwik.php']);
+                                    _paq.push(['setSiteId', {0}]);
+                                    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+                                    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+                                  }})();
+                                </script>
+                                <noscript><p><img src='//piwik.tind.io/piwik.php?idsite={0}' style='border:0;' alt='' /></p></noscript>
+                               <!-- End Piwik Code -->""".format(CFG_PIWIK)
+
+
         except:
-            CFG_PIWIK = ""
+            tracking_code = ""
         # load the right message language
         _ = gettext_set_language(ln)
 
@@ -600,7 +617,7 @@ template function generated it.
           'version': CFG_VERSION,
 
           'pagefooteradd': pagefooteradd,
-          'tracking_code': CFG_PIWIK,
+          'tracking_code': tracking_code,
         }
         return out
 

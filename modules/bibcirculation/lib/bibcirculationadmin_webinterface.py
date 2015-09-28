@@ -2074,7 +2074,8 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         lib_id = argd['lib_id']
         delete = argd['delete']
 
-        code = code.strip()
+        if code:
+            code = code.strip()
 
         return bal.locations(req, code=code, name=name, lib_id=lib_id, delete=delete, ln=ln)
 

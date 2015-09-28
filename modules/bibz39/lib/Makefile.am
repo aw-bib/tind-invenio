@@ -18,14 +18,20 @@
 pylibdir = $(libdir)/python/invenio
 
 pylib_DATA = \
-	bibz39_webapi.py \
 	bibz39_webinterface.py \
 	bibz39_config.py
 
+webdir=$(localstatedir)/www/css
 jsdir=$(localstatedir)/www/js
+
 
 js_DATA = bibz39.js
 
-EXTRA_DIST = $(pylib_DATA) $(js_DATA)
+web_DATA = bibz39.css
+
+EXTRA_DIST = $(pylib_DATA) \
+             $(js_DATA) \
+             $(web_DATA)
 
 CLEANFILES = *~ *.tmp *.pyc
+

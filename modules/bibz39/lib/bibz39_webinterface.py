@@ -22,7 +22,7 @@
 import cgi
 
 from PyZ3950 import zoom, zmarc
-from invenio.bibrecord import create_record, record_add_field, record_xml_output,\
+from invenio.bibrecord import create_record, record_add_field, record_xml_output, \
     record_delete_field
 
 
@@ -32,6 +32,7 @@ except ImportError:
     import simplejson as json
 
 from invenio.errorlib import register_exception
+
 try:
     from invenio.config import CFG_Z39_SERVER
 except ImportError:
@@ -40,7 +41,6 @@ from invenio.config import CFG_SITE_URL, CFG_SITE_SECURE_URL
 from invenio.access_control_engine import acc_authorize_action
 from invenio.webinterface_handler import WebInterfaceDirectory, wash_urlargd
 from invenio.webpage import page
-from invenio.bibz39_webapi import get_javascript, get_css
 from invenio.webuser import page_not_authorized
 from invenio.urlutils import redirect_to_url
 from invenio.bibedit_utils import create_cache
@@ -99,14 +99,15 @@ class WebInterfacebibz39Pages(WebInterfaceDirectory):
             err = False
             for server in argd["server"]:
                 try:
-                    errors[server] = {"internal": [],"remote": []}
+                    errors[server] = {"internal": [], "remote": []}
                     conn = zoom.Connection(CFG_Z39_SERVER[server]["address"],
                                            CFG_Z39_SERVER[server]["port"],
                                            user=CFG_Z39_SERVER[server].get("user", None),
                                            password=CFG_Z39_SERVER[server].get("password", None))
                     conn.databaseName = CFG_Z39_SERVER[server]["databasename"]
                     conn.preferredRecordSyntax = CFG_Z39_SERVER[server]["preferredRecordSyntax"]
-                    value = argd["search"].replace("-", "") if argd["search_type"] == "ISBN" else argd["search"]
+                    value = argd["search"].replace("-", "") if argd["search_type"] == "ISBN" else \
+                        argd["search"]
                     query = zoom.Query('CCL', u'{0}="{1}"'.format(
                         self._request_type_dict[argd["search_type"]], value))
                     body_content += ""
@@ -116,8 +117,9 @@ class WebInterfacebibz39Pages(WebInterfaceDirectory):
                             nb_to_browse = len(server_answer)
                         else:
                             nb_to_browse = 100
-                            errors[server]["remote"].append("The server {0} returned too many results. {1}/{2} are printed.".format(
-                                server, nb_to_browse, len(server_answer)))
+                            errors[server]["remote"].append(
+                                "The server {0} returned too many results. {1}/{2} are printed.".format(
+                                    server, nb_to_browse, len(server_answer)))
                         for result in server_answer[0:nb_to_browse]:
                             res.append({"value": result, "provider": server})
                     except zoom.Bib1Err as e:
@@ -207,7 +209,7 @@ class WebInterfacebibz39Pages(WebInterfaceDirectory):
                     body=body_content,
                     errors=[],
                     warnings=[],
-                    metaheaderadd=get_javascript() + get_css(),
+                    metaheaderadd=get_head(),
                     req=req)
 
     def interpret_string(self, data):
@@ -252,9 +254,25 @@ class WebInterfacebibz39Pages(WebInterfaceDirectory):
                     req_type, "checked" if req_type == "ISBN" else "")
 
         html += """</div>
-        <input type="text" name="search" id="search" value="{0}" />
-        <button onclick="spinning()" /> Search</button>
+        <input type="text" onkeydown="enterKeyLookUp(event)" name="search" id="search" value="{0}" />
+        <button type="button" onclick="spinning(event)" /> Search</button>
         </div>
         </form>""".format(argd["search"])
 
         return html
+
+
+def get_head():
+    """
+    Get all required scripts
+    """
+    js_scripts = """
+<link rel="stylesheet" href="%(site_url)s/img/font-awesome.min.css">
+<link rel="stylesheet" href="%(site_url)s/img/jquery-ui.css">
+<link rel="stylesheet" href="%(site_url)s/css/bibz39.css">
+<script type="text/javascript" src="%(site_url)s/js/jquery-ui.min.js">
+</script>
+<script type="text/javascript" src="%(site_url)s/js/bibz39.js">
+</script>
+                 """ % {'site_url': CFG_SITE_URL}
+    return js_scripts

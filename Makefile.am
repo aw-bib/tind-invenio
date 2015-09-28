@@ -156,6 +156,7 @@ install-jquery-plugins:
 	@echo "***********************************************************"
 	mkdir -p ${prefix}/var/www/js
 	mkdir -p $(prefix)/var/www/css
+	mkdir -p $(prefix)/var/www/fonts
 	(cd ${prefix}/var/www/js && \
 	wget -N http://requirejs.org/docs/release/2.1.20/minified/require.js && \
 	wget -N https://raw.githubusercontent.com/abpetkov/switchery/master/dist/switchery.min.js && \
@@ -207,16 +208,21 @@ install-jquery-plugins:
 	wget -N --no-check-certificate http://invenio-software.org/download/jquery/parsley.js &&\
 	wget -N --no-check-certificate http://invenio-software.org/download/jquery/spin.min.js &&\
 	rm -f jquery.bookmark.package-1.4.0.zip && \
+	cd ${prefix}/var/www/fonts && \
+	wget -N --no-check-certificate http://github.com/FortAwesome/Font-Awesome/raw/master/fonts/fontawesome-webfont.woff2 && \
+	wget -N --no-check-certificate http://github.com/FortAwesome/Font-Awesome/blob/master/fonts/fontawesome-webfont.woff && \
+	wget -N --no-check-certificate http://github.com/FortAwesome/Font-Awesome/raw/master/fonts/fontawesome-webfont.ttf && \
 	mkdir -p ${prefix}/var/www/img && \
 	cd ${prefix}/var/www/img && \
 	wget -r -np -nH --cut-dirs=4 -A "png,css" -P jquery-ui/themes http://jquery-ui.googlecode.com/svn/tags/1.8.17/themes/base/ && \
 	wget -r -np -nH --cut-dirs=4 -A "png,css" -P jquery-ui/themes http://jquery-ui.googlecode.com/svn/tags/1.8.17/themes/smoothness/ && \
 	wget -r -np -nH --cut-dirs=4 -A "png,css" -P jquery-ui/themes http://jquery-ui.googlecode.com/svn/tags/1.8.17/themes/redmond/ && \
 	wget --no-check-certificate -O datatables_jquery-ui.css https://raw.githubusercontent.com/DataTables/DataTables/1.10.0/media/css/demo_table_jui.css && \
-	wget -N https://raw.githubusercontent.com/abpetkov/switchery/master/dist/switchery.min.css && \
-	wget -N http://jquery-ui.googlecode.com/svn/tags/1.8.17/themes/redmond/jquery-ui.css && \
-	wget -N http://jquery-ui.googlecode.com/svn/tags/1.8.17/demos/images/calendar.gif && \
-	wget -r -np -nH --cut-dirs=5 -A "png" http://jquery-ui.googlecode.com/svn/tags/1.8.17/themes/redmond/images/)
+	wget --no-check-certificate http://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css && \
+	wget --no-check-certificate http://jquery-ui.googlecode.com/svn/tags/1.8.17/themes/redmond/jquery-ui.css && \
+	wget --no-check-certificate http://jquery-ui.googlecode.com/svn/tags/1.8.17/demos/images/calendar.gif && \
+	wget --no-check-certificate http://raw.githubusercontent.com/abpetkov/switchery/master/dist/switchery.min.css && \
+	wget -r -np -nH --cut-dirs=5 -A "png" http://jquery-ui.googlecode.com/svn/tags/1.8.17/themes/redmond/images/ )
 	@echo "***********************************************************"
 	@echo "** The jQuery plugins were successfully installed.       **"
 	@echo "***********************************************************"

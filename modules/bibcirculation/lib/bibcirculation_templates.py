@@ -3150,15 +3150,13 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                           <td class="bibcirccontent" align="center">%s</td>
                           <td class="bibcirccontent" align="center">%s</td>
                           <td class="bibcirccontent" align="right">
-                          <input type=button onClick="location.href='%s/admin2/bibcirculation/place_new_request_step2?ln=%s&barcode=%s&recid=%s&user_info=%s,%s,%s,%s,%s,%s,%s,%s'"
+                          <input type=button onClick="location.href='%s/admin2/bibcirculation/place_new_request_step2?ln=%s&barcode=%s&recid=%s&borrower_id=%s'"
                           value='%s' class="formbutton"></td>
                      </tr>
 
                 """ % (barcode, library, collection, call_no, location,
                        description, item_type, status, due_date,
                        CFG_SITE_URL, ln, barcode, recid, user_info[0],
-                       user_info[1], user_info[2], user_info[3],
-                       user_info[4], user_info[5], user_info[6], user_info[7],
                        _("Request"))
 
         out += """

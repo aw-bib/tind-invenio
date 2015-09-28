@@ -1640,7 +1640,7 @@ def create_new_request_step1(req, borrower_id, p="", f="", search=None,
     else:
         message = _('Empty borrower ID.')
         return borrower_search(req, message, False, ln)
-    borrower = clean_data(borrower)
+
     if search and p == '':
         infos.append(_('Empty string.') + ' ' + _('Please, try again.'))
         result = ''

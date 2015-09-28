@@ -156,6 +156,10 @@ def sort_record_relevance_findsimilar(recdict, rec_termcount, hitset, rank_limit
     hitset -= recdict.keys()
     #gives each record a score between 0-100
     divideby = max(recdict.values())
+
+    # It does mean that all score will be 0 so nothing to normalize, also dividing by 0 is bad !
+    if divideby == 0:
+        divideby = 1
     for recid, score in recdict.iteritems():
         score = int(score * 100 / divideby)
         if score >= rank_limit_relevance:

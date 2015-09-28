@@ -294,33 +294,29 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
     def place_new_request_step2(self, req, form):
         """http://cds.cern.ch/admin2/bibcirculation/place_new_request_step2"""
         argd = wash_urlargd(form, {'barcode': (str, None), 'recid': (str, None),
-                                    'user_info': (str, None), 'ln': (str, "en")})
+                                    'borrower_id': (int, None), 'ln': (str, "en")})
         barcode = argd['barcode']
         recid = argd['recid']
-        user_info = argd['user_info']
+        borrower_id = argd['borrower_id']
         ln = argd['ln']
 
-        if user_info is not None:
-            user_info = user_info.split(',')
 
-        return bal.place_new_request_step2(req, barcode, recid, user_info, ln)
+        return bal.place_new_request_step2(req, barcode, recid, borrower_id, ln)
 
     def place_new_request_step3(self, req, form):
         """http://cds.cern.ch/admin2/bibcirculation/place_new_request_step3"""
         argd = wash_urlargd(form, {'barcode': (str, None), 'recid': (str, None),
-                    'user_info': (str, None), 'period_from': (str, None),
+                    'borrower_id': (int, None), 'period_from': (str, None),
                     'period_to': (str, None), 'ln': (str, "en")})
+
         barcode = argd['barcode']
         recid = argd['recid']
-        user_info = argd['user_info']
+        borrower_id = argd['borrower_id']
         period_from = argd['period_from']
         period_to = argd['period_to']
         ln = argd['ln']
 
-        if user_info is not None:
-            user_info = user_info.split(',')
-
-        return bal.place_new_request_step3(req, barcode, recid, user_info, period_from,
+        return bal.place_new_request_step3(req, barcode, recid, borrower_id, period_from,
                                            period_to, ln)
 
 

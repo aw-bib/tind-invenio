@@ -3485,17 +3485,15 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
             <table class="bibcirctable">
                 <tr width="200">
                     <td align="center">
-                        <select name="user_info"
+                        <select name="borrower_id"
                                 size="8"
                                 style='border: 1px solid #cfcfcf; width:40%%'>
             """ % (CFG_SITE_URL, barcode, recid)
 
-            for (borrower_id, ccid, name, email,
-                 phone, address, mailbox, p_id) in result:
+            for borrower_id, name in result:
                 out += """
-                       <option value ='%s,%s,%s,%s,%s,%s,%s,%s'>%s
-                       """ % (borrower_id, ccid, name, email, phone,
-                              address, mailbox, p_id, name)
+                       <option value ='%s'>%s</option>
+                       """ % (borrower_id, name)
 
             out += """
                     </select>
@@ -3569,7 +3567,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                   method="post" >
             <input type=hidden name=barcode value='%s'>
             <input type=hidden name=recid value='%s'>
-            <input type=hidden name=user_info value="%s,%s,%s,%s,%s,%s,%s,%s">
+            <input type=hidden name=borrower_id value="%s">
             <br />
 
                 <table class="bibcirctable">
@@ -3624,7 +3622,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
 
               <br />
               """ % (CFG_SITE_URL, barcode, recid,
-                     borrower_id, ccid, name, email, phone, address, mailbox, p_id,
+                     borrower_id,
                      _("Item details"),
                      _("Name"), book_title,
                      _("Author(s)"), book_author,

@@ -1142,7 +1142,6 @@ def place_new_request_step1(req, barcode, recid, key, string, ln=CFG_SITE_LANG):
                     lastupdated=__lastupdated__)
 
     result = search_user(key, string)
-    borrowers_list = []
 
     if len(result) == 0 and key:
         if CFG_CERN_SITE:
@@ -1153,16 +1152,12 @@ def place_new_request_step1(req, barcode, recid, key, string, ln=CFG_SITE_LANG):
                                 {'ln': ln}, _("Register new borrower."))
             message = _("0 borrowers found.") + ' ' + new_borrower_link
             infos.append(message)
-    else:
-        for user in result:
-            borrower_data = db.get_borrower_data_by_id(user[0])
-            borrowers_list.append(clean_data(borrower_data))
 
     if len(result) == 1:
         return place_new_request_step2(req, barcode, recid,
-                                       borrowers_list[0], ln)
+                                       result[0][0], ln)
     else:
-        body = bc_templates.tmpl_place_new_request_step1(result=borrowers_list,
+        body = bc_templates.tmpl_place_new_request_step1(result=result,
                                                          key=key,
                                                          string=string,
                                                          barcode=barcode,
@@ -1181,7 +1176,7 @@ def place_new_request_step1(req, barcode, recid, key, string, ln=CFG_SITE_LANG):
                 navtrail=navtrail_previous_links,
                 lastupdated=__lastupdated__)
 
-def place_new_request_step2(req, barcode, recid, user_info, ln=CFG_SITE_LANG):
+def place_new_request_step2(req, barcode, recid, borrower_id, ln=CFG_SITE_LANG):
     """
     Place a new request from the item's page, step2.
 
@@ -1204,6 +1199,8 @@ def place_new_request_step2(req, barcode, recid, user_info, ln=CFG_SITE_LANG):
 
     _ = gettext_set_language(ln)
 
+    user_info = db.get_borrower_data_by_id(borrower_id)
+
     infos = []
 
     body = bc_templates.tmpl_place_new_request_step2(barcode=barcode,
@@ -1224,7 +1221,7 @@ def place_new_request_step2(req, barcode, recid, user_info, ln=CFG_SITE_LANG):
                 navtrail=navtrail_previous_links,
                 lastupdated=__lastupdated__)
 
-def place_new_request_step3(req, barcode, recid, user_info,
+def place_new_request_step3(req, barcode, recid, borrower_id,
                             period_from, period_to, ln=CFG_SITE_LANG):
     """
     Place a new request from the item's page, step3.
@@ -1250,6 +1247,8 @@ def place_new_request_step3(req, barcode, recid, user_info,
         return mustloginpage(req, auth_message)
 
     _ = gettext_set_language(ln)
+
+    user_info = db.get_borrower_data_by_id(borrower_id)
 
     if user_info:
         (_id, ccid, name, email, phone, address, mailbox, p_id) = user_info
@@ -6997,5 +6996,5 @@ def clean_data(data):
     final_res = list(data)
     for i in range(0, len(final_res)):
         if isinstance(final_res[i], str):
-            final_res[i] = final_res[i].replace(",", " ")
+            final_res[i] = final_res[i].replace(",", " ").replace("#","")
     return final_res

@@ -349,12 +349,12 @@ INSERT INTO field_tag VALUES (49,312,34);
 INSERT INTO field_tag VALUES (49,313,35);
 
 INSERT INTO format (id,name,code,description,content_type,visibility) VALUES (1,'HTML brief','hb', 'HTML brief output format, used for search results pages.', 'text/html', 1);
-INSERT INTO format (id,name,code,description,content_type,visibility) VALUES (2,'HTML detailed','hd', 'HTML detailed output format, used for Detailed record pages.', 'text/html', 1);
+INSERT INTO format (id,name,code,description,content_type,visibility) VALUES (2,'HTML detailed','hd', 'HTML detailed output format, used for Detailed record pages.', 'text/html', 0);
 INSERT INTO format (id,name,code,description,content_type,visibility) VALUES (3,'MARC','hm', 'HTML MARC.', 'text/html', 1);
 INSERT INTO format (id,name,code,description,content_type,visibility) VALUES (4,'Dublin Core','xd', 'XML Dublin Core.', 'text/xml', 1);
 INSERT INTO format (id,name,code,description,content_type,visibility) VALUES (5,'MARCXML','xm', 'XML MARC.', 'text/xml', 1);
-INSERT INTO format (id,name,code,description,content_type,visibility) VALUES (6,'portfolio','hp', 'HTML portfolio-style output format for photos.', 'text/html', 1);
-INSERT INTO format (id,name,code,description,content_type,visibility) VALUES (7,'photo captions only','hc', 'HTML caption-only output format for photos.', 'text/html', 1);
+INSERT INTO format (id,name,code,description,content_type,visibility) VALUES (6,'portfolio','hp', 'HTML portfolio-style output format for photos.', 'text/html', 0);
+INSERT INTO format (id,name,code,description,content_type,visibility) VALUES (7,'photo captions only','hc', 'HTML caption-only output format for photos.', 'text/html', 0);
 INSERT INTO format (id,name,code,description,content_type,visibility) VALUES (8,'BibTeX','hx', 'BibTeX.', 'text/html', 1);
 INSERT INTO format (id,name,code,description,content_type,visibility) VALUES (9,'EndNote','xe', 'XML EndNote.', 'text/xml', 1);
 INSERT INTO format (id,name,code,description,content_type,visibility) VALUES (10,'NLM','xn', 'XML NLM.', 'text/xml', 1);
@@ -365,7 +365,7 @@ INSERT INTO format (id,name,code,description,content_type,visibility) VALUES (14
 INSERT INTO format (id,name,code,description,content_type,visibility) VALUES (15,'File mini-panel', 'hdfile', 'Used to show fulltext files in mini-panel of detailed record pages.', 'text/html', 0);
 INSERT INTO format (id,name,code,description,content_type,visibility) VALUES (16,'Actions mini-panel', 'hdact', 'Used to display actions in mini-panel of detailed record pages.', 'text/html', 0);
 INSERT INTO format (id,name,code,description,content_type,visibility) VALUES (17,'References tab', 'hdref', 'Display record references in References tab.', 'text/html', 0);
-INSERT INTO format (id,name,code,description,content_type,visibility) VALUES (18,'HTML citesummary','hcs', 'HTML cite summary format, used for search results pages.', 'text/html', 1);
+INSERT INTO format (id,name,code,description,content_type,visibility) VALUES (18,'HTML citesummary','hcs', 'HTML cite summary format, used for search results pages.', 'text/html', 0);
 INSERT INTO format (id,name,code,description,content_type,visibility) VALUES (19,'RefWorks','xw', 'RefWorks.', 'text/xml', 1);
 INSERT INTO format (id,name,code,description,content_type,visibility) VALUES (20,'MODS', 'xo', 'Metadata Object Description Schema', 'application/xml', 1);
 INSERT INTO format (id,name,code,description,content_type,visibility) VALUES (21,'HTML author claiming', 'ha', 'Very brief HTML output format for author/paper claiming facility.', 'text/html', 0);

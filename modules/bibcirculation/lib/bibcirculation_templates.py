@@ -404,7 +404,7 @@ class Template:
                             <th>%s</th>
                             <th>%s</th>
                             <th>%s</th>
-                """ % (_("Request"), _("Library"), _("Call no"),
+                """ % (_("Options"), _("Library"), _("Call no"),
                        _("Location"), _("Description"), _("Item type"))
         if bibcirc_user:
             out += """      <th>%s</th>
@@ -431,9 +431,9 @@ class Template:
                 onClick="location.href='%s/%s/%s/holdings/request?barcode=%s&ln=%s'"
                 value='%s' class="bibcircbutton" onmouseover="this.className='bibcircbuttonover'"
                 onmouseout="this.className='bibcircbutton'">
-                """ % (CFG_SITE_URL, CFG_SITE_RECORD, recid, barcode, ln, _("Request"))
+                """ % (CFG_SITE_URL, CFG_SITE_RECORD, recid, barcode, ln, _("Place a hold"))
             elif auth_code and user_info['email'] == 'guest':
-                referal_url = urllib.quote("%s/%s/%s/holdings?ln=%s" %(CFG_SITE_URL, CFG_SITE_RECORD, recid, ln)
+                referal_url = urllib.quote("%s/%s/%s/holdings?ln=%s" %(CFG_SITE_URL, CFG_SITE_RECORD, recid, ln))
                 request_button = """
                 <input type=button
                 onClick="location.href='%s/youraccount/login?ln=%s&referer=%s'"
@@ -441,7 +441,7 @@ class Template:
                 onmouseout="this.className='bibcircbutton'">
                 """ % (CFG_SITE_URL, ln, referal_url, CFG_SITE_URL, _("Log in"))
             else:
-                request_button = '<span class="bibcircbutton" style="background: #9A9A9A">Request</span>'
+                request_button = '<span class="bibcircbutton" style="background: #9A9A9A">Place a hold</span>'
 
             if status in (CFG_BIBCIRCULATION_ITEM_STATUS_ON_ORDER,
                           'claimed'):

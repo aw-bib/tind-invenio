@@ -440,7 +440,7 @@ class Template:
                 onClick="location.href='%s/youraccount/login?ln=%s&referer=%s'"
                 value='%s' class="bibcircbutton" onmouseover="this.className='bibcircbuttonover'"
                 onmouseout="this.className='bibcircbutton'">
-                """ % (CFG_SITE_URL, ln, referal_url, CFG_SITE_URL, _("Log in"))
+                """ % (CFG_SITE_URL, ln, referal_url, _("Log in"))
             else:
                 request_button = '<span class="bibcircbutton" style="background: #9A9A9A">Place a hold</span>'
 

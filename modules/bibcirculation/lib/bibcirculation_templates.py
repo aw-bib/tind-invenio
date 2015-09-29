@@ -403,7 +403,7 @@ class Template:
                             <th>%s</th>
                             <th>%s</th>
                             <th>%s</th>
-                """ % (_("Options"), _("Library"), _("Call no"),
+                """ % (_("Request"), _("Library"), _("Call no"),
                        _("Location"), _("Description"), _("Item type"))
         if bibcirc_user:
             out += """      <th>%s</th>
@@ -431,6 +431,13 @@ class Template:
                 value='%s' class="bibcircbutton" onmouseover="this.className='bibcircbuttonover'"
                 onmouseout="this.className='bibcircbutton'">
                 """ % (CFG_SITE_URL, CFG_SITE_RECORD, recid, barcode, ln, _("Request"))
+            elif auth_code and user_info['email'] == 'guest':
+                request_button = """
+                <input type=button
+                onClick="location.href='%s/youraccount/login?ln=%s'"
+                value='%s' class="bibcircbutton" onmouseover="this.className='bibcircbuttonover'"
+                onmouseout="this.className='bibcircbutton'">
+                """ % (CFG_SITE_URL, ln, _("Log in"))
             else:
                 request_button = '<span class="bibcircbutton" style="background: #9A9A9A">Request</span>'
 

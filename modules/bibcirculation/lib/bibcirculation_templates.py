@@ -5379,7 +5379,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                         barcode, _("Update"),
                         recid, barcode, _("Add similar copy"),
                         barcode, _("New request"),
-                        _("New loan"),
+                        _("Checkout"),
                         _("Delete copy"))
 
             elif status == 'missing':
@@ -5400,7 +5400,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                         barcode, _("Update"),
                         recid, barcode, _("Add similar copy"),
                         _("New request"),
-                        _("New loan"),
+                        _("Checkout"),
                         barcode, _("Delete copy"))
 
             elif status == 'Reference':
@@ -5421,7 +5421,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                         barcode, _("Update"),
                         recid, barcode, _("Add similar copy"),
                         barcode, _("New request"),
-                        barcode, _("New loan"),
+                        barcode, _("Checkout"),
                         barcode, _("Delete copy"))
 
             else:
@@ -5442,7 +5442,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                         barcode, _("Update"),
                         recid, barcode, _("Add similar copy"),
                         barcode, _("New request"),
-                        barcode, _("New loan"),
+                        barcode, _("Checkout"),
                         barcode, _("Delete copy"))
 
         out += """

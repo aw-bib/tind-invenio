@@ -314,7 +314,8 @@ class Template:
         from invenio.bibcirculationadminlib import is_adminuser
 
         (auth_code, _auth_message) = is_adminuser(req)
-        bibcirc_user = db.get_borrower_id_by_email(collect_user_info(req)['email'])
+        user_info = collect_user_info(req)
+        bibcirc_user = db.get_borrower_id_by_email(user_info['email'])
 
         _ = gettext_set_language(ln)
 

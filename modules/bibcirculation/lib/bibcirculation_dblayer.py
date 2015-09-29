@@ -1229,7 +1229,7 @@ def get_item_info(barcode, for_update=False):
                             END) AS location,
                                 it.description,
                                 it.id_itemtype,
-                                it.status
+                                it.status,
                                 it.loc_exception
                            FROM crcITEM it
                       LEFT JOIN crcLOCATION_EXCEPTIONS le ON it.loc_exception = le.id

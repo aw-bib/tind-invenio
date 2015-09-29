@@ -23,6 +23,7 @@ __revision__ = "$Id$"
 
 import datetime
 import cgi
+import urllib
 from time import localtime
 import invenio.dateutils as dateutils
 from invenio.urlutils import create_html_link

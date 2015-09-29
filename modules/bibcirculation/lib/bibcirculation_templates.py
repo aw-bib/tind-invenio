@@ -299,7 +299,7 @@ class Template:
 
         return out
 
-    def tmpl_holdings_information(self, recid, req, holdings_info,
+    def tmpl_holdings_information(self, recid, req, holdings_info, bibformat_element=False
                                   ln=CFG_SITE_LANG):
         """
         This template is used in the user interface. In this template
@@ -319,6 +319,14 @@ class Template:
         bibcirc_user = db.get_borrower_id_by_email(user_info['email'])
 
         _ = gettext_set_language(ln)
+
+        if bibformat_element:
+            # Show only the first 10 items
+            see_all_link = ''
+            if len(holdings_info) > 10:
+                holdings_info = holdings_info[:10]
+                see_all_link = "<a href='%s/%s/%s/holdings?ln=%s'>%s</a>" % \
+                               (CFG_SITE_URL, CFG_SITE_RECORD, recid, ln, _("See all items..."))
 
         if not book_title_from_MARC(recid):
             out = """<div align="center"
@@ -483,37 +491,43 @@ class Template:
         out += """
             </tbody>
             </table>
-            <div id="pager" class="pager">
-                        <form>
-                            <br />
-                            <img src="/img/sb.gif" class="first" />
-                            <img src="/img/sp.gif" class="prev" />
-                            <input type="text" class="pagedisplay" />
-                            <img src="/img/sn.gif" class="next" />
-                            <img src="/img/se.gif" class="last" />
             """
+        if not bibformat_element:
+            out += """
+                <div id="pager" class="pager">
+                            <form>
+                                <br />
+                                <img src="/img/sb.gif" class="first" />
+                                <img src="/img/sp.gif" class="prev" />
+                                <input type="text" class="pagedisplay" />
+                                <img src="/img/sn.gif" class="next" />
+                                <img src="/img/se.gif" class="last" />
+                """
 
-        if is_periodical(recid):
+            if is_periodical(recid):
+                out += """
+                                <select class="pagesize">
+                                    <option value="10">10</option>
+                                    <option value="20">20</option>
+                                    <option value="30">30</option>
+                                    <option value="40" selected="selected">40</option>
+                                </select>
+                    """
+            else:
+                out += """
+                                <select class="pagesize">
+                                    <option value="10" selected="selected">10</option>
+                                    <option value="20">20</option>
+                                    <option value="30">30</option>
+                                    <option value="40">40</option>
+                                </select>
+                    """
             out += """
-                            <select class="pagesize">
-                                <option value="10">10</option>
-                                <option value="20">20</option>
-                                <option value="30">30</option>
-                                <option value="40" selected="selected">40</option>
-                            </select>
-                """
-        else:
+                            </form>
+                        </div>
+               """
+        if not bibformat_element:
             out += """
-                            <select class="pagesize">
-                                <option value="10" selected="selected">10</option>
-                                <option value="20">20</option>
-                                <option value="30">30</option>
-                                <option value="40">40</option>
-                            </select>
-                """
-        out += """
-                        </form>
-                    </div>
            <br />
            <br />
            <table class="bibcirctable">
@@ -522,6 +536,9 @@ class Template:
              </tr>
            </table>
            """ % (bibcirc_link)
+
+        if bibformat_element:
+            out += "<div style='text-align:center'>"+see_all_link+"</div>"
 
         return out
 

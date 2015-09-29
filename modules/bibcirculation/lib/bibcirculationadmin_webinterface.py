@@ -144,9 +144,10 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
     def loan_on_desk_step3(self, req, form):
         """http://cds.cern.ch/admin2/bibcirculation/loan_on_desk_step4"""
         argd = wash_urlargd(form, {'user_id': (int, None), 'barcode': (str, None),
-                                    'ln': (str, "en")})
+                                    'change_due_date': (str, None), 'ln': (str, "en")})
         user_id = argd['user_id']
         list_of_barcodes = argd['barcode']
+        change_due_date = argd['change_due_date']
         ln = argd['ln']
 
         if list_of_barcodes is not None:
@@ -154,7 +155,7 @@ class WebInterfaceBibCirculationAdminPages(WebInterfaceDirectory):
         else:
             list_of_barcodes = []
 
-        return bal.loan_on_desk_step3(req, user_id, list_of_barcodes, ln)
+        return bal.loan_on_desk_step3(req, user_id, list_of_barcodes, change_due_date, ln)
 
     def loan_on_desk_step4(self, req, form):
         """http://cds.cern.ch/admin2/bibcirculation/loan_on_desk_step5"""

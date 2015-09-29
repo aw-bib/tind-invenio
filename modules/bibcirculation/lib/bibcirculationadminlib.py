@@ -331,7 +331,7 @@ def loan_on_desk_step2(req, user_id, ln=CFG_SITE_LANG):
                 navtrail=navtrail_previous_links,
                 lastupdated=__lastupdated__)
 
-def loan_on_desk_step3(req, user_id, list_of_barcodes, ln=CFG_SITE_LANG):
+def loan_on_desk_step3(req, user_id, list_of_barcodes, change_due_date, ln=CFG_SITE_LANG):
     """
     Step 3/4 of loan procedure.
     Checks that the barcodes exist and that there are no request on these records.
@@ -445,7 +445,7 @@ def loan_on_desk_step3(req, user_id, list_of_barcodes, ln=CFG_SITE_LANG):
                                                     infos=infos,
                                                     ln=ln)
 
-    if infos == []:
+    if infos == [] and not change_due_date:
         # shortcut to simplify loan process
         due_dates = []
         for bc in list_of_barcodes:

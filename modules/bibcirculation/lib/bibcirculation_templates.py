@@ -421,11 +421,16 @@ class Template:
         out += """
                             <th>%s</th>
                             <th>%s</th>
+               """ % (_("Status"), _("Due date"))
+        if not bibformat_element:
+            out+= """
                             <th>%s</th>
+                  """ % _("Barcode")
+        out += """
                         </tr>
                     </thead>
                     <tbody>
-                """ % (_("Status"), _("Due date"), _("Barcode"))
+                """
 
         for (barcode, library, collection, call_no, location, description,
              item_type, status, due_date) in holdings_info:
@@ -476,9 +481,13 @@ class Template:
             out += """
                     <td>%s</td>
                     <td>%s</td>
+                """ % (status, due_date or '-')
+            if not bibformat_element:
+                out += """
                     <td align='center'>%s</td>
-                </tr>
-                """ % (status, due_date or '-', barcode)
+                """ % barcode
+            out += """
+                </tr>"""
 
         if auth_code != 0:
             bibcirc_link = ''
@@ -2378,6 +2387,12 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                         </script>
                     </td>
                   </tr>
+                  <tr>
+                    <td class="bibcirctableheader" width="77"></td>
+                    <td>
+                        <input type="checkbox" name="edit_due_date" /> %s
+                    </td>
+                  </tr>
                 </table>
                 <br />
                 <table class="bibcirctable">
@@ -2395,7 +2410,8 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                                           _("Email"), email,
                                           _("Phone"), phone,
                                           _("Patron type"), patron_type,
-                                          _("Enter the barcode"), _("Back"),
+                                          _("Enter the barcode"), _("Change due date"),
+                                          _("Back"),
                                           _("Continue"))
 
         out += """<input type=button value="%s"

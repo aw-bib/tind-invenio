@@ -299,7 +299,7 @@ class Template:
 
         return out
 
-    def tmpl_holdings_information(self, recid, req, holdings_info, bibformat_element=False
+    def tmpl_holdings_information(self, recid, req, holdings_info, bibformat_element=False,
                                   ln=CFG_SITE_LANG):
         """
         This template is used in the user interface. In this template

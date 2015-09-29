@@ -3303,7 +3303,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
         <br />
         </div>
 
-        """ % (_("A new request has been registered with success."),
+        """ % (_("A new hold request has been registered with success."),
                CFG_SITE_URL, ln, _("Back to home"))
 
         return out
@@ -3771,7 +3771,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
         <br />
         </div>
 
-        """ % (_("A new request has been registered with success."),
+        """ % (_("A new hold request has been registered with success."),
                CFG_SITE_URL, ln, _("Back to home"))
 
         return out
@@ -5378,7 +5378,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                  """ % (_("Select an action"),
                         barcode, _("Update"),
                         recid, barcode, _("Add similar copy"),
-                        barcode, _("New request"),
+                        barcode, _("New hold request"),
                         _("Checkout"),
                         _("Delete copy"))
 
@@ -5399,7 +5399,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                  """ % (_("Select an action"),
                         barcode, _("Update"),
                         recid, barcode, _("Add similar copy"),
-                        _("New request"),
+                        _("New hold request"),
                         _("Checkout"),
                         barcode, _("Delete copy"))
 
@@ -5420,7 +5420,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                  """ % (_("Select an action"),
                         barcode, _("Update"),
                         recid, barcode, _("Add similar copy"),
-                        barcode, _("New request"),
+                        barcode, _("New hold request"),
                         barcode, _("Checkout"),
                         barcode, _("Delete copy"))
 
@@ -5441,7 +5441,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                  """ % (_("Select an action"),
                         barcode, _("Update"),
                         recid, barcode, _("Add similar copy"),
-                        barcode, _("New request"),
+                        barcode, _("New hold request"),
                         barcode, _("Checkout"),
                         barcode, _("Delete copy"))
 
@@ -8065,7 +8065,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
     onClick="location.href='%s/admin2/bibcirculation/borrower_notification?ln=%s&borrower_id=%s&from_address=%s'"
                 value='%s' class='formbutton'>
         """ % (CFG_SITE_URL, ln, borrower_id, _("New loan"),
-               CFG_SITE_URL, ln, borrower_id, _("New request"),
+               CFG_SITE_URL, ln, borrower_id, _("New hold request"),
                CFG_SITE_URL, ln, borrower_id, _("New ILL request"),
                CFG_SITE_URL, ln, borrower_id, CFG_BIBCIRCULATION_LOANS_EMAIL, _("Notify this borrower"))
 

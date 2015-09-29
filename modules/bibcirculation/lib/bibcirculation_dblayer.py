@@ -2563,7 +2563,7 @@ def get_library_name(library_id):
         return None
 
 def get_lib_location(barcode):
-    return run_sql("""SELECT (CASE WHEN ex_loc.id_crcLIBRARY IS NOT NULL THEN
+    res = run_sql("""SELECT (CASE WHEN ex_loc.id_crcLIBRARY IS NOT NULL THEN
                                 ex_loc.id_crcLIBRARY
                             ELSE
                                 i.id_crcLIBRARY

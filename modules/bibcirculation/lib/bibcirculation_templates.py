@@ -433,12 +433,13 @@ class Template:
                 onmouseout="this.className='bibcircbutton'">
                 """ % (CFG_SITE_URL, CFG_SITE_RECORD, recid, barcode, ln, _("Request"))
             elif auth_code and user_info['email'] == 'guest':
+                referal_url = urllib.quote("%s/%s/%s/holdings?ln=%s" %(CFG_SITE_URL, CFG_SITE_RECORD, recid, ln)
                 request_button = """
                 <input type=button
-                onClick="location.href='%s/youraccount/login?ln=%s'"
+                onClick="location.href='%s/youraccount/login?ln=%s&referer=%s'"
                 value='%s' class="bibcircbutton" onmouseover="this.className='bibcircbuttonover'"
                 onmouseout="this.className='bibcircbutton'">
-                """ % (CFG_SITE_URL, ln, _("Log in"))
+                """ % (CFG_SITE_URL, ln, referal_url, CFG_SITE_URL, _("Log in"))
             else:
                 request_button = '<span class="bibcircbutton" style="background: #9A9A9A">Request</span>'
 

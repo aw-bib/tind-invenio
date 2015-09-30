@@ -4700,7 +4700,7 @@ class Template:
                 title_link = create_html_link(CFG_SITE_URL +
                                     '/admin2/bibcirculation/get_item_details',
                                     {'recid': recid, 'ln': ln},
-                                    (book_title_from_MARC(recid)))
+                                    (book_title_from_MARC(recid).split(":")[0]))
 
                 borrower_link = create_html_link(CFG_SITE_URL +
                                 '/admin2/bibcirculation/get_borrower_details',

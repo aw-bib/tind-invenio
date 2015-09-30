@@ -21,7 +21,6 @@ function changelength() {
 function recall_x_days(loan_id, template, days ){
     $.ajax("/admin2/bibcirculation/recall_loan?loan_id=" + loan_id + "&template=" + template + "&days="+days).done(function( data)
     {
-         alert(data);
          if(data["result"]==1) {
             print_notification("An error occured during recall process. Please try again later or contact tech@tind.io");
          } else {

@@ -2092,13 +2092,13 @@ def all_loans_data(req, msg=None, ln=CFG_SITE_LANG, library=(), loans_per_page=0
         actions_dropdown = """
          <select onchange="if(this.selectedIndex == 0){
                                             } else if(this.selectedIndex == 1) {
-                                                window.open('/get_borrower_loans_details?borrower_id=%(borrower_id)s&barcode=%(barcode)s&loan_id=%(loan_id)s&recid=%(recid)s');
+                                                window.open('get_borrower_loans_details?borrower_id=%(borrower_id)s&barcode=%(barcode)s&loan_id=%(loan_id)s&recid=%(recid)s');
                                             } else if(this.selectedIndex == 2) {
-                                                window.open('/loan_return_confirm?barcode=%(barcode)s');
+                                                window.open('loan_return_confirm?barcode=%(barcode)s');
                                             } else if(this.selectedIndex == 3) {
-                                                window.open('/change_due_date_step1?barcode=%(barcode)s&borrower_id=%(borrower_id)s');
+                                                window.open('change_due_date_step1?barcode=%(barcode)s&borrower_id=%(borrower_id)s');
                                             } else if(this.selectedIndex == 4) {
-                                                window.open('/claim_book_return?borrower_id=%(borrower_id)s&recid=%(recid)s&loan_id=%(loan_id)s&template=claim_return');
+                                                window.open('claim_book_return?borrower_id=%(borrower_id)s&recid=%(recid)s&loan_id=%(loan_id)s&template=claim_return');
                                             } else if(this.selectedIndex == 5) {
                                                 recall_x_days(%(loan_id)s, 'claim_return', 7);
                                             }
@@ -2197,13 +2197,13 @@ def all_expired_loans_data(req, ln=CFG_SITE_LANG):
                          <select onchange="if(this.selectedIndex == 0)
                                             {
                                             } else if(this.selectedIndex == 1) {
-                                                window.open('/get_borrower_loans_details?borrower_id=%(borrower_id)s&barcode=%(barcode)s&loan_id=%(loan_id)s&recid=%(recid)s');
+                                                window.open('get_borrower_loans_details?borrower_id=%(borrower_id)s&barcode=%(barcode)s&loan_id=%(loan_id)s&recid=%(recid)s');
                                             } else if(this.selectedIndex == 2) {
-                                                window.open('/loan_return_confirm?barcode=%(barcode)s');
+                                                window.open('loan_return_confirm?barcode=%(barcode)s');
                                             } else if(this.selectedIndex == 3) {
-                                                window.open('/change_due_date_step1?barcode=%(barcode)s&borrower_id=%(borrower_id)s');
+                                                window.open('change_due_date_step1?barcode=%(barcode)s&borrower_id=%(borrower_id)s');
                                             } else if(this.selectedIndex == 4) {
-                                                window.open('/claim_book_return?borrower_id=%(borrower_id)s&recid=%(recid)s&loan_id=%(loan_id)s&template=claim_return');
+                                                window.open('claim_book_return?borrower_id=%(borrower_id)s&recid=%(recid)s&loan_id=%(loan_id)s&template=claim_return');
                                             } else if(this.selectedIndex == 5) {
                                                 recall_x_days(%(loan_id)s, 'claim_return', 7);
                                             }

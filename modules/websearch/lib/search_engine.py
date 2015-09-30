@@ -3720,9 +3720,12 @@ def is_record_in_any_collection(recID, recreate_cache_if_needed=True):
 def get_all_collections_of_a_record(recID, recreate_cache_if_needed=True):
     """Return all the collection names a record belongs to.
     Note this function is O(n_collections)."""
-
-    recID = int(recID)
     ret = []
+    try:
+        recID = int(recID)
+    except:
+        return ret
+
     if recreate_cache_if_needed:
         collection_reclist_cache.recreate_cache_if_needed()
     for name in collection_reclist_cache.cache.keys():

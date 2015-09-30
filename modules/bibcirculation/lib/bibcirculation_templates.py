@@ -2387,12 +2387,6 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                         </script>
                     </td>
                   </tr>
-                  <tr>
-                    <td class="bibcirctableheader" width="77"></td>
-                    <td>
-                        <input type="checkbox" name="edit_due_date" /> %s
-                    </td>
-                  </tr>
                 </table>
                 <br />
                 <table class="bibcirctable">
@@ -2410,8 +2404,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                                           _("Email"), email,
                                           _("Phone"), phone,
                                           _("Patron type"), patron_type,
-                                          _("Enter the barcode"), _("Change due date"),
-                                          _("Back"),
+                                          _("Enter the barcode"), _("Back"),
                                           _("Continue"))
 
         out += """<input type=button value="%s"

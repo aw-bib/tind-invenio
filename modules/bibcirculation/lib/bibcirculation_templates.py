@@ -2383,7 +2383,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                         _("Patron type"), patron_type)
         if loan_info:
             out += """
-            <td>
+            <td style="vertical-align: top;>
               <table class="bibcirctable">
                     <tr>
                          <td class="bibcirctableheader">%s</td>
@@ -2405,7 +2405,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                 </table>
                     <form action="%s/admin2/bibcirculation/loan_return_confirm?ln=%s" method="post">
                     <input type="hidden" name="barcode" value="%s">
-                    <input type="submit" class="bibcircbutton" value="Return">
+                    <input type="submit" class="bibcircbutton" value="Return item">
                 </form>
             </td>
                 """ % (_("Loan details"),

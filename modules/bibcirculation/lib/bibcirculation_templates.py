@@ -6609,7 +6609,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
 
         for st in CFG_BIBCIRCULATION_ITEM_STATUS:
-            if st == CFG_BIBCIRCULATION_ITEM_STATUS_ON_LOAN and result[7] != CFG_BIBCIRCULATION_ITEM_STATUS_ON_LOAN:
+            if st == CFG_BIBCIRCULATION_ITEM_STATUS_ON_LOAN and result[8] != CFG_BIBCIRCULATION_ITEM_STATUS_ON_LOAN:
                 pass # to avoid creting a fake loan,
                      # 'on loan' is only shown if the item was already on loan
             elif st == result[8]:

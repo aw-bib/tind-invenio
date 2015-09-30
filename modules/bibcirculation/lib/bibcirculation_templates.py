@@ -2382,8 +2382,12 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                         _("Phone"), phone,
                         _("Patron type"), patron_type)
         if loan_info:
+            title_link = create_html_link(CFG_SITE_URL +
+                                '/admin2/bibcirculation/get_item_details',
+                                {'recid': loan_info[0], 'ln': ln},
+                                (book_title_from_MARC(loan_info[0])))
             out += """
-            <td style="vertical-align: top;>
+            <td style="vertical-align: top;">
               <table class="bibcirctable">
                     <tr>
                          <td class="bibcirctableheader">%s</td>
@@ -2403,16 +2407,11 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                   <td>%s</td>
                 </tr>
                 </table>
-                    <form action="%s/admin2/bibcirculation/loan_return_confirm?ln=%s" method="post">
-                    <input type="hidden" name="barcode" value="%s">
-                    <input type="submit" class="bibcircbutton" value="Return item">
-                </form>
             </td>
                 """ % (_("Loan details"),
-                       _("Title"), book_title_from_MARC(loan_info[0]),
+                       _("Title"), title_link,
                        _("Barcode"), loan_info[1],
-                       _("Due date"), loan_info[3],
-                       CFG_SITE_URL, ln, loan_info[1])
+                       _("Due date"), loan_info[3])
 
         out += """
             </tr></table>

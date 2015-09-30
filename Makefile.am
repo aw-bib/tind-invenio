@@ -218,7 +218,7 @@ install-jquery-plugins:
 	wget -r -np -nH --cut-dirs=4 -A "png,css" -P jquery-ui/themes http://jquery-ui.googlecode.com/svn/tags/1.8.17/themes/smoothness/ && \
 	wget -r -np -nH --cut-dirs=4 -A "png,css" -P jquery-ui/themes http://jquery-ui.googlecode.com/svn/tags/1.8.17/themes/redmond/ && \
 	wget --no-check-certificate -O datatables_jquery-ui.css https://raw.githubusercontent.com/DataTables/DataTables/1.10.0/media/css/demo_table_jui.css && \
-	wget --no-check-certificate http://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css && \
+	wget --no-check-certificate http://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css && \
 	wget --no-check-certificate http://jquery-ui.googlecode.com/svn/tags/1.8.17/themes/redmond/jquery-ui.css && \
 	wget --no-check-certificate http://jquery-ui.googlecode.com/svn/tags/1.8.17/demos/images/calendar.gif && \
 	wget --no-check-certificate http://raw.githubusercontent.com/abpetkov/switchery/master/dist/switchery.min.css && \

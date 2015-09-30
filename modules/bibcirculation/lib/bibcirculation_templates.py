@@ -2333,13 +2333,13 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
             <div class="bibcircbottom">
             <style type="text/css"> @import url("/img/tablesorter.css"); </style>
               <br />
-              <table style="width:100%">
+              <table style="width:100%%">
               <tr><td>
               <table class="bibcirctable">
                           <tr>
                                <td class="bibcirctableheader">%s</td>
                           </tr>
-                """ % (CFG_SITE_URL, _("User information"))
+                """ % _("User information")
 
         out += """
               </table>
@@ -2419,45 +2419,22 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                 <br />
             <form name="step2_form" action="%s/admin2/bibcirculation/loan_on_desk_step3"
                   method="get" >
+                  <input type=hidden name="user_id" value="%s">
                 <table class="bibcirctable">
                   <tr>
                     <td class="bibcirctableheader" width="77">%s</td>
                     <td>
                         <input type="text" size=45 id="barcode" name="barcode"
                                style='border: 1px solid #cfcfcf'>
+                        <input type="submit" id="submit_barcode" style="margin-left:10px;"
+                       value="%s" class="formbutton">
                         <script language="javascript" type="text/javascript">
                             document.getElementById("barcode").focus();
                         </script>
                     </td>
                   </tr>
-                </table>
-                <br />
-                <table class="bibcirctable">
-                <tr>
-                  <td>
-                       <input type=button value="%s"
-                        onClick="history.go(-1)" class="formbutton">
-
-                       <input type="submit" id="submit_barcode"
-                       value="%s" class="formbutton">
-
-                       <br /><br />""" % (_("Enter the barcode"), _("Back"),
-                                          _("Continue"))
-
-        out += """<input type=button value="%s"
-                        onClick="location.href='%s/admin2/bibcirculation/all_loans?ln=%s'"
-                        class="formbutton">""" % (_("See all loans"), CFG_SITE_SECURE_URL, ln)
-
-        out += """<input type=hidden name="user_id" value="%s">
-
-                  </td>
-                 </tr>
-                </table>
-                </form>
-                <br />
-                <br />
-                </div>
-                """ % (user_id)
+                </table>""" % (CFG_SITE_URL, user_id, _("Enter the barcode"),
+                                          _("Checkout"))
 
         return out
 

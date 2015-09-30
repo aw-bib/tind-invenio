@@ -576,12 +576,10 @@ def loan_on_desk_step4(req, list_of_barcodes, user_id,
             message = _("%(x_strong_tag_open)sNote:%(x_strong_tag_close)s The item %(x_barcode)s is not for overnight loan." %  {'x_barcode': barcode, 'x_strong_tag_open': '<strong>', 'x_strong_tag_close': '</strong>'})
             infos.append(message)
 
-    item_url = "<a href=\"%s/admin2/bibcirculation/item_search_result?f=barcode&p=%s\" target=\"_blank\" >" % (CFG_SITE_SECURE_URL, barcode)
-    infos.append(_("A loan for the item %(x_strong_tag_open)s%(x_title)s%(x_strong_tag_close)s, with barcode %(x_strong_tag_open)s%(a_href_open)s%(x_barcode)s%(a_href_close)s%(x_strong_tag_close)s, has been registered with success. Due date: %(due_date)s") % {'x_title': book_title_from_MARC(recid), 'x_barcode': barcode, 'x_strong_tag_open': '<strong>', 'x_strong_tag_close': '</strong>', 'a_href_open': item_url, 'a_href_close': '</a>', 'due_date': due_date[i]})
-    infos.append(_("You could enter the barcode for this user's next loan, if any."))
+    loan_info = db.get_loan_infos(db.get_current_loan_id(barcode))
+    infos.append(_("Loan registered."))
     body = bc_templates.tmpl_loan_on_desk_step2(user_id=user_id,
-                                                infos=infos, ln=ln)
-
+                                                infos=infos, loan_info=loan_info, ln=ln)
     return page(title=_("Circulation management"),
         uid=id_user,
         req=req,

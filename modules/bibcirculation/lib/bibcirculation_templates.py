@@ -2310,7 +2310,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
 
         return out
 
-    def tmpl_loan_on_desk_step2(self, user_id, infos, ln=CFG_SITE_LANG):
+    def tmpl_loan_on_desk_step2(self, user_id, infos, loan_info=None, ln=CFG_SITE_LANG):
         """
         @param ln: language of the page
         """
@@ -2332,9 +2332,9 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
         out += """
             <div class="bibcircbottom">
             <style type="text/css"> @import url("/img/tablesorter.css"); </style>
-            <form name="step2_form" action="%s/admin2/bibcirculation/loan_on_desk_step3"
-                  method="get" >
               <br />
+              <table style="width:100%">
+              <tr><td>
               <table class="bibcirctable">
                           <tr>
                                <td class="bibcirctableheader">%s</td>
@@ -2375,7 +2375,50 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                   <td>%s</td>
                 </tr>
                 </table>
+            </td>""" %( _("Name"), name,
+                        _("Address"), address,
+                        _("Mailbox"), mailbox,
+                        _("Email"), email,
+                        _("Phone"), phone,
+                        _("Patron type"), patron_type)
+        if loan_info:
+            out += """
+            <td>
+              <table class="bibcirctable">
+                    <tr>
+                         <td class="bibcirctableheader">%s</td>
+                    </tr>
+              </table>
+              <table class="tablesorter" border="0" cellpadding="0" cellspacing="1">
+                <tr>
+                  <th width="70">%s</th>
+                  <td>%s</td>
+                </tr>
+                <tr>
+                  <th width="70">%s</th>
+                  <td>%s</td>
+                  </tr>
+                <tr>
+                  <th width="70">%s</th>
+                  <td>%s</td>
+                </tr>
+                </table>
+                    <form action="%s/admin2/bibcirculation/loan_return_confirm?ln=%s" method="post">
+                    <input type="hidden" name="barcode" value="%s">
+                    <input type="submit" class="bibcircbutton" value="Return">
+                </form>
+            </td>
+                """ % (_("Loan details"),
+                       _("Title"), book_title_from_MARC(loan_info[0]),
+                       _("Barcode"), loan_info[1],
+                       _("Due date"), loan_info[3],
+                       CFG_SITE_URL, ln, loan_info[1])
+
+        out += """
+            </tr></table>
                 <br />
+            <form name="step2_form" action="%s/admin2/bibcirculation/loan_on_desk_step3"
+                  method="get" >
                 <table class="bibcirctable">
                   <tr>
                     <td class="bibcirctableheader" width="77">%s</td>
@@ -2398,13 +2441,7 @@ onClick="location.href='%s/admin2/bibcirculation/create_loan?ln=%s&request_id=%s
                        <input type="submit" id="submit_barcode"
                        value="%s" class="formbutton">
 
-                       <br /><br />""" % (_("Name"), name,
-                                          _("Address"), address,
-                                          _("Mailbox"), mailbox,
-                                          _("Email"), email,
-                                          _("Phone"), phone,
-                                          _("Patron type"), patron_type,
-                                          _("Enter the barcode"), _("Back"),
+                       <br /><br />""" % (_("Enter the barcode"), _("Back"),
                                           _("Continue"))
 
         out += """<input type=button value="%s"

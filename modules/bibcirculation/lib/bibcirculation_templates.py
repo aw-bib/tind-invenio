@@ -45,7 +45,8 @@ from invenio.bibcirculation_utils import get_book_cover, \
       is_periodical, \
       looks_like_dictionary, \
       generate_new_due_date, \
-      render_loan_period
+      render_loan_period, \
+      print_actual_due_date
 from invenio.bibcirculation_config import \
     CFG_BIBCIRCULATION_ITEM_LOAN_PERIOD, \
     CFG_BIBCIRCULATION_COLLECTION, \
@@ -486,7 +487,7 @@ class Template:
             out += """
                     <td>%s</td>
                     <td>%s</td>
-                """ % (status, due_date or '-')
+                """ % (status, print_actual_due_date(barcode=barcode) or '-')
             if not bibformat_element:
                 out += """
                     <td align='center'>%s</td>
@@ -725,7 +726,7 @@ class Template:
                 </tr>
                 """ % (record_link,
                        loaned_on,
-                       due_date,
+                       print_actual_due_date(barcode=barcode),
                        renew_link)
 
             out += """    </tbody>
@@ -2462,7 +2463,7 @@ class Template:
                 """ % (_("Loan details"),
                        _("Title"), title_link,
                        _("Barcode"), loan_info[1],
-                       _("Due date"), loan_info[3])
+                       _("Due date"), print_actual_due_date(barcode=loan_info[1]))
 
         out += """
             </tr></table>
@@ -3255,7 +3256,7 @@ class Template:
                      </tr>
 
                 """ % (barcode, library, collection, call_no, location,
-                       description, item_type, status, due_date,
+                       description, item_type, status, print_actual_due_date(barcode=barcode),
                        CFG_SITE_URL, ln, barcode, recid, user_info[0],
                        _("Request"))
 
@@ -4302,7 +4303,7 @@ class Template:
 
 
     def tmpl_change_due_date_step1(self, loan_details, loan_id, borrower_id, loan_period,
-                                   ln=CFG_SITE_LANG):
+                                   infos=None, ln=CFG_SITE_LANG):
         """
         Return the form where the due date can be changed.
 
@@ -4370,29 +4371,36 @@ class Template:
                     _("Title"), book_title_from_MARC(recid),
                     _("Barcode"), barcode,
                     _("Loan date"), loaned_on,
-                    _("Due date"), due_date,
+                    _("Due date"), print_actual_due_date(barcode=barcode),
                     _("Loan status"), loan_status,
                     _("Loan period"), render_loan_period(loan_period),
-                    _("Requested ?"), request_status)
+                    _("Hold requested?"), request_status)
 
         out += """
 
-            <script type="text/javascript" language='JavaScript' src="%s/js/ui.datepicker.min.js"></script>
-
+            <script type="text/javascript" language='JavaScript' src="/js/jquery.simple-dtpicker.js"></script>
+            <link rel="stylesheet" type="text/css" href="/img/jquery.simple-dtpicker.css" />
+            
             <table class="bibcirctable">
               <tr align="left">
                 <td width="230" class="bibcirctableheader">%s
                     <script type="text/javascript">
                         $(function(){
-                            $("#date_picker1").datepicker({dateFormat: 'yy-mm-dd', showOn: 'button', buttonImage: "%s/img/calendar.gif", buttonImageOnly: true});
+                """ % _("New due date: ")
+        if loan_period and loan_period['type'] != 'hours':
+            out += """$("#datetime_picker1").appendDtpicker({'locale': '%s', 'firstDayOfWeek': 1, "closeOnSelected": true, "dateOnly": true});""" % ln
+        else:
+            out += """$("#datetime_picker1").appendDtpicker({'locale': '%s', 'firstDayOfWeek': 1, "closeOnSelected": true});""" % ln
+
+        out += """
                         });
                     </script>
-                    <input type="text" size="12" id="date_picker1" name="new_due_date" value="%s" style='border: 1px solid #cfcfcf'>
+                    <input type="text" size="14" id="datetime_picker1" name="new_due_date" value="%s" style='border: 1px solid #cfcfcf;padding:5px;'>
                 </td>
               </tr>
             </table>
             <br />
-            """ % (CFG_SITE_URL, _("New due date: "), CFG_SITE_URL, due_date)
+            """ % print_actual_due_date(barcode=barcode)
 
         out += """
         <table class="bibcirctable">
@@ -4437,6 +4445,8 @@ class Template:
         _ = gettext_set_language(ln)
 
         out = """ """
+        if infos:
+            out += self.tmpl_infobox(infos, ln)
 
         out += load_menu(ln)
 
@@ -5636,7 +5646,7 @@ class Template:
 
         for (barcode, loan_period, library_name, library_id, call_no,
              location, nb_requests, status, collection,
-             description, due_date, code, item_type) in copies:
+             description, due_date, code, item_type, loan_id) in copies:
 
             number_of_requests = db.get_number_requests_per_copy(barcode)
             if number_of_requests > 0:
@@ -5670,7 +5680,7 @@ class Template:
                      <td>%s</td>
                      <td>%s</td>
                      """ % (barcode, status, requested,
-                            due_date or '-', library_link, call_no)
+                            print_actual_due_date(loan_id=loan_id) or '-', library_link, call_no)
 
             if not record_is_periodical:
                 out += """
@@ -6137,7 +6147,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                  <td>%s - %s</td>
                  <td>%s</td>
                  <td>%s</td>
-                 """ % (borrower_link, barcode, loaned_on, due_date,
+                 """ % (borrower_link, barcode, loaned_on, print_actual_due_date(loan_id=loan_id),
                         nb_renewal, nb_overdue, date_overdue,
                         status, check_notes)
 
@@ -6349,7 +6359,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
         for (name, borrower_id, barcode, library_name, call_no, location, loaned_on,
              due_date, returned_on, nb_renew,
-             nb_overdueletters) in loans_hist_overview:
+             nb_overdueletters, loan_id) in loans_hist_overview:
 
             borrower_link = create_html_link(CFG_SITE_URL +
                                 '/admin2/bibcirculation/get_borrower_details',
@@ -6369,7 +6379,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                        </tr>
                  """ % (borrower_link, barcode, library_name,
                         call_no, location, loaned_on,
-                        due_date, returned_on, nb_renew,
+                        print_actual_due_date(loan_id=loan_id), returned_on, nb_renew,
                         nb_overdueletters)
 
         out += """
@@ -6618,7 +6628,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
 
         for (barcode, loan_period, lib_name, libid, call_no, location, nb_requests,
-             status, collection, description, due_date, code, item_type) in result:
+             status, collection, description, due_date, code, item_type, loan_id) in result:
 
             library_link = create_html_link(CFG_SITE_URL +
                                 '/admin2/bibcirculation/get_library_details',
@@ -7380,7 +7390,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                     """ % (_("Description"))
 
         for (barcode, loan_period, lib_name, libid, call_no, location, nb_requests,
-             status, collection, description, due_date, code, item_type) in result:
+             status, collection, description, due_date, code, item_type, loan_id) in result:
 
             library_link = create_html_link(CFG_SITE_URL +
                                 '/admin2/bibcirculation/get_library_details',
@@ -7393,7 +7403,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                      <td>%s</td>
                      <td>%s</td>
                      <td>%s</td>
-                     """ % (barcode, status, due_date or '-', library_link, call_no or '')
+                     """ % (barcode, status, print_actual_due_date(loan_id=loan_id) or '-', library_link, call_no or '')
 
             if not record_is_periodical:
                 out += """
@@ -7970,7 +7980,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                     """ % (_("Description"))
 
         for (barcode, loan_period, lib_name, libid, call_no, location, nb_requests,
-             status, collection, description, due_date, code, item_type) in result:
+             status, collection, description, due_date, code, item_type, loan_id) in result:
 
             library_link = create_html_link(CFG_SITE_URL +
                                 '/admin2/bibcirculation/get_library_details',
@@ -7983,7 +7993,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                      <td>%s</td>
                      <td>%s</td>
                      <td>%s</td>
-                     """ % (barcode, status, due_date or '-', library_link, call_no)
+                     """ % (barcode, status, print_actual_due_date(loan_id=loan_id) or '-', library_link, call_no)
 
             if not record_is_periodical:
                 out += """
@@ -8057,7 +8067,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                         _("Description"))
 
         for (barcode, loan_period, lib_name, libid, call_no, location, nb_requests,
-             status, collection, description, due_date, code, item_type) in result:
+             status, collection, description, due_date, code, item_type, loan_id) in result:
             if barcode == barcode_to_delete:
                 library_link = create_html_link(CFG_SITE_URL +
                                 '/admin2/bibcirculation/get_library_details',
@@ -8076,7 +8086,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                          <td>%s</td>
                          <td>%s</td>
                      </tr>
-                     """ % (barcode, status, due_date, library_link, call_no, location,
+                     """ % (barcode, status, print_actual_due_date(loan_id=loan_id), library_link, call_no, location,
                             item_type or '-', nb_requests, collection or '-',
                             description or '-')
 
@@ -8759,7 +8769,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
               <td>%s</td>
               <td>%s</td>
               <td>%s</td>
-              """ % (title_link, barcode, loaned_on, due_date, nb_renewal,
+              """ % (title_link, barcode, loaned_on, print_actual_due_date(loan_id=loan_id), nb_renewal,
                      nb_overdue, date_overdue, loan_type, check_notes, status)
 
                 out += """
@@ -8994,7 +9004,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
             for (recid, barcode, library_name, call_no, location, loaned_on, due_date,
                  returned_on, nb_renew,
-                 nb_overdueletters) in loans_hist_overview:
+                 nb_overdueletters, loan_id) in loans_hist_overview:
 
                 title_link = create_html_link(CFG_SITE_URL +
                                     '/admin2/bibcirculation/get_item_details',
@@ -9015,7 +9025,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
                            </tr>
                      """ % (title_link, barcode,
                             library_name, call_no, location,
-                            loaned_on, due_date,
+                            loaned_on, print_actual_due_date(loan_id=loan_id),
                             returned_on, nb_renew,
                             nb_overdueletters)
 

@@ -1056,6 +1056,9 @@ def change_due_date_step1(req, barcode, borrower_id, ln=CFG_SITE_LANG):
     loan_id = db.get_current_loan_id(barcode)
     loan_details = db.get_loan_infos(loan_id)
     loan_period = db.get_loan_period_from_loan_rule(barcode, user_id=borrower_id)
+    infos=[]
+    if not loan_period:
+        infos.append(_("<strong>NB:</strong> This loan has no matching loan rule!"))
 
     navtrail_previous_links = '<a class="navtrail" ' \
                               'href="%s/help/admin">Admin Area' \
@@ -1065,6 +1068,7 @@ def change_due_date_step1(req, barcode, borrower_id, ln=CFG_SITE_LANG):
                                                    loan_id=loan_id,
                                                    borrower_id=borrower_id,
                                                    loan_period=loan_period,
+                                                   infos=infos,
                                                    ln=ln)
     return page(title=_("Change due date"),
                 uid=id_user,

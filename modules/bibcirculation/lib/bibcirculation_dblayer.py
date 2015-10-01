@@ -708,8 +708,8 @@ def get_loan_infos(loan_id):
 
     res =  run_sql("""SELECT l.id_bibrec,
                              l.barcode,
-                             DATE_FORMAT(l.loaned_on, '%%Y-%%m-%%d'),
-                             DATE_FORMAT(l.due_date, '%%Y-%%m-%%d'),
+                             DATE_FORMAT(l.loaned_on, '%%Y-%%m-%%d %%H:%%i'),
+                             DATE_FORMAT(l.due_date, '%%Y-%%m-%%d %%H:%%i'),
                              l.status,
                              it.loan_period,
                              it.status
@@ -738,6 +738,15 @@ def get_borrower_id(barcode):
                              (status=%s or status=%s)""",
                   (barcode, CFG_BIBCIRCULATION_LOAN_STATUS_ON_LOAN,
                    CFG_BIBCIRCULATION_LOAN_STATUS_EXPIRED))
+    try:
+        return res[0][0]
+    except IndexError:
+        return None
+
+def get_borrower_id_from_loan(loan_id):
+    res = run_sql(""" SELECT id_crcBORROWER
+                        FROM crcLOAN
+                       WHERE id = %s """, (loan_id, ))
     try:
         return res[0][0]
     except IndexError:
@@ -877,7 +886,7 @@ def get_all_loans(limit=None, sort= None, libraries=(), sort_by=-1, sort_dir="as
                        bi.value,
                        l.barcode,
                        DATE_FORMAT(l.loaned_on,'%d-%m-%Y'),
-                       DATE_FORMAT(l.due_date,'%d-%m-%Y'),
+                       DATE_FORMAT(l.due_date,'%d-%m-%Y %H:%i'),
                        l.number_of_renewals,
                        l.overdue_letter_number,
                        DATE_FORMAT(l.overdue_letter_date,'%d-%m-%Y'),
@@ -947,7 +956,7 @@ def get_expired_loans_with_parameters(sort= None, libraries=(), sort_by=-1, sort
                        bi.value,
                        l.barcode,
                        DATE_FORMAT(l.loaned_on,'%d-%m-%Y'),
-                       DATE_FORMAT(l.due_date,'%d-%m-%Y'),
+                       DATE_FORMAT(l.due_date,'%d-%m-%Y %H:%i'),
                        l.number_of_renewals,
                        l.overdue_letter_number,
                        DATE_FORMAT(l.overdue_letter_date,'%d-%m-%Y'),
@@ -974,7 +983,7 @@ def get_expired_loans_with_parameters(sort= None, libraries=(), sort_by=-1, sort
              LEFT JOIN crcLOCATION ex_loc ON ex_loc.id = le.id_crcLOCATION
              LEFT JOIN crcLIBRARY ex_lib ON ex_loc.`id_crcLIBRARY` = ex_lib.id
 
-                 WHERE ((l.status = "{0}" and l.due_date < CURDATE()) or l.status = "{1}" )
+                 WHERE ((l.status = "{0}" and l.due_date < NOW()) or l.status = "{1}" )
                        and bi.tag like '%a'
                        {2}{4}{3}
     """.format(CFG_BIBCIRCULATION_LOAN_STATUS_ON_LOAN,
@@ -994,7 +1003,7 @@ def get_all_expired_loans():
            it.id_bibrec,
            l.barcode,
            DATE_FORMAT(l.loaned_on,'%%Y-%%m-%%d'),
-           DATE_FORMAT(l.due_date,'%%Y-%%m-%%d'),
+           DATE_FORMAT(l.due_date,'%%Y-%%m-%%d %%H:%%i'),
            l.number_of_renewals,
            l.overdue_letter_number,
            DATE_FORMAT(l.overdue_letter_date,'%%Y-%%m-%%d'),
@@ -1003,7 +1012,7 @@ def get_all_expired_loans():
     FROM crcLOAN l, crcBORROWER bor, crcITEM it
     WHERE l.id_crcBORROWER = bor.id
           and l.barcode = it.barcode
-          and ((l.status = %s and l.due_date < CURDATE())
+          and ((l.status = %s and l.due_date < NOW())
                   or l.status = %s )
     """, (CFG_BIBCIRCULATION_LOAN_STATUS_ON_LOAN,
           CFG_BIBCIRCULATION_LOAN_STATUS_EXPIRED))
@@ -1039,7 +1048,7 @@ def get_expired_loans_with_waiting_requests():
 
                       WHERE (lr.status=%s or lr.status=%s)
                         AND (l.status=%s or (l.status=%s
-                        AND l.due_date < CURDATE()))
+                        AND l.due_date < NOW()))
                         AND lr.period_of_interest_from <= NOW()
                         AND lr.period_of_interest_to >= NOW()
                    ORDER BY lr.request_date;
@@ -1097,7 +1106,7 @@ def get_due_date(loan_id):
              crcLOAN.
     """
     # Select the newest loan given the barcode and borrower
-    date = run_sql("""SELECT DATE_FORMAT(due_date, '%%d-%%m-%%Y')
+    date = run_sql("""SELECT DATE_FORMAT(due_date, '%%d-%%m-%%Y %%H:%%i')
                         FROM crcLOAN
                        WHERE id = %s
                    """, (loan_id, ))
@@ -1340,7 +1349,7 @@ def get_item_loans(recid):
            bor.name,
            l.barcode,
            DATE_FORMAT(l.loaned_on,'%%Y-%%m-%%d'),
-           DATE_FORMAT(l.due_date,'%%Y-%%m-%%d'),
+           DATE_FORMAT(l.due_date,'%%Y-%%m-%%d %%H:%%i'),
            l.number_of_renewals,
            l.overdue_letter_number,
            DATE_FORMAT(l.overdue_letter_date,'%%Y-%%m-%%d'),
@@ -1462,10 +1471,11 @@ def get_item_loans_historical_overview(recid):
                                 loc.name
                             END) AS location,
                             DATE_FORMAT(l.loaned_on,'%%d-%%m-%%Y'),
-                            DATE_FORMAT(l.due_date,'%%d-%%m-%%Y'),
+                            DATE_FORMAT(l.due_date,'%%d-%%m-%%Y %%H:%%i'),
                             l.returned_on,
                             l.number_of_renewals,
-                            l.overdue_letter_number
+                            l.overdue_letter_number,
+                            l.id as loan_id
                        FROM crcLOAN l
                        JOIN crcBORROWER bor ON l.id_crcBORROWER=bor.id
                        JOIN crcITEM it ON l.barcode = it.barcode
@@ -1554,8 +1564,10 @@ def get_item_copies_details(recid, patrontype=None):
                         it.status,
                         it.collection,
                         it.description,
-                        DATE_FORMAT(ln.due_date,'%%d-%%m-%%Y'), lrv.code,
-                        itt.name AS itemtype
+                        DATE_FORMAT(ln.due_date,'%%d-%%m-%%Y %H:%%i'),
+                        lrv.code,
+                        itt.name AS itemtype,
+                        ln.id as loan_id
 
                         FROM crcITEM it
                         LEFT JOIN crcLOAN ln ON it.barcode = ln.barcode AND ln.status != "%s"
@@ -1593,9 +1605,10 @@ def get_item_copies_details(recid, patrontype=None):
                        it.status,
                        it.collection,
                        it.description,
-                       DATE_FORMAT(ln.due_date,'%%d-%%m-%%Y'),
+                       DATE_FORMAT(ln.due_date,'%%d-%%m-%%Y %%H:%%i'),
                        NULL,
-                       itt.name AS itemtype
+                       itt.name AS itemtype,
+                       ln.id as loan_id
 
                        FROM crcITEM it
                        LEFT JOIN crcLOAN ln ON it.barcode = ln.barcode AND ln.status != "%s"
@@ -1639,9 +1652,10 @@ def get_item_copies_details(recid, patrontype=None):
                     it.status,
                     it.collection,
                     it.description,
-                    DATE_FORMAT(ln.due_date,'%%d-%%m-%%Y'),
+                    DATE_FORMAT(ln.due_date,'%%d-%%m-%%Y %%H:%%i'),
                     NULL,
-                    itt.name as item_type
+                    itt.name as item_type,
+                    ln.id as loan_id
 
                     FROM crcITEM it
                     left join crcLOAN ln on it.barcode = ln.barcode and ln.status != "%s"
@@ -1756,7 +1770,7 @@ def get_holdings_information(recid, include_hidden_libraries=True):
                                 it.description,
                                 itt.name AS item_type,
                                 it.status,
-                                DATE_FORMAT(ln.due_date, '%%Y-%%m-%%d')
+                                DATE_FORMAT(ln.due_date, '%%Y-%%m-%%d %%H:%%i')
                            FROM crcITEM it
                                 left join crcLOAN ln on it.barcode = ln.barcode and ln.status != %s
                                 left join crcLIBRARY lib on lib.id = it.id_crcLIBRARY
@@ -1785,7 +1799,7 @@ def get_holdings_information(recid, include_hidden_libraries=True):
                                 it.description,
                                 itt.name AS item_type,
                                 it.status,
-                                DATE_FORMAT(ln.due_date, '%%Y-%%m-%%d')
+                                DATE_FORMAT(ln.due_date, '%%Y-%%m-%%d %%H:%%i')
                            FROM crcITEM it
                                 left join crcLOAN ln on it.barcode = ln.barcode and ln.status != %s
                                 left join crcLIBRARY lib on lib.id = it.id_crcLIBRARY
@@ -2181,7 +2195,7 @@ def get_borrower_loans(borrower_id):
     res = run_sql(""" SELECT id_bibrec,
                              barcode,
                              DATE_FORMAT(loaned_on,'%%Y-%%m-%%d'),
-                             DATE_FORMAT(due_date,'%%Y-%%m-%%d'),
+                             DATE_FORMAT(due_date,'%%Y-%%m-%%d %%H:%%i'),
                              type
                       FROM crcLOAN
                       WHERE id_crcBORROWER=%s and status != %s
@@ -2218,7 +2232,7 @@ def get_borrower_loan_details(borrower_id):
                   SELECT it.id_bibrec,
                          l.barcode,
                          DATE_FORMAT(l.loaned_on,'%%Y-%%m-%%d'),
-                         DATE_FORMAT(l.due_date,'%%Y-%%m-%%d'),
+                         DATE_FORMAT(l.due_date,'%%Y-%%m-%%d %%H:%%i'),
                          l.number_of_renewals,
                          l.overdue_letter_number,
                          DATE_FORMAT(l.overdue_letter_date,'%%Y-%%m-%%d'),
@@ -2332,10 +2346,11 @@ def bor_loans_historical_overview(borrower_id):
                                 loc.name
                             END) AS location,
                             DATE_FORMAT(l.loaned_on,'%%d-%%m-%%Y'),
-                            DATE_FORMAT(l.due_date,'%%d-%%m-%%Y'),
+                            DATE_FORMAT(l.due_date,'%%d-%%m-%%Y %%H:%%i'),
                             l.returned_on,
                             l.number_of_renewals,
-                            l.overdue_letter_number
+                            l.overdue_letter_number,
+                            l.id as loan_id
                        FROM crcLOAN l
                        JOIN crcITEM it ON l.barcode = it.barcode
                        JOIN crcLIBRARY lib ON it.id_crcLIBRARY = lib.id

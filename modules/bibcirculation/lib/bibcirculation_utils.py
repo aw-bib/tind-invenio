@@ -370,6 +370,27 @@ def suffix(d):
 def pretty_strftime(format, t):
     return t.strftime(format).replace('{S}', str(t.day) + suffix(t.day))
 
+def print_actual_due_date(loan_id=None, barcode=None, borrower_id=None):
+    if not loan_id and barcode:
+        loan_id = db.get_current_loan_id(barcode)
+    elif not barcode and loan_id:
+        loan_infos = db.get_loan_infos(loan_id)
+        if loan_infos:
+            barcode = loan_infos[1]
+
+    if loan_id and barcode:
+        due_date = db.get_due_date(loan_id)
+
+        if not (borrower_id):
+            borrower_id = db.get_borrower_id_from_loan(loan_id)
+
+        loan_period = db.get_loan_period_from_loan_rule(barcode, user_id=borrower_id, patrontype_id=None)
+        if loan_period['type'] == 'hours':
+            return due_date
+        else:
+            return due_date.split(" ")[0]
+
+    return None
 
 def renew_loan_for_X_days(barcode, borrower_id=None):
     """

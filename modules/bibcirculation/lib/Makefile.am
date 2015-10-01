@@ -34,9 +34,11 @@ pylib_DATA = bibcirculation.py \
              bibcirculation_regression_tests.py \
              bibcirculation_web_tests.py
 
-js_DATA = bibcirculation.js
+js_DATA = bibcirculation.js \
+          jquery.simple-dtpicker.js
 
-web_DATA = bibcirculation.css
+web_DATA = bibcirculation.css \
+           jquery.simple-dtpicker.css
 
 EXTRA_DIST = $(pylib_DATA) \
              $(js_DATA) \

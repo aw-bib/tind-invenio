@@ -636,9 +636,9 @@ class WebInterfaceYourAccountPages(WebInterfaceDirectory):
         # load the right message language
         _ = gettext_set_language(args['ln'])
 
-        if uid == -1 or CFG_ACCESS_CONTROL_LEVEL_SITE >= 1:
-            return webuser.page_not_authorized(req, "../youraccount/send_email",
-                                               navmenuid='youraccount')
+#        if uid == -1 or CFG_ACCESS_CONTROL_LEVEL_SITE >= 1:
+#            return webuser.page_not_authorized(req, "../youraccount/send_email",
+#                                               navmenuid='youraccount')
 
         user_prefs = webuser.get_user_preferences(webuser.emailUnique(args['p_email']))
         if user_prefs:

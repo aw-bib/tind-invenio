@@ -324,8 +324,11 @@ def detect_tokenizer_type(tokenizer):
     from invenio.bibindex_tokenizers.BibIndexStringTokenizer import BibIndexStringTokenizer
     from invenio.bibindex_tokenizers.BibIndexRecJsonTokenizer import BibIndexRecJsonTokenizer
     from invenio.bibindex_tokenizers.BibIndexMultiFieldTokenizer import BibIndexMultiFieldTokenizer
+    from invenio.bibindex_tokenizers.BibIndexFullTokenizer import BibIndexFullTokenizer
 
     tokenizer_inheritance_tree = inspect.getmro(tokenizer.__class__)
+    if BibIndexFullTokenizer in tokenizer_inheritance_tree:
+        return CFG_BIBINDEX_TOKENIZER_TYPE['full']
     if BibIndexStringTokenizer in tokenizer_inheritance_tree:
         return CFG_BIBINDEX_TOKENIZER_TYPE['string']
     if BibIndexMultiFieldTokenizer in tokenizer_inheritance_tree:

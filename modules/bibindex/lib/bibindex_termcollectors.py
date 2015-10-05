@@ -125,6 +125,23 @@ class TermCollector(object):
                     termslist[recID] = list_union(new_words, termslist[recID])
         return termslist
 
+    def _collect_full(self, recIDs, termslist):
+        """
+        Collects terms from specific tags or fields.
+        Used together with string tokenizer.
+        """
+        for tag in self.tags:
+            tokenizing_function = self.special_tags.get(tag, self.tokenizing_function)
+            phrases = self._get_phrases_for_tokenizing(tag, recIDs)
+            for row in phrases:
+                recID, phrase = row
+                if recID in recIDs:
+                    if not recID in termslist:
+                        termslist[recID] = []
+                    new_words = tokenizing_function(phrase, recID)
+                    termslist[recID] = list_union(new_words, termslist[recID])
+        return termslist
+
     def _get_phrases_for_tokenizing(self, tag, recIDs):
         """
         Gets phrases for later tokenization

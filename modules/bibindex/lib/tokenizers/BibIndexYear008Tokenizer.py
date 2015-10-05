@@ -50,22 +50,22 @@ class BibIndexYear008Tokenizer(BibIndexDefaultTokenizer):
         """Default tokenize_for_words inherited from default tokenizer"""
         return super(BibIndexFulltextTokenizer, self).tokenize_for_words(phrase)
 
+    def tokenize(self, phrase):
+        final = []
+        result = phrase[7:11]
+        if isinstance(result,list):
+            final.append(''.join(result))
+        result = phrase[11:15]
+        if isinstance(result,list):
+            final.append(''.join(result))
+        return final
 
     def tokenize_for_words(self, phrase):
-        result = phrase[7:11]
-        if isinstance(result,list):
-            result = ''.join(result)
-        return [result]
+        return self.tokenize(phrase)
 
     def tokenize_for_pairs(self, phrase):
-        result = phrase[7:11]
-        if isinstance(result,list):
-            result = ''.join(result)
-        return [result]
+        return self.tokenize(phrase)
 
     def tokenize_for_phrases(self, phrase):
-        result = phrase[7:11]
-        if isinstance(result,list):
-            result = ''.join(result)
-        return [result]
+        return self.tokenize(phrase)
 

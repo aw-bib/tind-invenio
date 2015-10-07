@@ -349,7 +349,7 @@ def save_xml_record(recid, uid, xml_record='', to_upload=True, to_merge=False,
     record_strip_empty_volatile_subfields(record)
     record_strip_empty_fields(record)
 
-    xml_to_write = wash_for_xml(record_xml_output(record))
+    xml_to_write = wash_for_xml(record_xml_output(record, order_fn="_order_by_tags"))
 
     # Write XML file.
     if not to_merge:

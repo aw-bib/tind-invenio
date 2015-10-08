@@ -2438,6 +2438,8 @@ class Template:
                                 '/admin2/bibcirculation/get_item_details',
                                 {'recid': loan_info[0], 'ln': ln},
                                 (book_title_from_MARC(loan_info[0])))
+            actual_due_date = print_actual_due_date(barcode=loan_info[1])
+
             out += """
             <td style="vertical-align: top;">
               <table class="bibcirctable">
@@ -2456,14 +2458,30 @@ class Template:
                   </tr>
                 <tr>
                   <th width="70">%s</th>
-                  <td>%s</td>
-                </tr>
-                </table>
-            </td>
+                  <td><form action="https://blix.tind.io/admin2/bibcirculation/change_due_date_step2" method="get">
+                  <input type="text" size="14" id="datetime_picker1" name="new_due_date" value="%s" style="border: 1px solid #cfcfcf;padding:5px;">
+                  <input type="submit" onmouseover="this.className='bibcircbuttonover'" onmouseout="this.className='bibcircbutton'" value="Change" class="bibcircbutton">
+                    <script type="text/javascript">
+                        $(function(){
                 """ % (_("Loan details"),
                        _("Title"), title_link,
                        _("Barcode"), loan_info[1],
-                       _("Due date"), print_actual_due_date(barcode=loan_info[1]))
+                       _("Due date"), actual_due_date)
+        # See if actual_due_date contains timestamp (looking for separating space)
+        if " " not in actual_due_date):
+            out += """$("#datetime_picker1").appendDtpicker({'locale': '%s', 'firstDayOfWeek': 1, "closeOnSelected": true, "dateOnly": true});""" % ln
+        else:
+            out += """$("#datetime_picker1").appendDtpicker({'locale': '%s', 'firstDayOfWeek': 1, "closeOnSelected": true});""" % ln
+
+        out += """
+                        });
+                    </script>
+                    </form>
+                  </td>
+                </tr>
+                </table>
+            </td>
+                """ % ln
 
         out += """
             </tr></table>

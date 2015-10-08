@@ -34,28 +34,24 @@ class BibIndexLoansLastYearTindTokenizer(BibIndexRecJsonTokenizer):
         pass
 
 
-    def tokenize(self, record):
+    def tokenize(self, recid):
         """Tokenizes for number of copies of a book in the 'real' library"""
-        count = 0
         try:
-            count = run_sql("SELECT count(*) "
+            return [run_sql("SELECT count(*) "
                             "FROM crcLOAN "
                             "WHERE loaned_on > DATE_SUB(NOW(),INTERVAL 1 YEAR) "
-                            "AND id_bibrec={0}".format(record["recid"]))[0][0]
-        except KeyError:
-            pass
-        except TypeError:
+                            "AND id_bibrec={0}".format(recid))[0][0]]
+        except (KeyError, TypeError):
             return []
-        return [str(count)]
 
-    def tokenize_for_words(self, record):
-        return self.tokenize(record)
+    def tokenize_for_words(self, recid):
+        return self.tokenize(recid)
 
-    def tokenize_for_pairs(self, record):
-        return self.tokenize(record)
+    def tokenize_for_pairs(self, recid):
+        return self.tokenize(recid)
 
-    def tokenize_for_phrases(self, record):
-        return self.tokenize(record)
+    def tokenize_for_phrases(self, recid):
+        return self.tokenize(recid)
 
     def get_tokenizing_function(self, wordtable_type):
         return self.tokenize

@@ -20,11 +20,11 @@
    owned by the library in the real world.
 """
 
-from invenio.bibindex_tokenizers.BibIndexStringTokenizer import BibIndexStringTokenizer
+from invenio.bibindex_tokenizers.BibIndexRecJsonTokenizer import BibIndexRecJsonTokenizer
 from invenio.dbquery import run_sql
 
 
-class BibIndexItemLocationTindTokenizer(BibIndexStringTokenizer):
+class BibIndexItemLocationTindTokenizer(BibIndexRecJsonTokenizer):
     """
         Returns locations of the books which is owned by the library.
     """
@@ -33,28 +33,27 @@ class BibIndexItemLocationTindTokenizer(BibIndexStringTokenizer):
                  remove_latex_markup=False):
         pass
 
+    def tokenize(self, recid):
 
-    def tokenize(self, record):
-        location = [""]
         try:
-            temp_location = [i[0] for i in run_sql("SELECT location "
-                                                   "FROM crcITEM "
-                                                   "WHERE id_bibrec={0}".format(record["recid"]))]
+            return [i[0] for i in run_sql(
+                "SELECT name "
+                "FROM crcITEM, crcLOCATION "
+                "WHERE id_bibrec = {0} "
+                "AND id_location = crcLOCATION.id".format(
+                    recid))]
 
-        except KeyError:
-            pass
-        except TypeError:
+        except (KeyError, TypeError):
             return []
-        return location
 
-    def tokenize_for_words(self, record):
-        return self.tokenize(record)
+    def tokenize_for_words(self, recid):
+        return self.tokenize(recid)
 
-    def tokenize_for_pairs(self, record):
-        return self.tokenize(record)
+    def tokenize_for_pairs(self, recid):
+        return self.tokenize(recid)
 
-    def tokenize_for_phrases(self, record):
-        return self.tokenize(record)
+    def tokenize_for_phrases(self, recid):
+        return self.tokenize(recid)
 
     def get_tokenizing_function(self, wordtable_type):
         return self.tokenize

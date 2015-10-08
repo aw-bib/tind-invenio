@@ -712,7 +712,9 @@ def get_loan_infos(loan_id):
                              DATE_FORMAT(l.due_date, '%%Y-%%m-%%d %%H:%%i'),
                              l.status,
                              it.loan_period,
-                             it.status
+                             it.status,
+                             l.id,
+                             l.id_crcBORROWER
                         FROM crcLOAN l, crcITEM it, crcLOANREQUEST lr
                        WHERE l.barcode=it.barcode and
                              l.id=%s""",

@@ -2461,6 +2461,8 @@ class Template:
                 <tr>
                   <th width="70">%s</th>
                   <td><form action="https://blix.tind.io/admin2/bibcirculation/change_due_date_step2" method="get">
+                  <input type="hidden" name="loan_id" value="%s">
+                  <input type="hidden" name="borrower_id" value="%s">
                   <input type="text" size="14" id="datetime_picker1" name="new_due_date" value="%s" style="border: 1px solid #cfcfcf;padding:5px;">
                   <input type="submit" onmouseover="this.className='bibcircbuttonover'" onmouseout="this.className='bibcircbutton'" value="Change" class="bibcircbutton">
                     <script type="text/javascript">
@@ -2468,7 +2470,8 @@ class Template:
                 """ % (_("Loan details"),
                        _("Title"), title_link,
                        _("Barcode"), loan_info[1],
-                       _("Due date"), actual_due_date)
+                       _("Due date"), loan_info[7], loan_info[8],
+                       actual_due_date)
             # See if actual_due_date contains timestamp (looking for separating space)
             if " " not in actual_due_date:
                 out += """$("#datetime_picker1").appendDtpicker({'locale': '%s', 'firstDayOfWeek': 1, "closeOnSelected": true, "dateOnly": true});""" % ln
@@ -2483,7 +2486,7 @@ class Template:
                 </tr>
                 </table>
             </td>
-                """ % ln
+                """
 
         out += """
             </tr></table>
@@ -4332,11 +4335,13 @@ class Template:
         _ = gettext_set_language(ln)
 
         out = """ """
+        if infos:
+            out += self.tmpl_infobox(infos, ln)
 
         out += load_menu(ln)
 
         (recid, barcode, loaned_on, due_date, loan_status,
-                                    old_loan_period, _item_status) = loan_details
+                                    old_loan_period, _item_status, loan_id, borrower_id) = loan_details
         number_of_requests = db.get_number_requests_per_copy(barcode)
         if number_of_requests > 0:
             request_status = 'Yes'
@@ -4455,8 +4460,6 @@ class Template:
         _ = gettext_set_language(ln)
 
         out = """ """
-        if infos:
-            out += self.tmpl_infobox(infos, ln)
 
         out += load_menu(ln)
 

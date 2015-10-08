@@ -1108,7 +1108,7 @@ def get_due_date(loan_id):
              crcLOAN.
     """
     # Select the newest loan given the barcode and borrower
-    date = run_sql("""SELECT DATE_FORMAT(due_date, '%%d-%%m-%%Y %%H:%%i')
+    date = run_sql("""SELECT DATE_FORMAT(due_date, '%%Y-%%m-%%d %%H:%%i')
                         FROM crcLOAN
                        WHERE id = %s
                    """, (loan_id, ))

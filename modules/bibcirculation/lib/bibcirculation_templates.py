@@ -2442,6 +2442,8 @@ class Template:
 
             out += """
             <td style="vertical-align: top;">
+            <script type="text/javascript" language='JavaScript' src="/js/jquery.simple-dtpicker.js"></script>
+            <link rel="stylesheet" type="text/css" href="/img/jquery.simple-dtpicker.css" />
               <table class="bibcirctable">
                     <tr>
                          <td class="bibcirctableheader">%s</td>

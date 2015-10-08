@@ -2467,13 +2467,13 @@ class Template:
                        _("Title"), title_link,
                        _("Barcode"), loan_info[1],
                        _("Due date"), actual_due_date)
-        # See if actual_due_date contains timestamp (looking for separating space)
-        if " " not in actual_due_date:
-            out += """$("#datetime_picker1").appendDtpicker({'locale': '%s', 'firstDayOfWeek': 1, "closeOnSelected": true, "dateOnly": true});""" % ln
-        else:
-            out += """$("#datetime_picker1").appendDtpicker({'locale': '%s', 'firstDayOfWeek': 1, "closeOnSelected": true});""" % ln
+            # See if actual_due_date contains timestamp (looking for separating space)
+            if " " not in actual_due_date:
+                out += """$("#datetime_picker1").appendDtpicker({'locale': '%s', 'firstDayOfWeek': 1, "closeOnSelected": true, "dateOnly": true});""" % ln
+            else:
+                out += """$("#datetime_picker1").appendDtpicker({'locale': '%s', 'firstDayOfWeek': 1, "closeOnSelected": true});""" % ln
 
-        out += """
+            out += """
                         });
                     </script>
                     </form>

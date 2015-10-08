@@ -2463,7 +2463,7 @@ class Template:
                   <td><form action="https://blix.tind.io/admin2/bibcirculation/change_due_date_step2" method="get">
                   <input type="hidden" name="loan_id" value="%s">
                   <input type="hidden" name="borrower_id" value="%s">
-                  <input type="text" size="14" id="datetime_picker1" name="new_due_date" value="%s" style="border: 1px solid #cfcfcf;padding:5px;">
+                  <input type="text" size="14" id="datetime_picker1" name="new_due_date" value="%s" style="border: 1px solid #cfcfcf;padding:5px;margin:0;">
                   <input type="submit" onmouseover="this.className='bibcircbuttonover'" onmouseout="this.className='bibcircbutton'" value="Change" class="bibcircbutton">
                     <script type="text/javascript">
                         $(function(){

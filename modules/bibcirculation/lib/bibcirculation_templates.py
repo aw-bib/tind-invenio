@@ -2468,7 +2468,7 @@ class Template:
                        _("Barcode"), loan_info[1],
                        _("Due date"), actual_due_date)
         # See if actual_due_date contains timestamp (looking for separating space)
-        if " " not in actual_due_date):
+        if " " not in actual_due_date:
             out += """$("#datetime_picker1").appendDtpicker({'locale': '%s', 'firstDayOfWeek': 1, "closeOnSelected": true, "dateOnly": true});""" % ln
         else:
             out += """$("#datetime_picker1").appendDtpicker({'locale': '%s', 'firstDayOfWeek': 1, "closeOnSelected": true});""" % ln
@@ -3016,19 +3016,9 @@ class Template:
 
         (borrower_id, ccid, name, email, phone, address, mailbox, p_id) = borrower
 
-<<<<<<< HEAD
         display_id = ccid
         id_string = "UID"
-
-        patron_type = db.get_patron_type_name(p_id)
-=======
-        display_id = borrower_id
-        id_string = _("ID")
         patron_type = db.get_patron_type_name(p_id) if p_id else None
-        if CFG_CERN_SITE == 1:
-            display_id = ccid
-            id_string = _("CCID")
->>>>>>> Adds if clause to fail gracefully for users with no patron type
 
         out += """
             <style type="text/css"> @import url("/img/tablesorter.css"); </style>
@@ -8145,20 +8135,9 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
 
         (borrower_id, ccid, name, email, phone, address, mailbox, p_id) = borrower
 
-<<<<<<< HEAD
         display_id = ccid
         id_string = "UID"
-=======
-        display_id = borrower_id
-        id_string = _("ID")
         patron_type = db.get_patron_type_name(p_id) if p_id else None
-
-        if CFG_CERN_SITE == 1:
-            display_id = ccid
-            id_string = _("CCID")
->>>>>>> Adds if clause to fail gracefully for users with no patron type
-
-        patron_type = db.get_patron_type_name(p_id)
 
         out += """
             <style type="text/css"> @import url("/img/tablesorter.css"); </style>
@@ -10497,7 +10476,7 @@ onClick="location.href='%s/admin2/bibcirculation/get_item_requests_details?recid
         patron_type = db.get_patron_type_name(p_id) if p_id else None
 
         (budget_code, period_of_interest_from, period_of_interest_to,
-         additional_comments<<, only_edition)= request_details
+         additional_comments, only_edition)= request_details
 
         out = ""
         if admin:

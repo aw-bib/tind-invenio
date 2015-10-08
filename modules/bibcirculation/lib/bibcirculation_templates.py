@@ -2474,9 +2474,9 @@ class Template:
                        actual_due_date)
             # See if actual_due_date contains timestamp (looking for separating space)
             if " " not in actual_due_date:
-                out += """$("#datetime_picker1").appendDtpicker({'locale': '%s', 'firstDayOfWeek': 1, "closeOnSelected": true, "dateOnly": true});""" % ln
+                out += """$("#datetime_picker1").appendDtpicker({'locale': '%s', "current": "%s", 'firstDayOfWeek': 1, "closeOnSelected": true, "dateOnly": true});""" % (ln, actual_due_date)
             else:
-                out += """$("#datetime_picker1").appendDtpicker({'locale': '%s', 'firstDayOfWeek': 1, "closeOnSelected": true});""" % ln
+                out += """$("#datetime_picker1").appendDtpicker({'locale': '%s', "current": "%s", 'firstDayOfWeek': 1, "closeOnSelected": true});""" % (ln, actual_due_date)
 
             out += """
                         });

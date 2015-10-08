@@ -24,7 +24,7 @@ from invenio.bibindex_tokenizers.BibIndexRecJsonTokenizer import BibIndexRecJson
 from invenio.dbquery import run_sql
 
 
-class BibIndexItemTypeTindTokenizer(BibIndexRecJsonTokenizer):
+class BibIndexRenewalsTindTokenizer(BibIndexRecJsonTokenizer):
     """
         Returns a number of copies of a book which is owned by the library.
     """
@@ -35,12 +35,8 @@ class BibIndexItemTypeTindTokenizer(BibIndexRecJsonTokenizer):
 
     def tokenize(self, recid):
         """Tokenizes for number of copies of a book in the 'real' library"""
-
         try:
-            return [x[0] for x in run_sql("SELECT itt.name "
-                                          "FROM crcITEM it "
-                                          "JOIN crcITEMTYPES itt ON it.id_itemtype = itt.id "
-                                          "WHERE it.id_bibrec={0}".format(recid))]
+            return [run_sql("select SUM(number_of_renewals) from crcLOAN where id_bibrec={0}".format(recid))[0][0]]
         except (KeyError, TypeError):
             return []
 

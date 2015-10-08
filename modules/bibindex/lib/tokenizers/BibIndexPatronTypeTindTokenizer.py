@@ -22,9 +22,10 @@
 
 from invenio.bibindex_tokenizers.BibIndexRecJsonTokenizer import BibIndexRecJsonTokenizer
 from invenio.dbquery import run_sql
+from itertools import permutations
 
 
-class BibIndexItemTypeTindTokenizer(BibIndexRecJsonTokenizer):
+class BibIndexPatronTypeTindTokenizer(BibIndexRecJsonTokenizer):
     """
         Returns a number of copies of a book which is owned by the library.
     """
@@ -33,25 +34,31 @@ class BibIndexItemTypeTindTokenizer(BibIndexRecJsonTokenizer):
                  remove_latex_markup=False):
         pass
 
-    def tokenize(self, recid):
-        """Tokenizes for number of copies of a book in the 'real' library"""
-
+    def tokenize_for_words(self, recid):
         try:
-            return [x[0] for x in run_sql("SELECT itt.name "
-                                          "FROM crcITEM it "
-                                          "JOIN crcITEMTYPES itt ON it.id_itemtype = itt.id "
-                                          "WHERE it.id_bibrec={0}".format(recid))]
+            types = []
+            types_db = [x[0] for x in run_sql("select crcP.name from crcLOAN as crcL, crcBORROWER as crcB, crcPATRONTYPES as crcP where crcL.id_bibrec = {0} and crcB.id = crcL.id_crcBORROWER and crcP.id = crcB.id_patrontype".format(recid))]
+            for _type in types_db:
+                types.extend(_type.split(" "))
+            return types
+        except (KeyError,TypeError):
+            return []
+
+    def tokenize_for_pairs(self, recid):
+        try:
+            types = []
+            types_db = [x[0] for x in run_sql("select crcP.name from crcLOAN as crcL, crcBORROWER as crcB, crcPATRONTYPES as crcP where crcL.id_bibrec = {0} and crcB.id = crcL.id_crcBORROWER and crcP.id = crcB.id_patrontype".format(recid))]
+            for _type in types_db:
+                types.extend(_type.split(" "))
+            return list(permutations(types,2))
         except (KeyError, TypeError):
             return []
 
-    def tokenize_for_words(self, recid):
-        return self.tokenize(recid)
-
-    def tokenize_for_pairs(self, recid):
-        return self.tokenize(recid)
-
     def tokenize_for_phrases(self, recid):
-        return self.tokenize(recid)
+        try:
+            return [x[0] for x in run_sql("select crcP.name from crcLOAN as crcL, crcBORROWER as crcB, crcPATRONTYPES as crcP where crcL.id_bibrec = {0} and crcB.id = crcL.id_crcBORROWER and crcP.id = crcB.id_patrontype".format(recid))]
+        except (KeyError, TypeError):
+            return []
 
     def get_tokenizing_function(self, wordtable_type):
         return self.tokenize

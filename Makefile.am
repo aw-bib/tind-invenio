@@ -162,6 +162,7 @@ install-jquery-plugins:
 	wget -N https://raw.githubusercontent.com/abpetkov/switchery/master/dist/switchery.min.js && \
 	wget -O jquery.min.js http://tind.io/download/jquery-1.7.1.min.js && \
 	wget -N http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.17/jquery-ui.min.js && \
+	wget -O ui.datepicker.min.js http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.17/jquery-ui.min.js && \
 	wget -O jquery.jeditable.mini.js http://tind.io/download/jquery.jeditable.custom.min.js && \
 	wget -N https://raw.githubusercontent.com/malsup/form/3.51/jquery.form.js --no-check-certificate && \
 	wget -N http://jquery-multifile-plugin.googlecode.com/svn-history/r54/trunk/jquery.MultiFile.pack.js && \

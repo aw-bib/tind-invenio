@@ -157,7 +157,9 @@ install-jquery-plugins:
 	mkdir -p ${prefix}/var/www/js
 	mkdir -p $(prefix)/var/www/css
 	mkdir -p $(prefix)/var/www/fonts
-	(cd ${prefix}/var/www/js && \
+	(cd ${prefix}/var/www && \
+	wget -O favicon.ico https://tind.io/download/tindicon.ico && \
+	cd ${prefix}/var/www/js && \
 	wget -N http://requirejs.org/docs/release/2.1.20/minified/require.js && \
 	wget -N https://raw.githubusercontent.com/abpetkov/switchery/master/dist/switchery.min.js && \
 	wget -O jquery.min.js http://tind.io/download/jquery-1.7.1.min.js && \
@@ -219,11 +221,11 @@ install-jquery-plugins:
 	wget -r -np -nH --cut-dirs=4 -A "png,css" -P jquery-ui/themes http://jquery-ui.googlecode.com/svn/tags/1.8.17/themes/smoothness/ && \
 	wget -r -np -nH --cut-dirs=4 -A "png,css" -P jquery-ui/themes http://jquery-ui.googlecode.com/svn/tags/1.8.17/themes/redmond/ && \
 	wget --no-check-certificate -O datatables_jquery-ui.css https://raw.githubusercontent.com/DataTables/DataTables/1.10.0/media/css/demo_table_jui.css && \
-	wget --no-check-certificate http://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css && \
 	wget --no-check-certificate http://jquery-ui.googlecode.com/svn/tags/1.8.17/themes/redmond/jquery-ui.css && \
 	wget --no-check-certificate http://jquery-ui.googlecode.com/svn/tags/1.8.17/demos/images/calendar.gif && \
 	wget --no-check-certificate http://raw.githubusercontent.com/abpetkov/switchery/master/dist/switchery.min.css && \
-	wget -r -np -nH --cut-dirs=5 -A "png" http://jquery-ui.googlecode.com/svn/tags/1.8.17/themes/redmond/images/ )
+	wget -r -np -nH --cut-dirs=5 -A "png" http://jquery-ui.googlecode.com/svn/tags/1.8.17/themes/redmond/images/ && \
+	wget --no-check-certificate http://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css )
 	@echo "***********************************************************"
 	@echo "** The jQuery plugins were successfully installed.       **"
 	@echo "***********************************************************"

@@ -1566,7 +1566,7 @@ def get_item_copies_details(recid, patrontype=None):
                         it.status,
                         it.collection,
                         it.description,
-                        DATE_FORMAT(ln.due_date,'%%d-%%m-%%Y %H:%%i'),
+                        DATE_FORMAT(ln.due_date,'%%d-%%m-%%Y %%H:%%i'),
                         lrv.code,
                         itt.name AS itemtype,
                         ln.id as loan_id

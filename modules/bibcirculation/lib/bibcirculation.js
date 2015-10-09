@@ -32,22 +32,23 @@ function recall_x_days(loan_id, template, days ){
 function print_notification(message, type) {
 
     var list = $(".infobox, .warningbox, .errorbox, .headline_div");
-    var highs = list.map(function(){return $(this).prop("offsetTop");}).get();
-    var highest = Math.max.apply(null, highs)
-    var selector = $(list[highs.indexOf(highest)])
+    var highs = list.map(function () {return $(this).prop("offsetTop"); }).get();
+    var highest = Math.max.apply(null, highs);
+    var selector = $(list[highs.indexOf(highest)]);
+    var box;
 
 
-    if(type == "info") {
-        box = "<div class='infobox'>" + message + "</div>"
-    } else if (type == "warning") {
-            box = "<div class='warningbox'>" + message + "</div>"
-    } else if (type == "error") { 
-            box = "<div class='errorbox'>" + message + "</div>"
+    if(type === "info") {
+        box = "<div class='infobox'>" + message + "</div>";
+    } else if (type === "warning") {
+            box = "<div class='warningbox'>" + message + "</div>";
+    } else if (type === "error") { 
+            box = "<div class='errorbox'>" + message + "</div>";
     } else {
-        box = "<div class='infobox'>" + message + "</div>"
+        box = "<div class='infobox'>" + message + "</div>";
     }
     selector.after(box);
-    setTimeout(function(){selector.next().fadeOut() }, 3000);
+    setTimeout(function(){selector.next().fadeOut(); }, 6000);
 
 }
 

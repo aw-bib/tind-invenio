@@ -916,7 +916,7 @@ def get_all_loans(limit=None, sort= None, libraries=(), sort_by=-1, sort_dir="as
              LEFT JOIN crcLOCATION ex_loc ON ex_loc.id = le.id_crcLOCATION
              LEFT JOIN crcLIBRARY ex_lib ON ex_loc.`id_crcLIBRARY` = ex_lib.id
 
-                 WHERE bi.tag like '%a'
+                 WHERE bi.tag like '245%a'
                        and l.status = '{4}'
                        {0}{2}{1}
                        {3}

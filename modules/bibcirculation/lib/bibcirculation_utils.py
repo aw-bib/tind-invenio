@@ -385,7 +385,7 @@ def print_actual_due_date(loan_id=None, barcode=None, borrower_id=None):
             borrower_id = db.get_borrower_id_from_loan(loan_id)
 
         loan_period = db.get_loan_period_from_loan_rule(barcode, user_id=borrower_id, patrontype_id=None)
-        if loan_period['type'] == 'hours':
+        if loan_period and loan_period['type'] == 'hours':
             return due_date
         else:
             return due_date.split(" ")[0]

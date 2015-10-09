@@ -536,7 +536,13 @@ CFG_BIBCIRCULATION_WORKING_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday',
 CFG_BIBCIRCULATION_ITEM_STATUS_ON_HOLDSHELF = "On holdshelf"
 
 CFG_BIBCIRCULATION_ITEM_STATUS = CFG_BIBCIRCULATION_ITEM_STATUS_OPTIONAL + \
-                                 [CFG_BIBCIRCULATION_ITEM_STATUS_ON_SHELF,
+                                 ["On holdshelf", "Limited circulation", "Lost",
+                                  "Archival copy", "At bindery", "In Technical Services",
+                                  "On order", "Ask at office", "At UMI",
+                                  "Key is at SFL circ desk", "Missing", "Overdue",
+                                  "Library use only", "To be replaced", "In repair",
+                                  "See notes", "In transit", "Online", "To delete",
+                                  CFG_BIBCIRCULATION_ITEM_STATUS_ON_SHELF,
                                   CFG_BIBCIRCULATION_ITEM_STATUS_ON_LOAN,
                                   CFG_BIBCIRCULATION_ITEM_STATUS_IN_PROCESS,
                                   #CFG_BIBCIRCULATION_ITEM_STATUS_UNDER_REVIEW,
@@ -544,8 +550,8 @@ CFG_BIBCIRCULATION_ITEM_STATUS = CFG_BIBCIRCULATION_ITEM_STATUS_OPTIONAL + \
                                   #CFG_BIBCIRCULATION_ITEM_STATUS_NOT_ARRIVED,
                                   CFG_BIBCIRCULATION_ITEM_STATUS_ON_ORDER,
                                   CFG_BIBCIRCULATION_ITEM_STATUS_CLAIMED,
-                                  'lost',
-                                  'withdrawn',]
+                                  'Withdrawn',]
+
 
 CFG_BIBCIRCULATION_LOAN_STATUS = [CFG_BIBCIRCULATION_LOAN_STATUS_ON_LOAN,
                                   CFG_BIBCIRCULATION_LOAN_STATUS_EXPIRED,

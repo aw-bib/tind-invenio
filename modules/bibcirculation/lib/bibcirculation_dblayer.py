@@ -2357,13 +2357,19 @@ def get_library_for_loan(loan_id):
         return res[0]
 
     # If no library, get a main library
-    (lib_id, name) = get_main_libraries()[0]
-    if lib_id:
-        return lib_id
+    try:
+        (lib_id, name) = get_main_libraries()[0]
+        if lib_id:
+            return lib_id
+    except TypeError:
+        # It does mean that get_main_libraries returned nothing
+        pass
+
 
     # If no main library either, just pick one:
     (lib_id, name) = get_all_libraries()[0]
     return lib_id
+    #FIXME: what does happen if nothing is working there
 
 def get_library_holding_barcode(barcode):
     """

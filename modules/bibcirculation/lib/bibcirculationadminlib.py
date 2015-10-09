@@ -2585,11 +2585,11 @@ def get_item_details(req, recid, patrontype, ln=CFG_SITE_LANG):
 
     _ = gettext_set_language(ln)
 
-    id_user = 1
     infos = []
 
-    if recid == None:
+    if not recid:
         infos.append(_("Record id not valid"))
+        recid = -1
 
     copies = db.get_item_copies_details(recid, patrontype)
     requests = db.get_item_requests(recid)

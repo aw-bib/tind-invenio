@@ -1881,6 +1881,9 @@ def search_borrower_by_ccid(string):
                 string = str(string).lstrip("0")
             except:
                 pass
+        if not string:
+            string = "0"
+
 
     res = run_sql("""SELECT id, name
                        FROM crcBORROWER

@@ -449,14 +449,6 @@ def loan_on_desk_step3(req, user_id, list_of_barcodes, ln=CFG_SITE_LANG):
                 message = _("This item is marked as non circulating. To override, choose %(x_strong_tag_open)s[Continue]%(x_strong_tag_close)s." % {'x_strong_tag_open': '<strong>', 'x_strong_tag_close': '</strong>'})
                 infos.append(message)
 
-            elif loan_rule[3] in (CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS, CFG_BIBCIRCULATION_LOAN_RULE_CODE_HOURS_MINUTE):
-                message = _("%(x_strong_tag_open)sNote:%(x_strong_tag_close)s This loan is not overnight." %  {'x_strong_tag_open': '<strong>', 'x_strong_tag_close': '</strong>'})
-                infos.append(message)
-
-            # FIXME add checks for bookable and holdable
-            if loan_rule[5].upper() == "N":
-                pass
-
 
             body = bc_templates.tmpl_loan_on_desk_step3(user_id=user_id,
                                                     list_of_books=list_of_books,

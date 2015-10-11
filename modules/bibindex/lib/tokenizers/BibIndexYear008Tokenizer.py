@@ -53,11 +53,15 @@ class BibIndexYear008Tokenizer(BibIndexDefaultTokenizer):
     def tokenize(self, phrase):
         final = []
         result = phrase[7:11]
-        if isinstance(result,list):
+        if isinstance(result, list):
             final.append(''.join(result))
+        else:
+            final.append(result)
         result = phrase[11:15]
         if isinstance(result,list):
-            final.append(''.join(result))
+            final.append(''.join(result))   
+        else:
+            final.append(result)
         return final
 
     def tokenize_for_words(self, phrase):

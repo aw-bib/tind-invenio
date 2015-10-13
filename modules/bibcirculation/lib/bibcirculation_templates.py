@@ -461,7 +461,7 @@ class Template:
                 onmouseout="this.className='bibcircbutton'">
                 """ % (CFG_SITE_URL, ln, referal_url, _("Log in"))
             else:
-                request_button = '<span class="bibcircbutton" style="background: #9A9A9A">Place a hold</span>'
+                request_button = '<span class="bibcircbutton" style="background: #9A9A9A;padding: 6px 11px;">Place a hold</span>'
 
             if status in (CFG_BIBCIRCULATION_ITEM_STATUS_ON_ORDER,
                           'claimed'):
@@ -4395,7 +4395,7 @@ class Template:
 
             <script type="text/javascript" language='JavaScript' src="/js/jquery.simple-dtpicker.js"></script>
             <link rel="stylesheet" type="text/css" href="/img/jquery.simple-dtpicker.css" />
-            
+
             <table class="bibcirctable">
               <tr align="left">
                 <td width="230" class="bibcirctableheader">%s

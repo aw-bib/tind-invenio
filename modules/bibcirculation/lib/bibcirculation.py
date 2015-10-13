@@ -91,6 +91,7 @@ def perform_borrower_loans(uid, barcode, borrower_id,
     #renew loan
     if action == 'renew':
         recid = db.get_id_bibrec(barcode)
+        loan_id = db.get_current_loan_id(barcode)    
         item_description = db.get_item_description(barcode)
         new_due_date = renew_loan_for_X_days(barcode)
         queue = db.get_queue_request(recid, item_description)
@@ -102,7 +103,6 @@ def perform_borrower_loans(uid, barcode, borrower_id,
         elif not loan_rule or loan_rule[9] == 'N':
             infos.append(_("This loan can't be renewed."))
         else:
-            loan_id = db.get_current_loan_id(barcode)
             db.renew_loan(loan_id, new_due_date)
             #update_status_if_expired(loan_id)
             tag_all_requests_as_done(barcode, borrower_id)

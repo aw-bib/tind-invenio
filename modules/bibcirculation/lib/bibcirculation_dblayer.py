@@ -3450,19 +3450,26 @@ def delete_brief_format_cache(recid):
                 WHERE format='HB'
                   AND id_bibrec=%s""", (recid,))
 
-def get_matching_loan_rule(barcode, user_id=None, patrontype_id=None):
-    if user_id:
+def get_matching_loan_rule(barcode=None, user_id=None, patrontype_id=None, loan_id=None):
+    if user_id and barcode:
         res = run_sql("""
             SELECT user_id, barcode, patrontype_id, itemtype_id, name, code, loan_period, holdable, homepickup, renewable, location, rule_i_id, rule_p_id FROM crcLOANRULES_MATCH_VIEW
             WHERE user_id = %s
             AND barcode = %s
         """, (user_id, barcode))
-    elif patrontype_id:
+    elif patrontype_id and barcode:
         res = run_sql("""
             SELECT DISTINCT NULL, barcode, patrontype_id, itemtype_id, name, code, loan_period, holdable, homepickup, renewable, location, rule_i_id, rule_p_id  FROM crcLOANRULES_MATCH_VIEW
             WHERE patrontype_id = %s
             AND barcode = %s
         """, (patrontype_id, barcode))
+    elif loan_id:
+        res = run_sql("""
+            SELECT lrv.user_id, lrv.barcode, lrv.patrontype_id, lrv.itemtype_id, lrv.name, lrv.code, lrv.loan_period, lrv.holdable, lrv.homepickup, lrv.renewable, lrv.location, lrv.rule_i_id, lrv.rule_p_id
+            FROM crcLOANRULES_MATCH_VIEW lrv
+            JOIN crcLOAN l on (l.id_crcBORROWER = lrv.user_id and l.barcode = lrv.barcode)
+            WHERE l.id = %s
+        """, (loan_id,))
     else:
         return None
 

@@ -94,12 +94,13 @@ def perform_borrower_loans(uid, barcode, borrower_id,
         item_description = db.get_item_description(barcode)
         new_due_date = renew_loan_for_X_days(barcode)
         queue = db.get_queue_request(recid, item_description)
-
+	loan_rule = db.get_matching_loan_rule(loan_id=loan_id)
         if len(queue) != 0 and queue[0][0] != borrower_id:
             message = "It is not possible to renew your loan for %(x_strong_tag_open)s%(x_title)s%(x_strong_tag_close)s" % {'x_title': book_title_from_MARC(recid), 'x_strong_tag_open': '<strong>', 'x_strong_tag_close': '</strong>'}
             message += ' ' + _("Another user is waiting for this book.")
             infos.append(message)
-
+        elif not loan_rule or loan_rule[9] == 'N':
+            infos.append(_("This loan can't be renewed."))
         else:
             loan_id = db.get_current_loan_id(barcode)
             db.renew_loan(loan_id, new_due_date)

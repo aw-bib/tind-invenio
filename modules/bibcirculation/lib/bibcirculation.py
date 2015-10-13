@@ -119,7 +119,7 @@ def perform_borrower_loans(uid, barcode, borrower_id,
         list_of_barcodes = db.get_borrower_loans_barcodes(borrower_id)
         for bc in list_of_barcodes:
             bc_recid = db.get_id_bibrec(bc)
-            loan_id = db.get_current_loan_id(barcode)
+            loan_id = db.get_current_loan_id(bc)
             item_description = db.get_item_description(bc)
             new_due_date = renew_loan_for_X_days(bc)
             queue = db.get_queue_request(bc_recid, item_description)
